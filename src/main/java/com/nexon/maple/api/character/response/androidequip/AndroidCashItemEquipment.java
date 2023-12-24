@@ -1,4 +1,4 @@
-package com.nexon.maple.api.character.response.androidquip;
+package com.nexon.maple.api.character.response.androidequip;
 
 
 import lombok.Getter;
@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AndroidCashItemEquip {
+public class AndroidCashItemEquipment {
     private String cashItemEquipmentPart;
     private String cashItemEquipmentSlot;
     private String cashItemName;

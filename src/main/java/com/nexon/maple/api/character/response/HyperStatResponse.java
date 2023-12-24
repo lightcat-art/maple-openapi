@@ -1,7 +1,10 @@
 package com.nexon.maple.api.character.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Setter
 @Getter
@@ -10,11 +13,17 @@ public class HyperStatResponse {
     private String characterClass;
     private String usePresetNo;
     private int useAvailableHyperStat;
-    private HyperStatPreset1 hyperStatPreset1;
+    @JsonProperty("hyper_stat_preset_1")
+    private List<HyperStatPreset1> hyperStatPreset1;
+    @JsonProperty("hyper_stat_preset_1_remain_point")
     private int hyperStatPreset1RemainPoint;
-    private HyperStatPreset2 hyperStatPreset2;
+    @JsonProperty("hyper_stat_preset_2")
+    private List<HyperStatPreset2> hyperStatPreset2;
+    @JsonProperty("hyper_stat_preset_2_remain_point")
     private int hyperStatPreset2RemainPoint;
-    private HyperStatPreset3 hyperStatPreset3;
+    @JsonProperty("hyper_stat_preset_3")
+    private List<HyperStatPreset3> hyperStatPreset3;
+    @JsonProperty("hyper_stat_preset_3_remain_point")
     private int hyperStatPreset3RemainPoint;
 
     @Getter
@@ -35,7 +44,7 @@ public class HyperStatResponse {
     }
     @Getter
     @Setter
-    private class HyperStatPreset3 {
+    private static class HyperStatPreset3 {
         private String statType;
         private int statPoint;
         private int statLevel;

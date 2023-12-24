@@ -18,17 +18,121 @@ public class MapleControllerTests {
     private MockMvc mvc;
 
     @Test
-    public void basicTest() throws Exception {
+    public void getCharBasic() throws Exception {
         mvc.perform(get("/api/char/basic"))
                 .andExpect(status().isOk())//200 상태
                 .andExpect(content().string(""));//응답 본문의 내용을 검증
     }
 
     @Test
-    public void symbolTest() throws Exception {
+    public void getCharSymbol() throws Exception {
         mvc.perform(get("/api/char/symbol"))
                 .andExpect(status().isOk())//200 상태
                 .andExpect(content().string(""));//응답 본문의 내용을 검증
     }
 
+    @Test
+    public void getCharAbility() throws Exception {
+        mvc.perform(get("/api/char/ability"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+
+    @Test
+    public void getCharAndroidEquip() throws Exception {
+        mvc.perform(get("/api/char/android-equip"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+    @Test
+    public void getCharBeautyEquip() throws Exception {
+        mvc.perform(get("/api/char/beauty-equip"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+
+    @Test
+    public void getCharCashItemEquip() throws Exception {
+        mvc.perform(get("/api/char/cashitem-equip"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+    @Test
+    public void getCharDojang() throws Exception {
+        mvc.perform(get("/api/char/dojang"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+    @Test
+    public void getCharHexaMatrix() throws Exception {
+        mvc.perform(get("/api/char/hexamatrix"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+    @Test
+    public void getCharHexaMatrixStat() throws Exception {
+        mvc.perform(get("/api/char/hexamatrix-stat"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+    @Test
+    public void getCharHyperStat() throws Exception {
+        mvc.perform(get("/api/char/hyperstat"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+    @Test
+    public void getCharItemEquip() throws Exception {
+        mvc.perform(get("/api/char/item-equip"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+    @Test
+    public void getCharLinkSkill() throws Exception {
+        mvc.perform(get("/api/char/linkskill"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+    @Test
+    public void getCharPetEquip() throws Exception {
+        mvc.perform(get("/api/char/pet-equip"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+    @Test
+    public void getCharPopularity() throws Exception {
+        mvc.perform(get("/api/char/popularity"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+    @Test
+    public void getCharPropensity() throws Exception {
+        mvc.perform(get("/api/char/propensity"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+    @Test
+    public void getCharSetEffect() throws Exception {
+        mvc.perform(get("/api/char/seteffect"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+    @Test
+    public void getCharSkill() throws Exception {
+        mvc.perform(get("/api/char/skill"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+    @Test
+    public void getCharStat() throws Exception {
+        mvc.perform(get("/api/char/stat"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+    @Test
+    public void getCharVMatrix() throws Exception {
+        mvc.perform(get("/api/char/vmatrix"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
 }

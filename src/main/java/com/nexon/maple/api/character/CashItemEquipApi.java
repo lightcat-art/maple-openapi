@@ -6,6 +6,7 @@ import com.nexon.maple.api.character.response.AndroidEquipResponse;
 import com.nexon.maple.api.character.response.BeautyEquipResponse;
 import com.nexon.maple.api.character.response.CashItemEquipResponse;
 import com.nexon.maple.common.MapleProperties;
+import com.nexon.maple.common.ObjectMapperManager;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -49,8 +50,7 @@ public class CashItemEquipApi {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
                 logger.info(body);
-                ObjectMapper mapper = new ObjectMapper();
-                CashItemEquipResponse res = mapper.readValue(body, CashItemEquipResponse.class);
+                CashItemEquipResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, CashItemEquipResponse.class);
                 return res;
             } else {
                 logger.error("response is error : " + response.getStatusLine().getStatusCode());

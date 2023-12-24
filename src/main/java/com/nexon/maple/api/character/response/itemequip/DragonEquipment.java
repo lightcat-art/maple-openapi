@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DragonEquipment {
-    //메카닉인 경우 응답됨.
+    //에반인 경우 응답됨.
     private String itemEquipmentPart;
     private String equipmentSlot;
     private String itemName;

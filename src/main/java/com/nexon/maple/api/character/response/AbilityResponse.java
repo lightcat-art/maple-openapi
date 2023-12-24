@@ -11,6 +11,7 @@ public class AbilityResponse {
     private String date;
     private String abilityGrade;
     private List<AbilityInfo> abilityInfo;
+    private String remainFame;
 
 
     @Setter

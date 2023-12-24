@@ -1,5 +1,6 @@
 package com.nexon.maple.api.character.response.itemequip;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nexon.maple.api.character.response.itemequip.inner.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,22 +9,28 @@ import lombok.Setter;
 @Setter
 public class ItemEquipment {
     private String itemEquipmentPart;
-    private String equipmentSlot;
+    private String itemEquipmentSlot;
     private String itemName;
     private String itemIcon;
     private String itemDescription;
     private String itemShapeName;
     private String itemShapeIcon;
-    private String gender;
+    private String itemGender;
     private ItemTotalOption itemTotalOption;
     private ItemBaseOption itemBaseOption;
     private String potentialOptionGrade;
     private String additionalPotentialOptionGrade;
+    @JsonProperty("potential_option_1")
     private String potentialOption1;
+    @JsonProperty("potential_option_2")
     private String potentialOption2;
+    @JsonProperty("potential_option_3")
     private String potentialOption3;
+    @JsonProperty("additional_potential_option_1")
     private String additionalPotentialOption1;
+    @JsonProperty("additional_potential_option_2")
     private String additionalPotentialOption2;
+    @JsonProperty("additional_potential_option_3")
     private String additionalPotentialOption3;
     private int equipmentLevelIncrease;
     private ItemExceptionalOption itemExceptionalOption;

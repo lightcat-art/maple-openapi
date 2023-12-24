@@ -3,6 +3,8 @@ package com.nexon.maple.api.character.response.cashitemequip;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class AdditionalCashItemEquipmentPreset3 {
@@ -11,7 +13,7 @@ public class AdditionalCashItemEquipmentPreset3 {
     private String cashItemName;
     private String cashItemIcon;
     private String cashItemDescription;
-    private CashItemOption cashItemOption;
+    private List<CashItemOption> cashItemOption;
     private String dateExpire;
     private String dateOptionExpire;
     private String cashItemLabel;

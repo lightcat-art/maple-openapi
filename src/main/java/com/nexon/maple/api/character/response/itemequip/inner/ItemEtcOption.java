@@ -1,7 +1,11 @@
 package com.nexon.maple.api.character.response.itemequip.inner;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ItemEtcOption {
     private String str;
     private String dex;

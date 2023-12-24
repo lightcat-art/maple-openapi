@@ -1,7 +1,12 @@
 package com.nexon.maple.api.character.response;
 
+import com.nexon.maple.api.character.response.androidequip.AndroidCashItemEquipment;
+import com.nexon.maple.api.character.response.androidequip.AndroidFace;
+import com.nexon.maple.api.character.response.androidequip.AndroidHair;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Setter
 @Getter
@@ -11,5 +16,9 @@ public class AndroidEquipResponse {
     private String androidNickname;
     private String androidIcon;
     private String androidDescription;
+    private AndroidHair androidHair;
+    private AndroidFace androidFace;
     private String androidSkinName;
+    private List<AndroidCashItemEquipment> androidCashItemEquipment;
+    private String androidEarSensorClipFlag;
 }

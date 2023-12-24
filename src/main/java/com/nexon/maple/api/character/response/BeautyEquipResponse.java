@@ -11,6 +11,7 @@ public class BeautyEquipResponse {
     private String characterClass;
     private CharacterHair characterHair;
     private CharacterFace characterFace;
+    private String characterSkinName;
     private AdditionalCharacterHair additionalCharacterHair;
     private AdditionalCharacterFace additionalCharacterFace;
     //제로인 경우 베타, 엔젤릭버스터인 경우 드레스 업 모드에 적용 중인 피부 명

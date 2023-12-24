@@ -11,7 +11,7 @@ public class LinkSkillResponse {
     private String date;
     private String characterClass;
     private List<CharacterLinkSkill> characterLinkSkill;
-    private List<CharacterOwnedLinkSkill> characterOwnedLinkSkill;
+    private CharacterOwnedLinkSkill characterOwnedLinkSkill;
 
     @Getter
     @Setter

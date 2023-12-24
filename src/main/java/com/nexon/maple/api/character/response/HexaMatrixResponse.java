@@ -17,7 +17,7 @@ public class HexaMatrixResponse {
         private String hexaCoreName;
         private int hexaCoreLevel;
         private String hexaCoreType;
-        private LinkedSkill linkedSkill;
+        private List<LinkedSkill> linkedSkill;
 
         @Setter
         @Getter

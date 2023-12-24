@@ -3,18 +3,20 @@ package com.nexon.maple.api.character.response;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Setter
 @Getter
 public class SetEffectResponse {
     private String date;
-    private SetEffect setEffect;
+    private List<SetEffect> setEffect;
 
     @Getter
     @Setter
     private static class SetEffect {
         private String setName;
         private int totalSetCount;
-        private SetEffectInfo setEffectInfo;
+        private List<SetEffectInfo> setEffectInfo;
 
         @Getter
         @Setter

@@ -3,13 +3,15 @@ package com.nexon.maple.api.character.response.petequip;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class Pet2Equipment {
     private String itemName;
     private String itemIcon;
     private String itemDescription;
-    private ItemOption itemOption;
+    private List<ItemOption> itemOption;
     private int scrollUpgrade;
-    private int scrollUpgradeable;
+    private int scrollUpgradable;
 }

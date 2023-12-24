@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nexon.maple.api.character.response.AbilityResponse;
 import com.nexon.maple.api.character.response.AndroidEquipResponse;
 import com.nexon.maple.common.MapleProperties;
+import com.nexon.maple.common.ObjectMapperManager;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -47,8 +48,7 @@ public class AndroidEquipApi {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
                 logger.info(body);
-                ObjectMapper mapper = new ObjectMapper();
-                AndroidEquipResponse res = mapper.readValue(body, AndroidEquipResponse.class);
+                AndroidEquipResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, AndroidEquipResponse.class);
                 return res;
             } else {
                 logger.error("response is error : " + response.getStatusLine().getStatusCode());

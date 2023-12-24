@@ -3,6 +3,7 @@ package com.nexon.maple.api.character;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nexon.maple.api.character.response.*;
 import com.nexon.maple.common.MapleProperties;
+import com.nexon.maple.common.ObjectMapperManager;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -27,11 +28,31 @@ public class SkillApi {
 
     Logger logger = LoggerFactory.getLogger(SkillApi.class);
 
-    public SkillResponse get(String ocid, String date) {
+    /**
+     *
+     * @param ocid
+     * @param date
+     * @param charSkillGrade 조회하고자 하는 전직차수 <br>
+     * 0: 0차 스킬 및 제로 공용스킬 <br>
+     * 1: 1차 스킬 <br>
+     * 1.5: 1.5차 스킬 <br>
+     * 2: 2차 스킬 <br>
+     * 2.5: 2.5차 스킬 <br>
+     * 3: 3차 스킬 <br>
+     * 4: 4차 스킬 및 제로 알파/베타 스킬 <br>
+     * hyperpassive: 하이퍼 패시브 스킬 <br>
+     * hyperactive: 하이퍼 액티브 스킬 <br>
+     * 5: 5차 스킬 <br>
+     * 6: 6차 스킬 <br>
+     * @return
+     */
+    public SkillResponse get(String ocid, String date, String charSkillGrade) {
+
         try {
             URI uri = new URIBuilder(mapleProperties.getBase() + characterProperties.getSkill())
                     .addParameter("ocid", ocid)
                     .addParameter("date", date)
+                    .addParameter("character_skill_grade", charSkillGrade)
                     .build();
             HttpGet getRequest = new HttpGet(uri); //GET 메소드 URL 생성
 
@@ -46,8 +67,7 @@ public class SkillApi {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
                 logger.info(body);
-                ObjectMapper mapper = new ObjectMapper();
-                SkillResponse res = mapper.readValue(body, SkillResponse.class);
+                SkillResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, SkillResponse.class);
                 return res;
             } else {
                 logger.error("response is error : " + response.getStatusLine().getStatusCode());
