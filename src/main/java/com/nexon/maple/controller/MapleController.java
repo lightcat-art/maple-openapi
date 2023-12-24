@@ -1,18 +1,19 @@
 package com.nexon.maple.controller;
 
 
-import com.nexon.maple.api.character.*;
-import com.nexon.maple.api.character.response.*;
-import com.nexon.maple.api.guild.GuildBasicApi;
-import com.nexon.maple.api.guild.GuildIdApi;
-import com.nexon.maple.api.guild.response.GuildBasicResponse;
-import com.nexon.maple.api.guild.response.GuildIdResponse;
-import com.nexon.maple.api.ranking.*;
-import com.nexon.maple.api.ranking.response.*;
-import com.nexon.maple.api.user.union.UserUnionApi;
-import com.nexon.maple.api.user.union.UserUnionRaiderApi;
-import com.nexon.maple.api.user.union.response.UserUnionRaiderResponse;
-import com.nexon.maple.api.user.union.response.UserUnionResponse;
+import com.nexon.maple.model.character.overall.CharacterOverallRequest;
+import com.nexon.maple.openapi.client.character.*;
+import com.nexon.maple.openapi.client.character.response.*;
+import com.nexon.maple.openapi.client.guild.GuildBasicApi;
+import com.nexon.maple.openapi.client.guild.GuildIdApi;
+import com.nexon.maple.openapi.client.guild.response.GuildBasicResponse;
+import com.nexon.maple.openapi.client.guild.response.GuildIdResponse;
+import com.nexon.maple.openapi.client.ranking.*;
+import com.nexon.maple.openapi.client.ranking.response.*;
+import com.nexon.maple.openapi.client.union.UserUnionApi;
+import com.nexon.maple.openapi.client.union.UserUnionRaiderApi;
+import com.nexon.maple.openapi.client.union.response.UserUnionRaiderResponse;
+import com.nexon.maple.openapi.client.union.response.UserUnionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,14 @@ public class MapleController {
     @Autowired
     UserUnionRaiderApi userUnionRaiderApi;
 
+    @GetMapping("/api/char/overall")
+    public String getCharOverall(CharacterOverallRequest request) {
+        // ocid 가져오기
+        IdResponse idres = idApi.get(request.getNickname());
+
+        //
+        return null;
+    }
 
     @GetMapping("/api/char/id")
     public String getCharOcid() {
@@ -99,7 +108,7 @@ public class MapleController {
     public String getCharBasic() {
         IdResponse idres = idApi.get("마하포드");
         logger.info("ouid = " + idres.getOcid());
-        BasicResponse basicRes = basicApi.get(idres.getOcid(), "2023-12-22");
+        BasicResponse basicRes = basicApi.get(idres.getOcid(), "2023-12-21");
         logger.info("response tostring = " + basicRes.toString());
         return null;
     }
