@@ -2,11 +2,13 @@ package com.nexon.maple.api.ranking.response;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Getter
 @Setter
+@ToString
 public class RankingGuildResponse {
     private List<Ranking> ranking;
 

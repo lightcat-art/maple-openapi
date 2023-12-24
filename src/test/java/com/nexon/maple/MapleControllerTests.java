@@ -135,4 +135,71 @@ public class MapleControllerTests {
                 .andExpect(status().isOk())//200 상태
                 .andExpect(content().string(""));//응답 본문의 내용을 검증
     }
+
+    //==========================================
+
+    @Test
+    public void getGuildInfo() throws Exception {
+        mvc.perform(get("/api/guild/id"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+
+    //=============================================
+    @Test
+    public void getRankOverall() throws Exception {
+        mvc.perform(get("/api/ranking/overall"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+    @Test
+    public void getRankAchieve() throws Exception {
+        mvc.perform(get("/api/ranking/achieve"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+
+    @Test
+    public void getRankDojang() throws Exception {
+        mvc.perform(get("/api/ranking/dojang"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+
+    @Test
+    public void getRankGuild() throws Exception {
+        mvc.perform(get("/api/ranking/guild"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+
+    @Test
+    public void getRankTheSeed() throws Exception {
+        mvc.perform(get("/api/ranking/theseed"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+
+    @Test
+    public void getRankUnion() throws Exception {
+        mvc.perform(get("/api/ranking/union"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+
+    //=====================================
+
+    @Test
+    public void getUserUnion() throws Exception {
+        mvc.perform(get("/api/user/union"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
+
+    @Test
+    public void getUserUnionRaider() throws Exception {
+        mvc.perform(get("/api/user/union-raider"))
+                .andExpect(status().isOk())//200 상태
+                .andExpect(content().string(""));//응답 본문의 내용을 검증
+    }
 }

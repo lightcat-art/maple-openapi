@@ -28,6 +28,17 @@ public class RankingGuildApi {
 
     Logger logger = LoggerFactory.getLogger(RankingGuildApi.class);
 
+    /**
+     *
+     * @param date
+     * @param worldName Available values :
+     * 스카니아, 베라, 루나, 제니스, 크로아, 유니온, 엘리시움, 이노시스,
+     * 레드, 오로라, 아케인, 노바, 리부트, 리부트2, 버닝, 버닝2, 버닝3
+     * @param rankingType 랭킹 타입 (0:주간 명성치, 1:플래그 레이스, 2:지하 수로)
+     * @param guildName
+     * @param page 페이지번호
+     * @return
+     */
     public RankingGuildResponse get(String date, String worldName, int rankingType, String guildName, int page) {
         try {
             URI uri = new URIBuilder(mapleProperties.getBase() + rankingProperties.getGuild())

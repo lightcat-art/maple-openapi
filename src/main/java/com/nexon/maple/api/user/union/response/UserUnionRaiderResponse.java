@@ -3,20 +3,23 @@ package com.nexon.maple.api.user.union.response;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Getter
 @Setter
+@ToString
 public class UserUnionRaiderResponse {
     private String date;
-    private String unionRaiderStat;
-    private String unionOccupiedStat;
+    private List<String> unionRaiderStat;
+    private List<String> unionOccupiedStat;
     private List<UnionInnerStat> unionInnerStat;
     private List<UnionBlock> unionBlock;
 
     @Getter
     @Setter
+    @ToString
     private static class UnionInnerStat {
         private String statFieldId;
         private String statFieldEffect;
@@ -24,6 +27,7 @@ public class UserUnionRaiderResponse {
 
     @Getter
     @Setter
+    @ToString
     private static class UnionBlock {
         private String blockType;
         private String blockClass;
@@ -33,6 +37,7 @@ public class UserUnionRaiderResponse {
 
         @Getter
         @Setter
+        @ToString
         private static class BlockControlPoint {
             private int x;
             private int y;
@@ -40,6 +45,7 @@ public class UserUnionRaiderResponse {
 
         @Getter
         @Setter
+        @ToString
         private static class BlockPosition {
             private int x;
             private int y;
