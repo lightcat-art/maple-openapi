@@ -18,7 +18,7 @@ public class BeautyEquipResponse {
 
     @Setter
     @Getter
-    public class CharacterHair {
+    private static class CharacterHair {
         private String hairName;
         private String baseColor;
         private String mixColor;
@@ -26,7 +26,7 @@ public class BeautyEquipResponse {
     }
     @Setter
     @Getter
-    private class CharacterFace {
+    private static class CharacterFace {
         private String faceName;
         private String baseColor;
         private String mixColor;
@@ -35,7 +35,7 @@ public class BeautyEquipResponse {
 
     @Setter
     @Getter
-    private class AdditionalCharacterHair {
+    private static class AdditionalCharacterHair {
         private String hairName;
         private String baseColor;
         private String mixColor;
@@ -43,7 +43,7 @@ public class BeautyEquipResponse {
     }
     @Setter
     @Getter
-    private class AdditionalCharacterFace {
+    private static class AdditionalCharacterFace {
         private String faceName;
         private String baseColor;
         private String mixColor;

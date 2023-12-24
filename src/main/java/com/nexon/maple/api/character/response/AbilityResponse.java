@@ -3,7 +3,6 @@ package com.nexon.maple.api.character.response;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Setter
@@ -16,7 +15,7 @@ public class AbilityResponse {
 
     @Setter
     @Getter
-    public class AbilityInfo {
+    private static class AbilityInfo {
         private String abilityNo;
         private String abilityGrade;
         private String abilityValue;

@@ -17,7 +17,4 @@ public class CashItemEquipResponse {
     private AdditionalCashItemEquipmentPreset1 additionalCashItemEquipmentPreset1;
     private AdditionalCashItemEquipmentPreset2 additionalCashItemEquipmentPreset2;
     private AdditionalCashItemEquipmentPreset3 additionalCashItemEquipmentPreset3;
-
-
-
 }

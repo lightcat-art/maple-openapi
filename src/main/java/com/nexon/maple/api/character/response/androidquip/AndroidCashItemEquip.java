@@ -20,14 +20,14 @@ public class AndroidCashItemEquip {
 
     @Getter
     @Setter
-    public class CashItemOption {
+    private static class CashItemOption {
         private String optionType;
         private String optionValue;
     }
 
     @Getter
     @Setter
-    public class CashItemColoringPrism {
+    private static class CashItemColoringPrism {
         private String colorRange;
         private long hue;
         private long saturation;
