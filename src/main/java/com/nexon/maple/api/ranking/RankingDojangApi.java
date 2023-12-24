@@ -1,8 +1,9 @@
-package com.nexon.maple.api.character;
+package com.nexon.maple.api.ranking;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nexon.maple.api.character.response.AbilityResponse;
-import com.nexon.maple.api.character.response.IdResponse;
+import com.nexon.maple.api.character.IdApi;
+import com.nexon.maple.api.guild.response.GuildIdResponse;
+import com.nexon.maple.api.ranking.response.RankingAchievementResponse;
+import com.nexon.maple.api.ranking.response.RankingDojangResponse;
 import com.nexon.maple.common.MapleProperties;
 import com.nexon.maple.common.ObjectMapperManager;
 import org.apache.http.client.ResponseHandler;
@@ -20,19 +21,24 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 
 @Component
-public class IdApi {
+public class RankingDojangApi {
     @Autowired
     private MapleProperties mapleProperties;
 
     @Autowired
-    private MapleProperties.Character characterProperties;
+    private MapleProperties.Ranking rankingProperties;
 
-    Logger logger = LoggerFactory.getLogger(IdApi.class);
+    Logger logger = LoggerFactory.getLogger(RankingDojangApi.class);
 
-    public IdResponse get(String nickname) {
+    public RankingDojangResponse get(String date, String worldName, int difficulty, String className, String ocid, int page) {
         try {
-            URI uri = new URIBuilder(mapleProperties.getBase() + characterProperties.getOcid())
-                    .addParameter("character_name", nickname)
+            URI uri = new URIBuilder(mapleProperties.getBase() + rankingProperties.getDojang())
+                    .addParameter("date", date)
+                    .addParameter("world_name", worldName)
+                    .addParameter("difficulty", String.valueOf(difficulty))
+                    .addParameter("class", className)
+                    .addParameter("ocid", ocid)
+                    .addParameter("page", String.valueOf(page))
                     .build();
             HttpGet getRequest = new HttpGet(uri); //GET 메소드 URL 생성
 
@@ -47,8 +53,8 @@ public class IdApi {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
                 logger.info(body);
-                IdResponse ouidRes = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, IdResponse.class);
-                return ouidRes;
+                RankingDojangResponse dojangRes = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, RankingDojangResponse.class);
+                return dojangRes;
             } else {
                 logger.error("response is error : " + response.getStatusLine().getStatusCode());
                 return null;

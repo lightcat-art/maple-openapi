@@ -1,8 +1,7 @@
-package com.nexon.maple.api.character;
+package com.nexon.maple.api.user.union;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nexon.maple.api.character.response.AbilityResponse;
-import com.nexon.maple.api.character.response.IdResponse;
+import com.nexon.maple.api.guild.response.GuildBasicResponse;
+import com.nexon.maple.api.user.union.response.UserUnionResponse;
 import com.nexon.maple.common.MapleProperties;
 import com.nexon.maple.common.ObjectMapperManager;
 import org.apache.http.client.ResponseHandler;
@@ -20,19 +19,20 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 
 @Component
-public class IdApi {
+public class UserUnionApi {
     @Autowired
     private MapleProperties mapleProperties;
 
     @Autowired
-    private MapleProperties.Character characterProperties;
+    private MapleProperties.User userProperties;
 
-    Logger logger = LoggerFactory.getLogger(IdApi.class);
+    Logger logger = LoggerFactory.getLogger(UserUnionApi.class);
 
-    public IdResponse get(String nickname) {
+    public UserUnionResponse get(String ocid, String date) {
         try {
-            URI uri = new URIBuilder(mapleProperties.getBase() + characterProperties.getOcid())
-                    .addParameter("character_name", nickname)
+            URI uri = new URIBuilder(mapleProperties.getBase() + userProperties.getUnion())
+                    .addParameter("ocid", ocid)
+                    .addParameter("date", date)
                     .build();
             HttpGet getRequest = new HttpGet(uri); //GET 메소드 URL 생성
 
@@ -47,8 +47,8 @@ public class IdApi {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
                 logger.info(body);
-                IdResponse ouidRes = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, IdResponse.class);
-                return ouidRes;
+                UserUnionResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, UserUnionResponse.class);
+                return res;
             } else {
                 logger.error("response is error : " + response.getStatusLine().getStatusCode());
                 return null;

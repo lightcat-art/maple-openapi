@@ -29,7 +29,6 @@ public class AbilityApi {
 
     public AbilityResponse get(String ocid, String date) {
         try {
-            logger.info("baseurl=" + mapleProperties.getBase());
             URI uri = new URIBuilder(mapleProperties.getBase() + characterProperties.getAbility())
                     .addParameter("ocid", ocid)
                     .addParameter("date", date)

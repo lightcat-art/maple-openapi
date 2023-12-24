@@ -31,7 +31,6 @@ public class BasicApi {
 
     public BasicResponse get(String ocid, String date) {
         try {
-            logger.info("baseurl=" + mapleProperties.getBase());
             URI uri = new URIBuilder(mapleProperties.getBase() + characterProperties.getBasic())
                     .addParameter("ocid", ocid)
                     .addParameter("date", date)
