@@ -47,8 +47,8 @@ public class AbilityApi {
                 String body = handler.handleResponse(response);
                 logger.info(body);
                 ObjectMapper mapper = new ObjectMapper();
-                AbilityResponse ouidRes = mapper.readValue(body, AbilityResponse.class);
-                return ouidRes;
+                AbilityResponse res = mapper.readValue(body, AbilityResponse.class);
+                return res;
             } else {
                 logger.error("response is error : " + response.getStatusLine().getStatusCode());
                 return null;

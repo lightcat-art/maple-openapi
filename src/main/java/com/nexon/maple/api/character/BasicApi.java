@@ -48,8 +48,8 @@ public class BasicApi {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
                 logger.info(body);
-                BasicResponse basicRes = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, BasicResponse.class);
-                return basicRes;
+                BasicResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, BasicResponse.class);
+                return res;
             } else {
                 logger.error("response is error : " + response.getStatusLine().getStatusCode());
                 return null;

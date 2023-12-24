@@ -47,8 +47,8 @@ public class IdApi {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
                 logger.info(body);
-                IdResponse ouidRes = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, IdResponse.class);
-                return ouidRes;
+                IdResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, IdResponse.class);
+                return res;
             } else {
                 logger.error("response is error : " + response.getStatusLine().getStatusCode());
                 return null;
