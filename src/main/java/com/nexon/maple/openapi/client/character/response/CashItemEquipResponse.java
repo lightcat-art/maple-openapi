@@ -1,7 +1,6 @@
 package com.nexon.maple.openapi.client.character.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.nexon.maple.openapi.character.response.cashitemequip.*;
 import com.nexon.maple.openapi.client.character.response.cashitemequip.*;
 import lombok.Getter;
 import lombok.Setter;

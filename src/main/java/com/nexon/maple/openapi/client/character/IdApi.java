@@ -48,11 +48,12 @@ public class IdApi {
                 IdResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, IdResponse.class);
                 return res;
             } else {
-                logger.error("response is error : " + response.getStatusLine().getStatusCode());
+                logger.error("response is error : " + response.getStatusLine().getStatusCode()
+                        + ", error message : " + response.getStatusLine().getReasonPhrase());
                 return null;
             }
         } catch (Exception e) {
-            logger.error("error occurred.",e);
+            logger.error("error occurred.", e);
             return null;
         }
     }
