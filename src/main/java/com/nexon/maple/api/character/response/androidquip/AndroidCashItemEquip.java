@@ -1,0 +1,36 @@
+package com.nexon.maple.api.character.response.androidquip;
+
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class AndroidCashItemEquip {
+    private String cashItemEquipmentPart;
+    private String cashItemEquipmentSlot;
+    private String cashItemName;
+    private String cashItemIcon;
+    private String cashItemDescription;
+    private CashItemOption cashItemOption;
+    private String dateExpire;
+    private String dateOptionExpire;
+    private String cashItemLabel;
+    private CashItemColoringPrism cashItemColoringPrism;
+
+    @Getter
+    @Setter
+    public class CashItemOption {
+        private String optionType;
+        private String optionValue;
+    }
+
+    @Getter
+    @Setter
+    public class CashItemColoringPrism {
+        private String colorRange;
+        private long hue;
+        private long saturation;
+        private long value;
+    }
+}

@@ -1,0 +1,37 @@
+api:
+  key: test_0f23fc87b6d01ccef837703278e7264392a2f7aafe543ba700be5ad1cc3dd0dc3e492347b34892b3cb931d4d1dfacbcf
+  base: https://open.api.nexon.com
+  character:
+    ocid: /maplestory/v1/id
+    basic: /maplestory/v1/character/basic
+    popularity: /maplestory/v1/character/popularity
+    stat: /maplestory/v1/character/stat
+    hyperstat: /maplestory/v1/character/hyper-stat
+    propensity: /maplestory/v1/character/propensity
+    ability: /maplestory/v1/character/ability
+    itemequip: /maplestory/v1/character/item-equipment
+    cashequip: /maplestory/v1/character/cashitem-equipment
+    symbolequip: /maplestory/v1/character/symbol-equipment
+    seteffect: /maplestory/v1/character/set-effect
+    beautyequip: /maplestory/v1/character/beauty-equipment
+    androidequip: /maplestory/v1/character/android-equipment
+    petequip: /maplestory/v1/character/pet-equipment
+    skill: /maplestory/v1/character/skill
+    linkskill: /maplestory/v1/character/link-skill
+    vmatrix: /maplestory/v1/character/vmatrix
+    hexamatrix: /maplestory/v1/character/hexamatrix
+    hexamatrixstat: /maplestory/v1/character/hexamatrix-stat
+    dojang: /maplestory/v1/character/dojang
+  user:
+    union: /maplestory/v1/user/union
+    unionraider: /maplestory/v1/user/union-raider
+  guild:
+    id: /maplestory/v1/guild/id
+    basic: /maplestory/v1/guild/basic
+  ranking:
+    overall: /maplestory/v1/ranking/overall
+    union: /maplestory/v1/ranking/union
+    guild: /maplestory/v1/ranking/guild
+    dojang: /maplestory/v1/ranking/dojang
+    theseed: /maplestory/v1/ranking/theseed
+    achievement: /maplestory/v1/ranking/achievement
