@@ -18,19 +18,4 @@ public class AndroidCashItemEquipment {
     private String cashItemLabel;
     private CashItemColoringPrism cashItemColoringPrism;
 
-    @Getter
-    @Setter
-    private static class CashItemOption {
-        private String optionType;
-        private String optionValue;
-    }
-
-    @Getter
-    @Setter
-    private static class CashItemColoringPrism {
-        private String colorRange;
-        private long hue;
-        private long saturation;
-        private long value;
-    }
 }

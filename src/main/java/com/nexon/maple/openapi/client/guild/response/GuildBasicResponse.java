@@ -1,6 +1,8 @@
 package com.nexon.maple.openapi.client.guild.response;
 
 
+import com.nexon.maple.openapi.client.guild.response.basic.GuildNoblessSkill;
+import com.nexon.maple.openapi.client.guild.response.basic.GuildSkill;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -25,25 +27,4 @@ public class GuildBasicResponse {
     private String guildMark;
     private String guildMarkCustom; //base64 encoding format
 
-    @Getter
-    @Setter
-    @ToString
-    private static class GuildSkill {
-        private String skillName;
-        private String skillDescription;
-        private int skillLevel;
-        private String skillEffect;
-        private String skillIcon;
-    }
-
-    @Getter
-    @Setter
-    @ToString
-    private static class GuildNoblessSkill {
-        private String skillName;
-        private String skillDescription;
-        private int skillLevel;
-        private String skillEffect;
-        private String skillIcon;
-    }
 }

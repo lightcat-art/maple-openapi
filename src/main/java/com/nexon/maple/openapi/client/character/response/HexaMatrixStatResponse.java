@@ -1,6 +1,8 @@
 package com.nexon.maple.openapi.client.character.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nexon.maple.openapi.client.character.response.hexamatrixstat.CharacterHexaStatCore;
+import com.nexon.maple.openapi.client.character.response.hexamatrixstat.PresetHexaStatCore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,37 +16,4 @@ public class HexaMatrixStatResponse {
     private List<CharacterHexaStatCore> characterHexaStatCore;
     private List<PresetHexaStatCore> presetHexaStatCore;
 
-    @Setter
-    @Getter
-    private static class CharacterHexaStatCore {
-        private String slotId;
-        private String mainStatName;
-        @JsonProperty("sub_stat_name_1")
-        private String subStatName1;
-        @JsonProperty("sub_stat_name_2")
-        private String subStatName2;
-        private int mainStatLevel;
-        @JsonProperty("sub_stat_level_1")
-        private int subStatLevel1;
-        @JsonProperty("sub_stat_level_2")
-        private int subStatLevel2;
-        private int statGrade;
-    }
-
-    @Setter
-    @Getter
-    private static class PresetHexaStatCore {
-        private String slotId;
-        private String mainStatName;
-        @JsonProperty("sub_stat_name_1")
-        private String subStatName1;
-        @JsonProperty("sub_stat_name_2")
-        private String subStatName2;
-        private int mainStatLevel;
-        @JsonProperty("sub_stat_level_1")
-        private int subStatLevel1;
-        @JsonProperty("sub_stat_level_2")
-        private int subStatLevel2;
-        private int statGrade;
-    }
 }

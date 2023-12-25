@@ -13,13 +13,4 @@ public class SkillResponse {
     private String characterSkillGrade;
     private List<CharacterSkill> characterSkill;
 
-    @Getter
-    @Setter
-    private static class CharacterSkill {
-        private String skillName;
-        private String skillDescription;
-        private String skillLevel;
-        private String skillEffect;
-        private String skillIcon;
-    }
 }

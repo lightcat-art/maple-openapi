@@ -17,8 +17,13 @@ import com.nexon.maple.openapi.client.union.response.UserUnionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 public class MapleController {
@@ -90,8 +95,49 @@ public class MapleController {
 
     @GetMapping("/api/char/overall")
     public String getCharOverall(CharacterOverallRequest request) {
+
+        LocalDate now = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedNow = now.format(formatter);
+
         // ocid 가져오기
-        IdResponse idres = idApi.get(request.getNickname());
+        IdResponse idRes = idApi.get(request.getNickname());
+        if (idRes == null) {
+            logger.error("해당 캐릭터 정보가 생성되지 않음.");
+            return null;
+        }
+
+        BasicResponse basicResponse = basicApi.get(idRes.getOcid(), formattedNow);
+        PopularityResponse popularityResponse = popularityApi.get(idRes.getOcid(), formattedNow);
+        StatResponse statResponse = statApi.get(idRes.getOcid(), formattedNow);
+        HyperStatResponse hyperStatResponse = hyperStatApi.get(idRes.getOcid(), formattedNow);
+        PropensityResponse propensityResponse = propensityApi.get(idRes.getOcid(), formattedNow);
+        AbilityResponse abilityResponse = abilityApi.get(idRes.getOcid(), formattedNow);
+        ItemEquipResponse itemEquipResponse = itemEquipApi.get(idRes.getOcid(), formattedNow);
+        CashItemEquipResponse cashItemEquipResponse = cashItemEquipApi.get(idRes.getOcid(), formattedNow);
+        SymbolEquipResponse symbolEquipResponse = symbolEquipApi.get(idRes.getOcid(), formattedNow);
+        SetEffectResponse setEffectResponse = setEffectApi.get(idRes.getOcid(), formattedNow);
+        BeautyEquipResponse beautyEquipResponse = beautyEquipApi.get(idRes.getOcid(), formattedNow);
+        AndroidEquipResponse androidEquipResponse = androidEquipApi.get(idRes.getOcid(), formattedNow);
+        PetEquipResponse petEquipResponse = petEquipApi.get(idRes.getOcid(), formattedNow);
+        // 하이퍼 패시브
+        SkillResponse skillResponseHp = skillApi.get(idRes.getOcid(), formattedNow, "hyperpassive");
+        // 하이퍼 액티브
+        SkillResponse skillResponseHa = skillApi.get(idRes.getOcid(), formattedNow, "hyperactive");
+        // 5차
+        SkillResponse skillResponse5 = skillApi.get(idRes.getOcid(), formattedNow, "5");
+        // 6차
+        SkillResponse skillResponse6 = skillApi.get(idRes.getOcid(), formattedNow, "6");
+        LinkSkillResponse linkSkillResponse = linkSkillApi.get(idRes.getOcid(), formattedNow);
+        VMatrixResponse vMatrixResponse = vMatrixApi.get(idRes.getOcid(), formattedNow);
+        HexaMatrixResponse hexaMatrixResponse = hexaMatrixApi.get(idRes.getOcid(), formattedNow);
+        HexaMatrixStatResponse hexaMatrixStatResponse = hexaMatrixStatApi.get(idRes.getOcid(), formattedNow);
+        DojangResponse dojangResponse = dojangApi.get(idRes.getOcid(), formattedNow);
+
+        RankingUnionResponse rankingUnionResponse = rankingUnionApi
+                .get(formattedNow, basicResponse.getWorldName(), idRes.getOcid(), 1);
+
+
 
         //
         return null;
@@ -290,7 +336,8 @@ public class MapleController {
     public String getRankOverall() {
         IdResponse idres = idApi.get("마하포드");
         logger.info("ouid = " + idres.getOcid());
-        RankingOverallResponse res = rankingOverallApi.get("2023-12-22","리부트", 0, "기사단-미하일", idres.getOcid(), 1);
+//        RankingOverallResponse res = rankingOverallApi.get("2023-12-22","리부트", 0, "기사단-미하일", idres.getOcid(), 1);
+        RankingOverallResponse res = rankingOverallApi.get("2023-12-22", "리부트", 1, "기사단-미하일", idres.getOcid(), 10000);
         logger.info("response tostring = " + res.toString());
         return null;
     }
@@ -306,11 +353,14 @@ public class MapleController {
 
     @GetMapping("/api/ranking/dojang")
     public String getRankDojang() {
-        IdResponse idres = idApi.get("마하포드");
+        IdResponse idres = idApi.get("꾸부기");
         logger.info("ouid = " + idres.getOcid());
-        RankingDojangResponse res = rankingDojangApi.get("2023-12-22","리부트", 1, "기사단-미하일", idres.getOcid(), 1);
+        RankingDojangResponse res = rankingDojangApi.get("2023-12-24", "리부트", 0, "레지스탕스-전체 전직", idres.getOcid(), 1);
+        RankingDojangResponse res2 = rankingDojangApi.get("2023-12-24", "리부트", 0, "레지스탕스-배틀메이지", idres.getOcid(), 1);
+        RankingDojangResponse res3 = rankingDojangApi.get("2023-12-24", "리부트", 1, "레지스탕스-전체 전직", idres.getOcid(), 1);
+        RankingDojangResponse res4 = rankingDojangApi.get("2023-12-24", "리부트", 1, "레지스탕스-배틀메이지", idres.getOcid(), 1);
         //무릉 기록이 없으면 ranking 안에 빈 리스트가 return
-        logger.info("response tostring = " + res.toString());
+//        logger.info("response tostring = " + res.toString());
         return null;
     }
 

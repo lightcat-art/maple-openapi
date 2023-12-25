@@ -1,6 +1,9 @@
 package com.nexon.maple.openapi.client.character.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nexon.maple.openapi.client.character.response.hyperstat.HyperStatPreset1;
+import com.nexon.maple.openapi.client.character.response.hyperstat.HyperStatPreset2;
+import com.nexon.maple.openapi.client.character.response.hyperstat.HyperStatPreset3;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,29 +28,4 @@ public class HyperStatResponse {
     private List<HyperStatPreset3> hyperStatPreset3;
     @JsonProperty("hyper_stat_preset_3_remain_point")
     private int hyperStatPreset3RemainPoint;
-
-    @Getter
-    @Setter
-    private static class HyperStatPreset1 {
-        private String statType;
-        private int statPoint;
-        private int statLevel;
-        private String statIncrease;
-    }
-    @Getter
-    @Setter
-    private static class HyperStatPreset2 {
-        private String statType;
-        private int statPoint;
-        private int statLevel;
-        private String statIncrease;
-    }
-    @Getter
-    @Setter
-    private static class HyperStatPreset3 {
-        private String statType;
-        private int statPoint;
-        private int statLevel;
-        private String statIncrease;
-    }
 }

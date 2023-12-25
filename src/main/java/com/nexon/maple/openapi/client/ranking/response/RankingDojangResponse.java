@@ -1,5 +1,6 @@
 package com.nexon.maple.openapi.client.ranking.response;
 
+import com.nexon.maple.openapi.client.ranking.response.dojang.Ranking;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,17 +11,4 @@ import java.util.List;
 public class RankingDojangResponse {
     private List<Ranking> ranking;
 
-    @Getter
-    @Setter
-    private static class Ranking {
-        private String date;
-        private long ranking;
-        private String characterName;
-        private String worldName;
-        private String className;
-        private String subClassName;
-        private int characterLevel;
-        private int dojangFloor;
-        private int dojangTimeRecord;
-    }
 }

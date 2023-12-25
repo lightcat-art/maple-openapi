@@ -1,5 +1,6 @@
 package com.nexon.maple.openapi.client.character.response;
 
+import com.nexon.maple.openapi.client.character.response.symbolequip.Symbol;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,20 +13,4 @@ public class SymbolEquipResponse {
     private String characterClass;
     private List<Symbol> symbol;
 
-    @Getter
-    @Setter
-    private static class Symbol {
-        private String symbolName;
-        private String symbolIcon;
-        private String symbolDescription;
-        private String symbolForce;
-        private int symbolLevel;
-        private String symbolStr;
-        private String symbolDex;
-        private String symbolInt;
-        private String symbolLuk;
-        private String symbolHp;
-        private int symbolGrowthCount;
-        private int symbolRequireGrowthCount;
-    }
 }

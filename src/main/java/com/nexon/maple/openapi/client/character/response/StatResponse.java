@@ -1,5 +1,6 @@
 package com.nexon.maple.openapi.client.character.response;
 
+import com.nexon.maple.openapi.client.character.response.stat.FinalStat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,10 +14,4 @@ public class StatResponse {
     private List<FinalStat> finalStat;
     private int remainAp;
 
-    @Getter
-    @Setter
-    private static class FinalStat {
-        private String statName;
-        private String statValue;
-    }
 }
