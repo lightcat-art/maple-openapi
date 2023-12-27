@@ -1,5 +1,6 @@
 package com.nexon.maple.openapi.client.character.response;
 
+import com.nexon.maple.openapi.client.character.response.skill.CharacterSkill;
 import lombok.Getter;
 import lombok.Setter;
 

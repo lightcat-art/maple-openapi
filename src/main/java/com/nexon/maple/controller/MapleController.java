@@ -1,7 +1,9 @@
 package com.nexon.maple.controller;
 
 
+import com.nexon.maple.cache.ResponseCacheManager;
 import com.nexon.maple.model.character.overall.CharacterOverallRequest;
+import com.nexon.maple.model.character.overall.CharacterOverallResponse;
 import com.nexon.maple.openapi.client.character.*;
 import com.nexon.maple.openapi.client.character.response.*;
 import com.nexon.maple.openapi.client.guild.GuildBasicApi;
@@ -18,14 +20,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@RestController
+@RestController //@RestController = @Controller + @ResponseBody
 public class MapleController {
     Logger logger = LoggerFactory.getLogger(MapleController.class);
 
@@ -94,11 +95,18 @@ public class MapleController {
     UserUnionRaiderApi userUnionRaiderApi;
 
     @GetMapping("/api/char/overall")
-    public String getCharOverall(CharacterOverallRequest request) {
+    public CharacterOverallResponse getCharOverall(CharacterOverallRequest request) {
 
-        LocalDate now = LocalDate.now();
+        LocalDate now = LocalDate.now().minusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedNow = now.format(formatter);
+
+        logger.info("request nickname = " + request.getNickname() + ", now = " + formattedNow);
+        // 필요에 따라 key 저장방식을 ocid로 바꾸는것도 고려 필요.
+        if (ResponseCacheManager.getInstance().getCharacterCacheMap().containsKey(request.getNickname())) {
+            logger.info("Use Cache. character name = " + request.getNickname());
+            return ResponseCacheManager.getInstance().getCharacterCache(request.getNickname());
+        }
 
         // ocid 가져오기
         IdResponse idRes = idApi.get(request.getNickname());
@@ -107,40 +115,90 @@ public class MapleController {
             return null;
         }
 
-        BasicResponse basicResponse = basicApi.get(idRes.getOcid(), formattedNow);
-        PopularityResponse popularityResponse = popularityApi.get(idRes.getOcid(), formattedNow);
-        StatResponse statResponse = statApi.get(idRes.getOcid(), formattedNow);
-        HyperStatResponse hyperStatResponse = hyperStatApi.get(idRes.getOcid(), formattedNow);
-        PropensityResponse propensityResponse = propensityApi.get(idRes.getOcid(), formattedNow);
-        AbilityResponse abilityResponse = abilityApi.get(idRes.getOcid(), formattedNow);
-        ItemEquipResponse itemEquipResponse = itemEquipApi.get(idRes.getOcid(), formattedNow);
-        CashItemEquipResponse cashItemEquipResponse = cashItemEquipApi.get(idRes.getOcid(), formattedNow);
-        SymbolEquipResponse symbolEquipResponse = symbolEquipApi.get(idRes.getOcid(), formattedNow);
-        SetEffectResponse setEffectResponse = setEffectApi.get(idRes.getOcid(), formattedNow);
-        BeautyEquipResponse beautyEquipResponse = beautyEquipApi.get(idRes.getOcid(), formattedNow);
-        AndroidEquipResponse androidEquipResponse = androidEquipApi.get(idRes.getOcid(), formattedNow);
-        PetEquipResponse petEquipResponse = petEquipApi.get(idRes.getOcid(), formattedNow);
-        // 하이퍼 패시브
-        SkillResponse skillResponseHp = skillApi.get(idRes.getOcid(), formattedNow, "hyperpassive");
-        // 하이퍼 액티브
-        SkillResponse skillResponseHa = skillApi.get(idRes.getOcid(), formattedNow, "hyperactive");
-        // 5차
-        SkillResponse skillResponse5 = skillApi.get(idRes.getOcid(), formattedNow, "5");
-        // 6차
-        SkillResponse skillResponse6 = skillApi.get(idRes.getOcid(), formattedNow, "6");
-        LinkSkillResponse linkSkillResponse = linkSkillApi.get(idRes.getOcid(), formattedNow);
-        VMatrixResponse vMatrixResponse = vMatrixApi.get(idRes.getOcid(), formattedNow);
-        HexaMatrixResponse hexaMatrixResponse = hexaMatrixApi.get(idRes.getOcid(), formattedNow);
-        HexaMatrixStatResponse hexaMatrixStatResponse = hexaMatrixStatApi.get(idRes.getOcid(), formattedNow);
-        DojangResponse dojangResponse = dojangApi.get(idRes.getOcid(), formattedNow);
 
-        RankingUnionResponse rankingUnionResponse = rankingUnionApi
-                .get(formattedNow, basicResponse.getWorldName(), idRes.getOcid(), 1);
+//        BasicResponse basicResponse = basicApi.get(idRes.getOcid(), formattedNow);
+//        PopularityResponse popularityResponse = popularityApi.get(idRes.getOcid(), formattedNow);
+//        StatResponse statResponse = statApi.get(idRes.getOcid(), formattedNow);
+//        HyperStatResponse hyperStatResponse = hyperStatApi.get(idRes.getOcid(), formattedNow);
+//        PropensityResponse propensityResponse = propensityApi.get(idRes.getOcid(), formattedNow);
+//        AbilityResponse abilityResponse = abilityApi.get(idRes.getOcid(), formattedNow);
+//        ItemEquipResponse itemEquipResponse = itemEquipApi.get(idRes.getOcid(), formattedNow);
+//        CashItemEquipResponse cashItemEquipResponse = cashItemEquipApi.get(idRes.getOcid(), formattedNow);
+//        SymbolEquipResponse symbolEquipResponse = symbolEquipApi.get(idRes.getOcid(), formattedNow);
+//        SetEffectResponse setEffectResponse = setEffectApi.get(idRes.getOcid(), formattedNow);
+//        BeautyEquipResponse beautyEquipResponse = beautyEquipApi.get(idRes.getOcid(), formattedNow);
+//        AndroidEquipResponse androidEquipResponse = androidEquipApi.get(idRes.getOcid(), formattedNow);
+//        PetEquipResponse petEquipResponse = petEquipApi.get(idRes.getOcid(), formattedNow);
+//        // 하이퍼 패시브
+//        SkillResponse skillResponseHp = skillApi.get(idRes.getOcid(), formattedNow, "hyperpassive");
+//        // 하이퍼 액티브
+//        SkillResponse skillResponseHa = skillApi.get(idRes.getOcid(), formattedNow, "hyperactive");
+//        // 5차
+//        SkillResponse skillResponse5 = skillApi.get(idRes.getOcid(), formattedNow, "5");
+//        // 6차
+//        SkillResponse skillResponse6 = skillApi.get(idRes.getOcid(), formattedNow, "6");
+//        LinkSkillResponse linkSkillResponse = linkSkillApi.get(idRes.getOcid(), formattedNow);
+//        VMatrixResponse vMatrixResponse = vMatrixApi.get(idRes.getOcid(), formattedNow);
+//        HexaMatrixResponse hexaMatrixResponse = hexaMatrixApi.get(idRes.getOcid(), formattedNow);
+//        HexaMatrixStatResponse hexaMatrixStatResponse = hexaMatrixStatApi.get(idRes.getOcid(), formattedNow);
+//        DojangResponse dojangResponse = dojangApi.get(idRes.getOcid(), formattedNow);
+//
+//        // 유니온 랭킹 정보
+//        RankingUnionResponse rankingUnionResponse = rankingUnionApi
+//                .get(formattedNow, basicResponse.getWorldName(), idRes.getOcid(), 1);
+//
+//        String myClassNamFull = rankingUnionResponse.getRanking().get(0).getClassName()
+//                + "-" + rankingUnionResponse.getRanking().get(0).getSubClassName();
+//        String wholeClassNmFull = rankingUnionResponse.getRanking().get(0).getClassName() + "-" + "전체 전직";
+//        // 종합 랭킹 정보
+//        RankingOverallResponse rankingOverallMyClassResponse = rankingOverallApi
+//                .get(formattedNow, basicResponse.getWorldName(), 0, myClassNamFull, idRes.getOcid(), 1);
+//
+//        RankingOverallResponse rankOverallWholeClassResponse = rankingOverallApi
+//                .get(formattedNow, basicResponse.getWorldName(), 0, wholeClassNmFull, idRes.getOcid(), 1);
+//
+//
+//        int difficulty = 1; //무릉도장 조회 구간은 통달으로 통일.
+//        // 무릉도장 랭킹 정보
+//        RankingDojangResponse rankDojangMyClassResponse = rankingDojangApi.get(formattedNow, basicResponse.getWorldName(), difficulty,
+//                myClassNamFull, idRes.getOcid(), 1);
+//        RankingDojangResponse rankDojangWholeClassResponse = rankingDojangApi.get(formattedNow, basicResponse.getWorldName(), difficulty,
+//                wholeClassNmFull, idRes.getOcid(), 1);
+//
+//        RankingTheSeedResponse rankingTheSeedResponse = rankingTheSeedApi.get(formattedNow, basicResponse.getWorldName(), idRes.getOcid(), 1);
+//
+//        RankingAchievementResponse rankingAchievementResponse = rankingAchievementApi.get(formattedNow, idRes.getOcid(), 1);
 
+//        UserUnionResponse userUnionResponse = userUnionApi.get(idRes.getOcid(), formattedNow);
 
+        UserUnionRaiderResponse userUnionRaiderResponse = userUnionRaiderApi.get(idRes.getOcid(), formattedNow);
 
+        CharacterOverallResponse out = CharacterOverallResponse.builder()
+//                .basicResponse(basicResponse)
+//                .popularityResponse(popularityResponse)
+//                .statResponse(statResponse)
+//                .hyperStatResponse(hyperStatResponse)
+//                .propensityResponse(propensityResponse).abilityResponse(abilityResponse)
+//                .itemEquipResponse(itemEquipResponse)
+//                .cashItemEquipResponse(cashItemEquipResponse)
+//                .symbolEquipResponse(symbolEquipResponse).setEffectResponse(setEffectResponse)
+//                .beautyEquipResponse(beautyEquipResponse).androidEquipResponse(androidEquipResponse)
+//                .petEquipResponse(petEquipResponse).skillResponseHp(skillResponseHp)
+//                .skillResponseHa(skillResponseHa).skillResponse5(skillResponse5)
+//                .skillResponse6(skillResponse6).linkSkillResponse(linkSkillResponse)
+//                .vMatrixResponse(vMatrixResponse).hexaMatrixResponse(hexaMatrixResponse)
+//                .hexaMatrixStatResponse(hexaMatrixStatResponse).dojangResponse(dojangResponse)
+//                .rankingUnionResponse(rankingUnionResponse)
+//                .rankingOverallMyClassResponse(rankingOverallMyClassResponse)
+//                .rankingOverallWholeClassResponse(rankOverallWholeClassResponse)
+//                .rankingDojangMyClassResponse(rankDojangMyClassResponse)
+//                .rankingDojangWholeClassResponse(rankDojangWholeClassResponse)
+//                .rankingUnionResponse(rankingUnionResponse).rankingAchievementResponse(rankingAchievementResponse)
+                .userUnionRaiderResponse(userUnionRaiderResponse)
+                .build();
+        ResponseCacheManager.getInstance().addCharacterCache(request.getNickname(), out);
         //
-        return null;
+        return out;
     }
 
     @GetMapping("/api/char/id")
