@@ -3,10 +3,13 @@ import './App.css';
 import * as React from 'react';
 import axios from 'axios';
 import UnionRaiderSetting from './union/UnionRaiderSetting';
+import BlockType from './union/BlockType';
+import { shuffle } from './common/util'
 
 function App() {
   // const [charOverall, setCharOverall] = React.useState('-')
   const param = { nickname: '비밀의햇잎' }
+  const blockTypeInstance = new BlockType();
   React.useEffect(() => {
     axios.get('/api/char/overall', { params: param })
       .then(response => {
@@ -24,12 +27,14 @@ function App() {
           [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
           [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
           ];
-        const setting = new UnionRaiderSetting(param.nickname, response.data.userUnionRaiderResponse.unionBlock, JSON.parse(JSON.stringify(table)));
+        const setting = new UnionRaiderSetting(param.nickname, response.data.userUnionRaiderResponse.unionBlock.shuffle(), JSON.parse(JSON.stringify(table)));
         setting.parseRaider();
-        console.log('parsedBlocks=',setting.parsedBlocks,
-        ', length =',setting.parsedBlocks.length);
-        console.log(setting.classify());
-        console.log('table = ', table)
+        console.log('parsed blocks=', setting.parsedBlocks,
+          ', length =', setting.parsedBlocks.length);
+          console.log('dominated blocks = ',setting.classify())
+          console.log('filled count=',setting.filledCount)
+        console.log('result table = ', setting.table)
+        console.log('allBlockType=', blockTypeInstance.allBlockType);
 
         // setCharOverall(response.data)
       })

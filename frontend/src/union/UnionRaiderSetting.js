@@ -8,6 +8,10 @@ export default class UnionRaiderSetting {
         this.parsedBlocks = []
         this.table = table
         this.dominatedBlocks = []
+        this.filledCount = 0;
+    }
+    addFilledCount() {
+        this.filledCount = this.filledCount + 1
     }
 
     parseRaider() {
@@ -40,26 +44,43 @@ export default class UnionRaiderSetting {
     rotate(block) {
         // 회전 및 뒤집기를 통해 8번 rotation을 하여 모든 타입의 블록 json으로 반환.
         let max = Math.max(...block.map(v => Math.max(v[0], v[1])))
-        let allblockType = [];
+        let allBlockType = [];
+        let rotateBlock = JSON.parse(JSON.stringify(block));
         for (let i = 0; i < 4; i++) {
-            let rotateBlock = block;
             if (i > 0) {
-                rotateBlock = block.map(v => [max - v[1], v[0]]) // 90도 회전
+                rotateBlock = rotateBlock.map(v => [max - v[1], v[0]]) // 90도 회전
             }
-            var normalRotate = this.normalizeBlock(rotateBlock)
-            var rotateStr = JSON.stringify(normalRotate)
-            allblockType.push(rotateStr);
+            let normalRotate = this.normalizeBlock(rotateBlock)
+            let existElement = false;
+            allBlockType.forEach(v => {
+                if (JSON.stringify(normalRotate) === JSON.stringify(v)) {
+                    existElement = true
+                }
+            })
+            if (!existElement) {
+                // this.allBlockType[k].push(normalRotate)
+                allBlockType.push(normalRotate);
+            }
         }
         // 뒤집어서 다시 4번 회전.
         let transBlock = block.map(v => [v[1], v[0]])
         for (let i = 0; i < 4; i++) {
-            let transRotateBlock = transBlock;
             if (i > 0) {
-                transRotateBlock = transBlock.map(v => [max - v[1], v[0]]) // 90도 회전
+                transBlock = transBlock.map(v => [max - v[1], v[0]]) // 90도 회전
             }
-            allblockType.push(JSON.stringify(this.normalizeBlock(transRotateBlock)));
+            let transNormalRotate = this.normalizeBlock(transBlock)
+            let existElement = false;
+            allBlockType.forEach(v => {
+                if (JSON.stringify(transNormalRotate) === JSON.stringify(v)) {
+                    existElement = true
+                }
+            })
+            if (!existElement) {
+                // this.allBlockType[k].push(normalRotate)
+                allBlockType.push(transNormalRotate);
+            }
         }
-        return allblockType;
+        return allBlockType;
     }
 
     // 채워야할 곳은 0으로 표현하기. 채울필요가 없거나 이미 채워진곳은 1으로 표시.
@@ -101,7 +122,7 @@ export default class UnionRaiderSetting {
                     // parse, ", dominated = ", domiBlock);
                     for (let j = 0; j < domiRotateBlocks.length; j++) {
                         const domi = domiRotateBlocks[j]
-                        if (domi === JSON.stringify(parse)) {
+                        if (JSON.stringify(domi) === JSON.stringify(parse)) {
                             delParsedBlockIdx = i
                             fitted = true
                             break
@@ -116,6 +137,7 @@ export default class UnionRaiderSetting {
                 // table에 점령된 곳에 대해서 점령되었다고 바꾸기.
                 domiBlock.forEach(v => {
                     table[v[0]][v[1]] = 1
+                    this.addFilledCount();
                 })
                 break
             }
@@ -138,8 +160,8 @@ export default class UnionRaiderSetting {
                 }
             }
             // 더이상 방문할곳에 없다면 추출할 것이 없는것으로 보고 종료
-            if (visit.length === 0) { 
-                domiBlock.length = 0 
+            if (visit.length === 0) {
+                domiBlock.length = 0
                 break
             }
         }
