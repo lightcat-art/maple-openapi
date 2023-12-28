@@ -107,6 +107,7 @@ export default class UnionRaiderSetting {
         const lenY = table[0].length;
         const dx = [-1, 0, 0, 1]
         const dy = [0, -1, 1, 0]
+        let bfsTable = JSON.parse(JSON.stringify(table)) // 시뮬레이션 돌리기위해 테이블 복사
 
         // parsedBlock에서 채워진 블록은 뺴야함.
         // 채워진 좌표를 찍어야함. 
@@ -117,7 +118,7 @@ export default class UnionRaiderSetting {
             let fitted = false
             let delParsedBlockIdx = -1;
             let [cx, cy] = visit.shift()
-            // table[cx][cy] = 1
+            bfsTable[cx][cy] = 1
             domiBlock.push([cx, cy])
 
             const domiRotateBlocks = this.rotate(domiBlock);
@@ -146,7 +147,7 @@ export default class UnionRaiderSetting {
                 this.parsedBlocks.splice(delParsedBlockIdx, 1)
                 // table에 점령된 곳에 대해서 점령되었다고 바꾸기.
                 let direction = this.blockType.checkDirection(domiBlock)
-                let color = this.blockType.getColorByBlock(domiBlock)
+                let color = this.blockType.getColorByBlock(this.normalizeBlock(domiBlock))
                 for (let i = 0; i < domiBlock.length; i++) {
                     let tableValue = 0
                     let v = domiBlock[i]
@@ -171,9 +172,9 @@ export default class UnionRaiderSetting {
                 let nx = cx + dx[i]
                 let ny = cy + dy[i]
                 if (0 <= nx && 0 <= ny && nx < lenX
-                    && ny < lenY && (table[nx][ny] === k)) {
+                    && ny < lenY && (bfsTable[nx][ny] === k)) {
                     visit.push([nx, ny])
-                    // table[nx][ny] = k
+                    bfsTable[nx][ny] = k
                     continue
                 }
             }

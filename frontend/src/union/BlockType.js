@@ -21,6 +21,24 @@ class BlockType {
             [[0, 0], [0, 1]], // I
             [[0, 0]], // dot
         ]
+        this.defaultBlockTypeColor = ['#00ff0000']
+        this.blockTypeColor = [
+            '#111111',
+            '#222222',
+            '#333333',
+            '#444444',
+            '#555555',
+            '#dddddd',
+            '#eee000',
+            '#eee111',
+            '#111eee',
+            '#a84343',
+            '#e73636',
+            '#fca7a7',
+            '#2ec948',
+            '#3dccb9',
+            '#29a9c9'
+        ]
         this.baseBlockSizeIdx = { 5: [0, 5], 4: [6, 10], 3: [11, 12], 2: [13, 13], 1: [14, 14] }
         this.blockDirection = { 1: 'border-top', 2: 'border-left', 4: 'border-right', 8: 'border-bottom' }
         // [i][j] => i: 블록타입 종류,  j: 블록의 회전에 따른 종류
@@ -28,7 +46,37 @@ class BlockType {
         this.getAllBlockType();
         BlockType.instance = this;
     }
+    
+    getDefaultTableStyle(table) {
+        let style = Array.from(Array(table.length), () => Array(table[0].length).fill({}))
 
+        for (let i = 0; i < table.length; i++) {
+            for (let j = 0; j < table[0].length; j++) {
+                let cellStyleMap = {}
+                cellStyleMap.direction = []
+                cellStyleMap.color = this.defaultBlockTypeColor
+                style[i][j] = cellStyleMap
+            }
+        }
+        return style
+    }
+
+    getTableStyle(table) {
+        let style = Array.from(Array(table.length), () => Array(table[0].length).fill({}))
+
+        for (let i = 0; i < table.length; i++) {
+            for (let j = 0; j < table[0].length; j++) {
+                if (table[i][j] === -1 || table[i][j] === 0) {
+                    continue
+                }
+                let cellStyleMap = {}
+                cellStyleMap.direction = this.getDirection(table[i][j])
+                cellStyleMap.color = this.blockTypeColor[this.getOnlyColorIdx(table[i][j])]
+                style[i][j] = cellStyleMap
+            }
+        }
+        return style
+    }
 
     /**
      * 블록이 연결되있는 지점을 이진수로 반환
@@ -43,8 +91,8 @@ class BlockType {
         const result = new Array(block.length).fill(0)
         for (let i = 0; i < block.length; i++) {
             for (let j = 0; j < dx.length; j++) {
-                let nx = block[i][0] + dx;
-                let ny = block[i][1] + dy;
+                let nx = block[i][0] + dx[j];
+                let ny = block[i][1] + dy[j];
                 block.forEach(v => {
                     if (JSON.stringify([nx, ny]) === JSON.stringify(v)) {
                         result[i] += direction[j]
@@ -52,6 +100,26 @@ class BlockType {
                 })
             }
         }
+        return result
+    }
+
+    /**
+     * 백단위의 색상값은 무시하고 방향값에 대해 어떤 방향의 테두리를 연결해야하는지 속성값 반환
+     * @param {*} value 테이블에 들어가있는 색상 및 방향값
+     */
+    getDirection(value) {
+        let result = []
+        let directionBit = value % 100
+        Object.keys(this.blockDirection).forEach((v) => {
+            v = Number(v)
+            let a = directionBit & v
+            let b = v
+
+            // console.log('type a = ',typeof(a), ",  b = ",typeof(b))
+            if ((directionBit & v) === v) {
+                result.push(this.blockDirection[v])
+            }
+        })
         return result
     }
 
@@ -97,6 +165,12 @@ class BlockType {
         }
     }
 
+    /**
+     * 색상은 baseBlockType 인덱스 기준으로 100~1600 까지 백단위로 지정.
+
+     * @param {*} block 
+     * @returns table에 들어갈 색상 값
+     */
     getColorByBlock(block) {
         let len = block.length;
 
@@ -107,18 +181,26 @@ class BlockType {
             for (let j = 0; j < blockType.length; j++) {
                 let blockRotateType = blockType[j]
                 if (JSON.stringify(blockRotateType) === JSON.stringify(block)) {
-                    return i * 100
+                    return (i + 1) * 100
                 }
             }
         }
     }
 
     /**
+     * 색상과 방향값 중 색상인덱스만 추출
+     * @param {*} value 
+     */
+    getOnlyColorIdx(value) {
+        return Math.floor(value / 100) - 1
+    }
+
+    /**
      * 
      * @param {*} value : table에 들어가있는 색상 및 방향값
      */
-    getBaseTypeByColor(value) {
-        let blockIdx = Math.floor(value / 100)
+    getBaseBlockByColor(value) {
+        let blockIdx = Math.floor(value / 100) - 1
         return this.baseBlockType[blockIdx]
     }
 
