@@ -21,32 +21,35 @@ class BlockType {
             [[0, 0], [0, 1]], // I
             [[0, 0]], // dot
         ]
-        this.defaultBlockTypeColor = ['#00ff0000']
+        this.defaultBlockTypeColor = [
+            // '#00ff0000'
+            '#ffffff'
+        ]
         this.blockTypeColor = [
-            '#111111',
-            '#222222',
-            '#333333',
-            '#444444',
-            '#555555',
-            '#dddddd',
+            '#030000',
+            '#5f3535',
+            '#805858',
+            '#6b1111',
+            '#8f2ca8',
+            '#270b0b',
             '#eee000',
-            '#eee111',
+            '#ee3c77f1',
             '#111eee',
-            '#a84343',
-            '#e73636',
+            '#1a0b0b',
+            '#f7c7c7',
             '#fca7a7',
             '#2ec948',
             '#3dccb9',
             '#29a9c9'
         ]
         this.baseBlockSizeIdx = { 5: [0, 5], 4: [6, 10], 3: [11, 12], 2: [13, 13], 1: [14, 14] }
-        this.blockDirection = { 1: 'border-top', 2: 'border-left', 4: 'border-right', 8: 'border-bottom' }
+        this.blockDirection = { 1: 'borderTop', 2: 'borderLeft', 4: 'borderRight', 8: 'borderBottom' }
         // [i][j] => i: 블록타입 종류,  j: 블록의 회전에 따른 종류
         this.allBlockType = new Array(this.baseBlockType.length)
         this.getAllBlockType();
         BlockType.instance = this;
     }
-    
+
     getDefaultTableStyle(table) {
         let style = Array.from(Array(table.length), () => Array(table[0].length).fill({}))
 
@@ -54,7 +57,7 @@ class BlockType {
             for (let j = 0; j < table[0].length; j++) {
                 let cellStyleMap = {}
                 cellStyleMap.direction = []
-                cellStyleMap.color = this.defaultBlockTypeColor
+                cellStyleMap.background = this.defaultBlockTypeColor
                 style[i][j] = cellStyleMap
             }
         }
@@ -66,12 +69,16 @@ class BlockType {
 
         for (let i = 0; i < table.length; i++) {
             for (let j = 0; j < table[0].length; j++) {
-                if (table[i][j] === -1 || table[i][j] === 0) {
-                    continue
-                }
                 let cellStyleMap = {}
-                cellStyleMap.direction = this.getDirection(table[i][j])
-                cellStyleMap.color = this.blockTypeColor[this.getOnlyColorIdx(table[i][j])]
+                if (table[i][j] === -1 || table[i][j] === 0) {
+                    cellStyleMap.background = this.defaultBlockTypeColor
+                } else{
+                    let directionList = this.getDirection(table[i][j])
+                    directionList.forEach((v) => {
+                        cellStyleMap[v] = 'none'
+                    })
+                    cellStyleMap['background'] = this.blockTypeColor[this.getOnlyColorIdx(table[i][j])]
+                }
                 style[i][j] = cellStyleMap
             }
         }

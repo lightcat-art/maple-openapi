@@ -9,14 +9,16 @@ export function BasicTable({ value, style }) {
 
     return (
 
-        <table>
+        <table 
+            style={{borderSpacing: '0px'}}
+        >
             <tbody>
-                {value.map((row, rowIndex) => (
+                {style.map((row, rowIndex) => (
                     <tr key={rowIndex}>
-                        {row.map((v, columnIndex) => (
-                            <td key={columnIndex} style={{background: '#ffffff', height:30, width:30}} > </td>
-                        ))}
-                    </tr>
+                    {row.map((v, columnIndex) => (
+                        <td className='table-cell' key={columnIndex} style={v}> </td>
+                    ))}
+                </tr>
                 ))}
             </tbody>
         </table>

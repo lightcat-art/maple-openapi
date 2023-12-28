@@ -1,0 +1,9 @@
+/** 기본적으로 table cell 테두리는 설정해놓고 필요에 따라 테두리가 없어져야 되는 블록들은 내부에서 borderBottom: 'none' 등으로 적용*/
+.table-cell{
+    width: 30px;
+    height: 30px;
+    border-bottom: 1px solid black;
+    /* border-top: 1px solid black; */
+    border-left: 1px solid black;
+    /* border-right: 1px solid black; */
+}
