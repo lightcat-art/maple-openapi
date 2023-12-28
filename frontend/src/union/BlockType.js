@@ -31,11 +31,11 @@ class BlockType {
             '#805858',
             '#6b1111',
             '#8f2ca8',
-            '#270b0b',
+            '#af4545',
             '#eee000',
-            '#ee3c77f1',
-            '#111eee',
-            '#1a0b0b',
+            '#7e1c3bf1',
+            '#babcd4',
+            '#004c8a',
             '#f7c7c7',
             '#fca7a7',
             '#2ec948',
@@ -57,7 +57,7 @@ class BlockType {
             for (let j = 0; j < table[0].length; j++) {
                 let cellStyleMap = {}
                 cellStyleMap.direction = []
-                cellStyleMap.background = this.defaultBlockTypeColor
+                cellStyleMap['background'] = this.defaultBlockTypeColor
                 style[i][j] = cellStyleMap
             }
         }

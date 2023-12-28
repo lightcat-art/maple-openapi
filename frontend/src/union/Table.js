@@ -9,7 +9,7 @@ export function BasicTable({ value, style }) {
 
     return (
 
-        <table 
+        <table className='table'
             style={{borderSpacing: '0px'}}
         >
             <tbody>

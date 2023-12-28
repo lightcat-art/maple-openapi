@@ -1,4 +1,5 @@
 import BlockType from './BlockType';
+import { shuffle } from '../common/util'
 
 export default class UnionRaiderSetting {
 
@@ -93,7 +94,7 @@ export default class UnionRaiderSetting {
         return allBlockType;
     }
 
-    // 채워야할 곳은 0으로 표현하기. 채울필요가 없거나 이미 채워진곳은 1으로 표시.
+    // 채워야할 곳은 0으로 표현하기. 채울필요가 없거나 이미 채워진곳은 -1으로 표시.
     /**
      * 
      * @param {*} start : 탐색시작좌표
@@ -105,8 +106,12 @@ export default class UnionRaiderSetting {
         // 상, 좌, 우, 하 순으로 탐색
         const lenX = table.length;
         const lenY = table[0].length;
-        const dx = [-1, 0, 0, 1]
-        const dy = [0, -1, 1, 0]
+        // let dxy = [[-1, 0], [0, -1], [0, 1], [1, 0]]
+        // let dxy = [[0, -1], [-1, 0], [0, 1], [1, 0]]
+
+        // dxy = dxy.shuffle()
+        // const dx = [-1, 0, 0, 1]
+        // const dy = [0, -1, 1, 0]
         let bfsTable = JSON.parse(JSON.stringify(table)) // 시뮬레이션 돌리기위해 테이블 복사
 
         // parsedBlock에서 채워진 블록은 뺴야함.
@@ -115,20 +120,31 @@ export default class UnionRaiderSetting {
         let visit = JSON.parse(JSON.stringify(start)); // deep copy를 통해 visit이 start에 영향을 줄수 없도록 구성.
         let domiBlock = [] // 점령된 블록 
         while (visit.length > 0) {
+            let dxyShuffle =
+                [
+                    [[-1, 0], [0, -1], [0, 1], [1, 0]],
+                    [[0, -1], [-1, 0], [0, 1], [1, 0]],
+                    // [[0, -1], [-1, 0], [1, 0], [0, 1]],
+                    // [[-1, 0], [0, -1], [1, 0], [0, 1]]
+                ]
+            dxyShuffle = dxyShuffle.shuffle()
             let fitted = false
             let delParsedBlockIdx = -1;
             let [cx, cy] = visit.shift()
-            bfsTable[cx][cy] = 1
+            bfsTable[cx][cy] = -1
             domiBlock.push([cx, cy])
 
             const domiRotateBlocks = this.rotate(domiBlock);
 
             for (let i = 0; i < this.parsedBlocks.length; i++) {
                 const parse = this.parsedBlocks[i]
+                // if (domiBlock.length === 2) {
+                //     console.log('test')
+                // }
                 if (parse.length === domiBlock.length) {
-                    if (parse.length === 1) {
-                        console.log('test')
-                    }
+                    // if (parse.length === 2) {
+                    //     console.log('test')
+                    // }
                     // console.log('compare parsedBlocks vs dominated blocks : parsed = ',
                     // parse, ", dominated = ", domiBlock);
                     for (let j = 0; j < domiRotateBlocks.length; j++) {
@@ -168,14 +184,15 @@ export default class UnionRaiderSetting {
             }
 
 
-            for (let i = 0; i < dx.length; i++) {
-                let nx = cx + dx[i]
-                let ny = cy + dy[i]
+            for (let i = 0; i < dxyShuffle[0].length; i++) {
+                let nx = cx + dxyShuffle[0][i][0]
+                let ny = cy + dxyShuffle[0][i][1]
                 if (0 <= nx && 0 <= ny && nx < lenX
                     && ny < lenY && (bfsTable[nx][ny] === k)) {
+                    // console.log('bfs visit : [nx,ny] = ', [nx, ny])
                     visit.push([nx, ny])
-                    bfsTable[nx][ny] = k
-                    continue
+                    // bfsTable[nx][ny] = k
+                    break
                 }
             }
             // 더이상 방문할곳에 없다면 추출할 것이 없는것으로 보고 종료
