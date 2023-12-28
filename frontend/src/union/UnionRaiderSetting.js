@@ -1,14 +1,24 @@
-
+import BlockType from './BlockType';
 
 export default class UnionRaiderSetting {
 
-    constructor(name, raider, table) {
+    /**
+     * 
+     * @param {*} name : 캐릭터 이름
+     * @param {*} raider : 공격대원 좌표
+     * @param {*} table : 배치판 좌표
+     * @param {*} setTable : 실시간 table 렌더링을 위함
+     * @param {*} blockType : blockTypeInstance 활용
+     */
+    constructor(name, raider, table, setTable, blockType) {
         this.name = name
         this.raider = raider // raider는 기본적으로 unionRaiderResponse의 unionBlock으로 받는것이 원칙.
         this.parsedBlocks = []
         this.table = table
+        this.setTable = setTable;
         this.dominatedBlocks = []
         this.filledCount = 0;
+        this.blockType = new BlockType();
     }
     addFilledCount() {
         this.filledCount = this.filledCount + 1
@@ -135,10 +145,18 @@ export default class UnionRaiderSetting {
             if (fitted) {
                 this.parsedBlocks.splice(delParsedBlockIdx, 1)
                 // table에 점령된 곳에 대해서 점령되었다고 바꾸기.
-                domiBlock.forEach(v => {
-                    table[v[0]][v[1]] = 1
-                    this.addFilledCount();
-                })
+                let direction = this.blockType.checkDirection(domiBlock)
+                let color = this.blockType.getColorByBlock(domiBlock)
+                for (let i = 0; i < domiBlock.length; i++) {
+                    let tableValue = 0
+                    let v = domiBlock[i]
+                    tableValue += direction[i]
+                    tableValue += color
+                    table[v[0]][v[1]] = tableValue
+                    this.addFilledCount()
+                    // 블록종류는 백의자리부터 표현 (기본 15종류 더해질수 있음.). 블록방향은 이진수로 표현.
+                    this.setTable(table)
+                }
                 break
             }
 

@@ -5,29 +5,36 @@ import axios from 'axios';
 import UnionRaiderSetting from './union/UnionRaiderSetting';
 import BlockType from './union/BlockType';
 import { shuffle } from './common/util'
+import { BasicTable } from './union/Table';
 
 function App() {
   // const [charOverall, setCharOverall] = React.useState('-')
   const param = { nickname: '비밀의햇잎' }
   const blockTypeInstance = new BlockType();
+  const defaultTable =
+  [
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+  ];
+  const [table, setTable] = React.useState(defaultTable);
   React.useEffect(() => {
     axios.get('/api/char/overall', { params: param })
       .then(response => {
         console.log(response.data)
         // 0이 유니온블록을 채워야 하는곳 , 1은 채우지 못하는 곳 or 이미 채워진곳
-        const table =
-          [[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-          [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-          [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-          [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
-          [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
-          ];
-        const setting = new UnionRaiderSetting(param.nickname, response.data.userUnionRaiderResponse.unionBlock.shuffle(), JSON.parse(JSON.stringify(table)));
+
+        const setting = new UnionRaiderSetting(param.nickname, response.data.userUnionRaiderResponse.unionBlock.shuffle(), 
+                        JSON.parse(JSON.stringify(table)), setTable);
         setting.parseRaider();
         console.log('parsed blocks=', setting.parsedBlocks,
           ', length =', setting.parsedBlocks.length);
@@ -41,10 +48,11 @@ function App() {
       .catch(error => console.log(error))
   }, []);
 
+  
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        {/* <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
@@ -55,10 +63,11 @@ function App() {
           rel="noopener noreferrer"
         >
           Learn React
-        </a>
+        </a> */}
         <div>
-          백엔드에서 가져온 데이터입니다
+          {/* 백엔드에서 가져온 데이터입니다 */}
         </div>
+        <BasicTable tableValue={table}></BasicTable>
       </header>
 
     </div>

@@ -21,10 +21,38 @@ class BlockType {
             [[0, 0], [0, 1]], // I
             [[0, 0]], // dot
         ]
-        // [i][j] => i: 블록타입 개수,  j: 블록의 회전에 따른 종류
+        this.baseBlockSizeIdx = { 5: [0, 5], 4: [6, 10], 3: [11, 12], 2: [13, 13], 1: [14, 14] }
+        this.blockDirection = { 1: 'border-top', 2: 'border-left', 4: 'border-right', 8: 'border-bottom' }
+        // [i][j] => i: 블록타입 종류,  j: 블록의 회전에 따른 종류
         this.allBlockType = new Array(this.baseBlockType.length)
         this.getAllBlockType();
         BlockType.instance = this;
+    }
+
+
+    /**
+     * 블록이 연결되있는 지점을 이진수로 반환
+     * @param {*} block : 한 block 좌표 리스트 반환
+     */
+    checkDirection(block) {
+
+        // 상 좌 우 하
+        const dx = [-1, 0, 0, 1]
+        const dy = [0, -1, 1, 0]
+        const direction = [1, 2, 4, 8]
+        const result = new Array(block.length).fill(0)
+        for (let i = 0; i < block.length; i++) {
+            for (let j = 0; j < dx.length; j++) {
+                let nx = block[i][0] + dx;
+                let ny = block[i][1] + dy;
+                block.forEach(v => {
+                    if (JSON.stringify([nx, ny]) === JSON.stringify(v)) {
+                        result[i] += direction[j]
+                    }
+                })
+            }
+        }
+        return result
     }
 
     getAllBlockType() {
@@ -67,6 +95,31 @@ class BlockType {
                 }
             }
         }
+    }
+
+    getColorByBlock(block) {
+        let len = block.length;
+
+        let startArrIdx = this.baseBlockSizeIdx[len][0]
+        let endArrIdx = this.baseBlockSizeIdx[len][1]
+        for (let i = startArrIdx; i < endArrIdx + 1; i++) {
+            let blockType = this.allBlockType[i]
+            for (let j = 0; j < blockType.length; j++) {
+                let blockRotateType = blockType[j]
+                if (JSON.stringify(blockRotateType) === JSON.stringify(block)) {
+                    return i * 100
+                }
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param {*} value : table에 들어가있는 색상 및 방향값
+     */
+    getBaseTypeByColor(value) {
+        let blockIdx = Math.floor(value / 100)
+        return this.baseBlockType[blockIdx]
     }
 
     normalizeBlock(block) {
