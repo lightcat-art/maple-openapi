@@ -150,8 +150,7 @@ export default class UnionRaiderSetting {
                     for (let j = 0; j < domiRotateBlocks.length; j++) {
                         const domi = domiRotateBlocks[j]
                         if (JSON.stringify(domi) === JSON.stringify(parse)) {
-                            for (let k = 0; k < failedBlocks.length; k++) {
-                                const failedBlock = failedBlocks[k]
+                            for (const failedBlock of failedBlocks) {
                                 if (JSON.stringify(parse) === JSON.stringify(failedBlock)) {
                                     // 이미 실패처리된 케이스 중복체크
                                     failed = true
@@ -161,11 +160,14 @@ export default class UnionRaiderSetting {
                             if (failed) { // 그 다음 소유 블록을 체크하기 위해 넘어간다.
                                 break
                             }
-                            // 사방으로 둘러봤을때 막힌 구역이 존재하는지 체크.
+                            if (cx === 3 && cy === 2){
+                                console.log('test')
+                            }
+                            // 사방으로 둘러봤을때 외딴섬블록이 존재하는지 체크.
                             // 여러개의 블록이 남아있더라도 현재 남은 블록중 맞는 블록이 없으면 의미없기때문에 이런 로직도 추가해주어야함.
                             if (this.blockType.checkBlankAlone([cx, cy], bfsTable)) {
                                 failed = true
-                                continue
+                                break // 그 다음 소유 블록을 체크하기 위해 넘어간다.
                             }
                             delParsedBlockIdx = i
                             fitted = true
@@ -174,11 +176,12 @@ export default class UnionRaiderSetting {
                     }
                 }
                 if (failed) {
-                    // 막힌 블록구역을 생성하는 블록케이스는 모두 failedBlocks 에 넣어 중복으로 트라이되지 않도록 처리한다. (회전케이스 포함)
+                    // 외딴섬블록 구역을 생성하는 블록케이스는 모두 failedBlocks 에 넣어 중복으로 트라이되지 않도록 처리한다. (회전케이스 포함)
                     // because. 불변성을 가진 탐색블록에 대해 적합하지 않다고 판명된 블록은 모든 회전케이스에 대해서도 적합하지 않으므로 모두 추가.
                     domiRotateBlocks.forEach((v) => {
-                        failedBlocks.push(v)
+                        failedBlocks.add(v)
                     })
+                    break // 현재 점령된 블록과 모양이 같은데도 주변에 외딴섬블록이 존재하므로 아예 루프 중지
                 }
                 if (fitted) { break }
             }
@@ -234,7 +237,7 @@ export default class UnionRaiderSetting {
                 if (this.table[i][j] === 0) {
                     // console.log('bfs start i=',i,', j=',j)
                     // 이미 한번 트라이해본 블록이라면 패스
-                    let failedBlocks = []
+                    let failedBlocks = new Set([]);
                     let bfsResult = [];
                     let limitLoopCnt = 0;
                     while (bfsResult.length == 0 && limitLoopCnt < 4) {

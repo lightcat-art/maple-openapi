@@ -115,8 +115,8 @@ class BlockType {
             // 옮겨간 블록이 유효하고 비어있는 블록일때만 체크.
             if (0 <= nx && 0 <= ny && nx < lenX && ny < lenY && table[nx][ny] === this.blankBlockValue) {
                 for (let j = 0; j < dxy.length; j++) {
-                    let nnx = nx + dxy[i][0]
-                    let nny = ny + dxy[i][1]
+                    let nnx = nx + dxy[j][0]
+                    let nny = ny + dxy[j][1]
                     // 옮겨간 블록의 사방이 막혀있는지 체크
                     if (0 > nnx || 0 > nny || nnx >= lenX || nny >= lenY || (table[nnx][nny] !== this.blankBlockValue)) {
                         closeCurState += direction[j]
