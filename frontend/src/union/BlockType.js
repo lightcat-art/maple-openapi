@@ -112,13 +112,18 @@ class BlockType {
             let closeAllState = 2 ** 4 - 1
             let closeCurState = 0
             const direction = Object.keys(this.blockDirection).map((v) => Number(v))
-            for (let j = 0; j < dxy.length; j++) { // 옮겨간 블록에서 상하좌우 모두 막혔는지 아닌지 체크
-                let nnx = nx + dxy[i][0]
-                let nny = ny + dxy[i][1]
-                if (0 > nnx || 0 > nny || nnx >= lenX || nny >= lenY || (table[nnx][nny] !== this.blankBlockValue)) {
-                    closeCurState += direction[j]
+            // 옮겨간 블록이 유효하고 비어있는 블록일때만 체크.
+            if (0 <= nx && 0 <= ny && nx < lenX && ny < lenY && table[nx][ny] === this.blankBlockValue) {
+                for (let j = 0; j < dxy.length; j++) {
+                    let nnx = nx + dxy[i][0]
+                    let nny = ny + dxy[i][1]
+                    // 옮겨간 블록의 사방이 막혀있는지 체크
+                    if (0 > nnx || 0 > nny || nnx >= lenX || nny >= lenY || (table[nnx][nny] !== this.blankBlockValue)) {
+                        closeCurState += direction[j]
+                    }
                 }
             }
+
             if (closeAllState === closeCurState) {
                 return true;
             }
@@ -161,9 +166,6 @@ class BlockType {
         let directionBit = value % 100
         Object.keys(this.blockDirection).forEach((v) => {
             v = Number(v)
-            let a = directionBit & v
-            let b = v
-
             // console.log('type a = ',typeof(a), ",  b = ",typeof(b))
             if ((directionBit & v) === v) {
                 result.push(this.blockDirection[v])

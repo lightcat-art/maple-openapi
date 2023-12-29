@@ -131,7 +131,7 @@ export default class UnionRaiderSetting {
             let fitted = false
             let delParsedBlockIdx = -1;
             let [cx, cy] = visit.shift()
-            bfsTable[cx][cy] = -1
+            bfsTable[cx][cy] = -1 // 방문처리는 우선 일시적으로 해야함.
             domiBlock.push([cx, cy])
 
             // bfs를 통해 탐색된 블록 자체의 회전케이스를 구해  소유한 블록과 비교한다.
@@ -142,8 +142,11 @@ export default class UnionRaiderSetting {
                 const parse = this.parsedBlocks[i]
 
                 let failed = false
+
                 if (parse.length === domiBlock.length) {
-                    
+                    // if (parse.length === 4) {
+                    //     console.log('test')
+                    // }
                     for (let j = 0; j < domiRotateBlocks.length; j++) {
                         const domi = domiRotateBlocks[j]
                         if (JSON.stringify(domi) === JSON.stringify(parse)) {
@@ -204,8 +207,7 @@ export default class UnionRaiderSetting {
                 break
             }
 
-
-            for (let i = 0; i < dxyShuffle.length; i++) {
+            for (let i = 0; i < dxyShuffle[0].length; i++) {
                 let nx = cx + dxyShuffle[0][i][0]
                 let ny = cy + dxyShuffle[0][i][1]
                 if (0 <= nx && 0 <= ny && nx < lenX && ny < lenY && (bfsTable[nx][ny] === k)) {
@@ -235,15 +237,15 @@ export default class UnionRaiderSetting {
                     let failedBlocks = []
                     let bfsResult = [];
                     let limitLoopCnt = 0;
-                    while (bfsResult.length == 0 && limitLoopCnt < 1) {
-                        bfsResult = this.bfs([[i, j]], this.table, 0, failedBlocks)
+                    while (bfsResult.length == 0 && limitLoopCnt < 4) {
+                        bfsResult = this.bfs([[i, j]], this.table, this.blockType.blankBlockValue, failedBlocks)
                         if (bfsResult.length !== 0) {
                             this.dominatedBlocks.push(bfsResult)
                         }
                         // console.log('failedBlocks = ', failedBlocks)
                         limitLoopCnt += 1
                     }
-                    console.log('limitCnt = ',limitLoopCnt)
+                    // console.log('limitCnt = ',limitLoopCnt)
                 }
             }
         }
