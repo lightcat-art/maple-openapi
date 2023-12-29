@@ -21,9 +21,13 @@ class BlockType {
             [[0, 0], [0, 1]], // I
             [[0, 0]], // dot
         ]
-        this.defaultBlockTypeColor = [
+        this.closeBlockColor = [
             // '#00ff0000'
             '#ffffff'
+        ]
+        this.blankBlockColor = [
+            '#00ff0000'
+            // '#ffffff'
         ]
         this.blockTypeColor = [
             '#030000',
@@ -47,6 +51,8 @@ class BlockType {
         // [i][j] => i: 블록타입 종류,  j: 블록의 회전에 따른 종류
         this.allBlockType = new Array(this.baseBlockType.length)
         this.getAllBlockType();
+        this.closeBlockValue = -1
+        this.blankBlockValue = 0
         BlockType.instance = this;
     }
 
@@ -70,10 +76,12 @@ class BlockType {
         for (let i = 0; i < table.length; i++) {
             for (let j = 0; j < table[0].length; j++) {
                 let cellStyleMap = {}
-                if (table[i][j] === -1 || table[i][j] === 0) {
-                    cellStyleMap.background = this.defaultBlockTypeColor
-                } else{
-                    let directionList = this.getDirection(table[i][j])
+                if (table[i][j] === this.closeBlockValue) {
+                    cellStyleMap.background = this.closeBlockColor
+                } else if (table[i][j] === this.blankBlockValue) {
+                    cellStyleMap.background = this.blankBlockColor
+                } else {
+                    let directionList = this.getConnectedDirection(table[i][j])
                     directionList.forEach((v) => {
                         cellStyleMap[v] = 'none'
                     })
@@ -83,6 +91,39 @@ class BlockType {
             }
         }
         return style
+    }
+    /**
+     * 상하좌우에 혼자 남겨진 사방이 막힌 블록이 존재하는지 체크.
+     * @param {*} position  : 현재 좌표
+     * @param {*} table : 유니온 배치판
+     * @param {*} k : 막힌 블록의 값
+     * @returns 
+     */
+    checkBlankAlone(position, table) {
+        // 상 좌 우 하
+        let dxy = [[-1, 0], [0, -1], [0, 1], [1, 0]]
+        const lenX = table.length;
+        const lenY = table[0].length;
+
+        for (let i = 0; i < dxy.length; i++) { // 현재블록에서 상하좌우 블록 이동
+            let nx = position[0] + dxy[i][0]
+            let ny = position[1] + dxy[i][1]
+
+            let closeAllState = 2 ** 4 - 1
+            let closeCurState = 0
+            const direction = Object.keys(this.blockDirection).map((v) => Number(v))
+            for (let j = 0; j < dxy.length; j++) { // 옮겨간 블록에서 상하좌우 모두 막혔는지 아닌지 체크
+                let nnx = nx + dxy[i][0]
+                let nny = ny + dxy[i][1]
+                if (0 > nnx || 0 > nny || nnx >= lenX || nny >= lenY || (table[nnx][nny] !== this.blankBlockValue)) {
+                    closeCurState += direction[j]
+                }
+            }
+            if (closeAllState === closeCurState) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -94,8 +135,9 @@ class BlockType {
         // 상 좌 우 하
         const dx = [-1, 0, 0, 1]
         const dy = [0, -1, 1, 0]
-        const direction = [1, 2, 4, 8]
-        const result = new Array(block.length).fill(0)
+        const direction = Object.keys(this.blockDirection).map((v) => Number(v))
+        // console.log('direction', direction)
+        const result = new Array(block.length).fill(this.blankBlockValue)
         for (let i = 0; i < block.length; i++) {
             for (let j = 0; j < dx.length; j++) {
                 let nx = block[i][0] + dx[j];
@@ -114,7 +156,7 @@ class BlockType {
      * 백단위의 색상값은 무시하고 방향값에 대해 어떤 방향의 테두리를 연결해야하는지 속성값 반환
      * @param {*} value 테이블에 들어가있는 색상 및 방향값
      */
-    getDirection(value) {
+    getConnectedDirection(value) {
         let result = []
         let directionBit = value % 100
         Object.keys(this.blockDirection).forEach((v) => {
