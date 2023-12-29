@@ -102,7 +102,7 @@ export default class UnionRaiderSetting {
      * @param {*} k : 0과 1중 어떤값을 가진 블록을 목표로 탐색을 해야하는지
      * @returns 
      */
-    bfs(start, table, k) {
+    bfs(start, table, k, failedBlocks) {
         // 상, 좌, 우, 하 순으로 탐색
         const lenX = table.length;
         const lenY = table[0].length;
@@ -131,30 +131,54 @@ export default class UnionRaiderSetting {
             let fitted = false
             let delParsedBlockIdx = -1;
             let [cx, cy] = visit.shift()
-            bfsTable[cx][cy] = -1
+            bfsTable[cx][cy] = -1 // 방문처리는 우선 일시적으로 해야함.
             domiBlock.push([cx, cy])
 
+            // bfs를 통해 탐색된 블록 자체의 회전케이스를 구해  소유한 블록과 비교한다.
+            // 탐색된 블록에 대해 fitted 되는 8가지 가능성이 존재하기 때문. (회전 및 뒤집기를 이용하면)
             const domiRotateBlocks = this.rotate(domiBlock);
 
             for (let i = 0; i < this.parsedBlocks.length; i++) {
                 const parse = this.parsedBlocks[i]
-                // if (domiBlock.length === 2) {
-                //     console.log('test')
-                // }
+
+                let failed = false
+
                 if (parse.length === domiBlock.length) {
-                    // if (parse.length === 2) {
+                    // if (parse.length === 4) {
                     //     console.log('test')
                     // }
-                    // console.log('compare parsedBlocks vs dominated blocks : parsed = ',
-                    // parse, ", dominated = ", domiBlock);
                     for (let j = 0; j < domiRotateBlocks.length; j++) {
                         const domi = domiRotateBlocks[j]
                         if (JSON.stringify(domi) === JSON.stringify(parse)) {
+                            for (let k = 0; k < failedBlocks.length; k++) {
+                                const failedBlock = failedBlocks[k]
+                                if (JSON.stringify(parse) === JSON.stringify(failedBlock)) {
+                                    // 이미 실패처리된 케이스 중복체크
+                                    failed = true
+                                    break
+                                }
+                            }
+                            if (failed) { // 그 다음 소유 블록을 체크하기 위해 넘어간다.
+                                break
+                            }
+                            // 사방으로 둘러봤을때 막힌 구역이 존재하는지 체크.
+                            // 여러개의 블록이 남아있더라도 현재 남은 블록중 맞는 블록이 없으면 의미없기때문에 이런 로직도 추가해주어야함.
+                            if (this.blockType.checkBlankAlone([cx, cy], bfsTable)) {
+                                failed = true
+                                continue
+                            }
                             delParsedBlockIdx = i
                             fitted = true
                             break
                         }
                     }
+                }
+                if (failed) {
+                    // 막힌 블록구역을 생성하는 블록케이스는 모두 failedBlocks 에 넣어 중복으로 트라이되지 않도록 처리한다. (회전케이스 포함)
+                    // because. 불변성을 가진 탐색블록에 대해 적합하지 않다고 판명된 블록은 모든 회전케이스에 대해서도 적합하지 않으므로 모두 추가.
+                    domiRotateBlocks.forEach((v) => {
+                        failedBlocks.push(v)
+                    })
                 }
                 if (fitted) { break }
             }
@@ -183,12 +207,10 @@ export default class UnionRaiderSetting {
                 break
             }
 
-
             for (let i = 0; i < dxyShuffle[0].length; i++) {
                 let nx = cx + dxyShuffle[0][i][0]
                 let ny = cy + dxyShuffle[0][i][1]
-                if (0 <= nx && 0 <= ny && nx < lenX
-                    && ny < lenY && (bfsTable[nx][ny] === k)) {
+                if (0 <= nx && 0 <= ny && nx < lenX && ny < lenY && (bfsTable[nx][ny] === k)) {
                     // console.log('bfs visit : [nx,ny] = ', [nx, ny])
                     visit.push([nx, ny])
                     // bfsTable[nx][ny] = k
@@ -201,9 +223,6 @@ export default class UnionRaiderSetting {
                 break
             }
         }
-        if (domiBlock.length === 1) {
-            console.log('test')
-        }
         // console.log('finish bfs')
         return domiBlock
     }
@@ -214,10 +233,19 @@ export default class UnionRaiderSetting {
             for (let j = 0; j < this.table[0].length; j++) {
                 if (this.table[i][j] === 0) {
                     // console.log('bfs start i=',i,', j=',j)
-                    const bfsResult = this.bfs([[i, j]], this.table, 0)
-                    if (bfsResult.length !== 0) {
-                        this.dominatedBlocks.push(bfsResult)
+                    // 이미 한번 트라이해본 블록이라면 패스
+                    let failedBlocks = []
+                    let bfsResult = [];
+                    let limitLoopCnt = 0;
+                    while (bfsResult.length == 0 && limitLoopCnt < 4) {
+                        bfsResult = this.bfs([[i, j]], this.table, this.blockType.blankBlockValue, failedBlocks)
+                        if (bfsResult.length !== 0) {
+                            this.dominatedBlocks.push(bfsResult)
+                        }
+                        // console.log('failedBlocks = ', failedBlocks)
+                        limitLoopCnt += 1
                     }
+                    // console.log('limitCnt = ',limitLoopCnt)
                 }
             }
         }

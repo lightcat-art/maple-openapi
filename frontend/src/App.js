@@ -10,7 +10,12 @@ function App() {
   // const [charOverall, setCharOverall] = React.useState('-')
   const param = { nickname: '비밀의햇잎' }
   const blockTypeInstance = new BlockType();
-  const arraytest = [[1,2],[3,4],[5,6],[7,8]]
+  const arraytest =  [
+    [[-1, 0], [0, -1], [0, 1], [1, 0]],
+    [[0, -1], [-1, 0], [0, 1], [1, 0]],
+    // [[0, -1], [-1, 0], [1, 0], [0, 1]],
+    // [[-1, 0], [0, -1], [1, 0], [0, 1]]
+]
   console.log('arraytest shuffle = ',arraytest.shuffle())
   const defaultTable =
     // [
