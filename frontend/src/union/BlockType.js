@@ -26,7 +26,7 @@ class BlockType {
             '#ffffff'
         ]
         this.blankBlockColor = [
-            '#00ff0000'
+            '#757474ff'
             // '#ffffff'
         ]
         this.blockTypeColor = [
@@ -53,6 +53,7 @@ class BlockType {
         this.getAllBlockType();
         this.closeBlockValue = -1
         this.blankBlockValue = 0
+        this.limitBlockSize = 5; // 가능한 블록의 최대 길이
         BlockType.instance = this;
     }
 

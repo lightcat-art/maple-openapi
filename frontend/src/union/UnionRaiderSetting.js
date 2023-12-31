@@ -240,9 +240,12 @@ export default class UnionRaiderSetting {
                     let failedBlocks = new Set([]);
                     let bfsResult = [];
                     let limitLoopCnt = 0;
+                    let maxBlockSize = 0;
+                    let curBlockSize = 0;
                     while (bfsResult.length == 0 && limitLoopCnt < 4) {
                         bfsResult = this.bfs([[i, j]], this.table, this.blockType.blankBlockValue, failedBlocks)
-                        if (bfsResult.length !== 0) {
+                        if (maxBlockSize < bfsResult.length) {
+                            maxBlockSize = bfsResult.length
                             this.dominatedBlocks.push(bfsResult)
                         }
                         // console.log('failedBlocks = ', failedBlocks)
