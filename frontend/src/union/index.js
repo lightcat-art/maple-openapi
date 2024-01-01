@@ -10,13 +10,13 @@ export const UnionRaider = () => {
   // const [charOverall, setCharOverall] = React.useState('-')
   const param = { nickname: '비밀의햇잎' }
   const blockTypeInstance = new BlockType();
-  const arraytest =  [
+  const arraytest = [
     [[-1, 0], [0, -1], [0, 1], [1, 0]],
     [[0, -1], [-1, 0], [0, 1], [1, 0]],
     // [[0, -1], [-1, 0], [1, 0], [0, 1]],
     // [[-1, 0], [0, -1], [1, 0], [0, 1]]
-]
-  console.log('arraytest shuffle = ',arraytest.shuffle())
+  ]
+  console.log('arraytest shuffle = ', arraytest.shuffle())
   const defaultTable =
     // [
     //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -92,11 +92,8 @@ export const UnionRaider = () => {
 
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <BasicTable value={table} style={tableStyle}></BasicTable>
-      </header>
-
+    <div>
+      <BasicTable value={table} style={tableStyle}></BasicTable>
     </div>
   );
 }

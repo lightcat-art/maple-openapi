@@ -10,7 +10,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route exact path='/' element={<Home />} />
-        {/* <Route exact path='/union' element={<UnionRaider />} /> */}
+        <Route exact path='/union' element={<UnionRaider />} />
       </Routes>
     </BrowserRouter>
   )

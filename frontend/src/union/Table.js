@@ -7,20 +7,19 @@ export function BasicTable({ value, style }) {
 
 
     return (
-
-        <table className='table'
-            style={{borderSpacing: '0px'}}
-        >
-            <tbody>
-                {style.map((row, rowIndex) => (
-                    <tr key={rowIndex}>
-                    {row.map((v, columnIndex) => (
-                        <td className='table-cell' key={columnIndex} style={v}> </td>
+            <table className='union-table'
+                // style={{ borderSpacing: '0px' }}
+            >
+                <tbody>
+                    {style.map((row, rowIndex) => (
+                        <tr key={rowIndex}>
+                            {row.map((v, columnIndex) => (
+                                <td className='union-table-cell' key={columnIndex} style={v}> </td>
+                            ))}
+                        </tr>
                     ))}
-                </tr>
-                ))}
-            </tbody>
-        </table>
+                </tbody>
+            </table>
 
     );
 }

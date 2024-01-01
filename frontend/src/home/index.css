@@ -1,18 +1,38 @@
-/*** Hero Header ***/
 .main-bg {
-    background: linear-gradient(rgba(20, 20, 31, 0.877), rgba(20, 20, 31, 0.877)), url(../static/img/wallpaper/arcana/arcanadesktop_1920x1060.jpg);
+    background: linear-gradient(rgba(29, 29, 46, 0.877), rgba(20, 20, 31, 0.877)), url(../static/img/wallpaper/arcana/arcanadesktop_1.jpg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
     width: 100vw;
     height: 100vh;
+    /* transition: .5s; */
+}
+
+.main-bg-tab {
+    background: linear-gradient(rgba(29, 29, 46, 0.877), rgba(20, 20, 31, 0.877)), url(../static/img/wallpaper/arcana/arcanadesktop_2.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100vw;
+    height: 100vh;
+    /* transition: .5s; */
+
 }
 
 .main-bg-mob {
-    background: linear-gradient(rgba(20, 20, 31, 0.877), rgba(20, 20, 31, 0.877)), url(../static/img/wallpaper/arcana/arcanaphone_1080x1800.jpg);
+    background: linear-gradient(rgba(29, 29, 46, 0.877), rgba(20, 20, 31, 0.877)), url(../static/img/wallpaper/arcana/arcanadesktop_3.jpg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
     width: 100vw;
     height: 100vh;
+    /* transition: .5s; */
+}
+
+.search-form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50%;
+    transform: translate(-50%, -50%);
 }
