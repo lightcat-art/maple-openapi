@@ -1,6 +1,6 @@
 class BlockType {
     // React component에서 선언하는 경우 다시 새로고침하면 인스턴스 날아감.
-    // 색 구분할수있는 기반 마련.
+    // 현재 가지고 있는 블록 정보를 기반으로 화면에 표시할수 있도록 도와주는 클래스
     static instance;
     constructor() {
         if (BlockType.instance) return BlockType.instance;
@@ -21,11 +21,11 @@ class BlockType {
             [[0, 0], [0, 1]], // I
             [[0, 0]], // dot
         ]
-        this.closeBlockColor = [
+        this.closeTableColor = [
             // '#00ff0000'
             '#ffffff'
         ]
-        this.blankBlockColor = [
+        this.blankTableColor = [
             '#757474ff'
             // '#ffffff'
         ]
@@ -51,9 +51,12 @@ class BlockType {
         // [i][j] => i: 블록타입 종류,  j: 블록의 회전에 따른 종류
         this.allBlockType = new Array(this.baseBlockType.length)
         this.getAllBlockType();
-        this.closeBlockValue = -1
-        this.blankBlockValue = 0
-        this.limitBlockSize = 5; // 가능한 블록의 최대 길이
+        this.binaryBlockOn = 1 // 블록바이너리표현 :  블록이 있는 부분
+        this.binaryBlockOff = 0 // 블록바이너리표현 : 블록이 없는 부분
+        this.closeTableValue = 0 // 유니온 지도에서 채울수 없는 부분
+        this.blankTableValue = 1 // 유니온 지도에서 채워질 부분 (비어있는 부분)
+        this.limitBlockSize = 5; // 한 블록의 최대 큐브 개수
+        this.limitBlockLength = 4; // 좌표평면상 블록의 최대 길이
         BlockType.instance = this;
     }
 
@@ -77,10 +80,10 @@ class BlockType {
         for (let i = 0; i < table.length; i++) {
             for (let j = 0; j < table[0].length; j++) {
                 let cellStyleMap = {}
-                if (table[i][j] === this.closeBlockValue) {
-                    cellStyleMap.background = this.closeBlockColor
-                } else if (table[i][j] === this.blankBlockValue) {
-                    cellStyleMap.background = this.blankBlockColor
+                if (table[i][j] === this.closeTableValue) {
+                    cellStyleMap.background = this.closeTableColor
+                } else if (table[i][j] === this.blankTableValue) {
+                    cellStyleMap.background = this.blankTableColor
                 } else {
                     let directionList = this.getConnectedDirection(table[i][j])
                     directionList.forEach((v) => {
@@ -114,12 +117,12 @@ class BlockType {
             let closeCurState = 0
             const direction = Object.keys(this.blockDirection).map((v) => Number(v))
             // 옮겨간 블록이 유효하고 비어있는 블록일때만 체크.
-            if (0 <= nx && 0 <= ny && nx < lenX && ny < lenY && table[nx][ny] === this.blankBlockValue) {
+            if (0 <= nx && 0 <= ny && nx < lenX && ny < lenY && table[nx][ny] === this.blankTableValue) {
                 for (let j = 0; j < dxy.length; j++) {
                     let nnx = nx + dxy[j][0]
                     let nny = ny + dxy[j][1]
                     // 옮겨간 블록의 사방이 막혀있는지 체크
-                    if (0 > nnx || 0 > nny || nnx >= lenX || nny >= lenY || (table[nnx][nny] !== this.blankBlockValue)) {
+                    if (0 > nnx || 0 > nny || nnx >= lenX || nny >= lenY || (table[nnx][nny] !== this.blankTableValue)) {
                         closeCurState += direction[j]
                     }
                 }
@@ -143,7 +146,7 @@ class BlockType {
         const dy = [0, -1, 1, 0]
         const direction = Object.keys(this.blockDirection).map((v) => Number(v))
         // console.log('direction', direction)
-        const result = new Array(block.length).fill(this.blankBlockValue)
+        const result = new Array(block.length).fill(0)
         for (let i = 0; i < block.length; i++) {
             for (let j = 0; j < dx.length; j++) {
                 let nx = block[i][0] + dx[j];
@@ -175,9 +178,98 @@ class BlockType {
         return result
     }
 
+    /**
+     * map형태 ex) [{x: 24, y: 25}, ...] 로 되어있는 유니온 초기 오브젝트를 normalize
+     * @param {*} block 
+     * @returns 
+     */
+    normalizeOriginBlock(block) {
+        let minX = Math.min(...block.map(v => v.x))
+        let minY = Math.min(...block.map(v => v.y))
+
+        return block.map(v => [v.x - minX, v.y - minY]).sort()
+    }
+
+    /**
+     * list형태 ex) [[1,2],[2,4],...] 로 되어있는 오브젝트 normalize
+     * @param {*} block 
+     * @returns 
+     */
+    normalizeBlock(block) {
+        let minX = Math.min(...block.map(v => v[0]))
+        let minY = Math.min(...block.map(v => v[1]))
+
+        return block.map(v => [v[0] - minX, v[1] - minY]).sort()
+    }
+
+    /**
+     * 현재 블록에 대해 회전 시 블록 종류 반환.
+     * @param {*} block 
+     * @returns 
+     */
+    rotate(block) {
+        // 회전 및 뒤집기를 통해 8번 rotation을 하여 모든 타입의 블록 json으로 반환.
+        let max = Math.max(...block.map(v => Math.max(v[0], v[1])))
+        let allBlockType = new Set()
+        let rotateBlock = JSON.parse(JSON.stringify(block))
+        for (let i = 0; i < 4; i++) {
+            if (i > 0) {
+                rotateBlock = rotateBlock.map(v => [max - v[1], v[0]]) // 90도 회전
+            }
+            let normalRotate = this.normalizeBlock(rotateBlock)
+            allBlockType.add(JSON.stringify(normalRotate))
+        }
+        // 뒤집어서 다시 4번 회전.
+        let transBlock = block.map(v => [v[1], v[0]])
+        for (let i = 0; i < 4; i++) {
+            if (i > 0) {
+                transBlock = transBlock.map(v => [max - v[1], v[0]]) // 90도 회전
+            }
+            let transNormalRotate = this.normalizeBlock(transBlock)
+            allBlockType.add(JSON.stringify(transNormalRotate))
+        }
+        let result = []
+        allBlockType.forEach((v) => {
+            result.push(JSON.parse(v))
+        })
+        return Array.from(result)
+    }
+
+    /**
+     * 블록이 존재하는 곳은 this.binaryBlockOn, 나머지는 this.binaryBlockOff
+     * @param {*} block 
+     */
+    transToBinary(block) {
+        let binary = []
+        for (let i = 0; i < this.limitBlockLength; i++) {
+            for (let j = 0; j < this.limitBlockLength; j++) {
+                let match = false
+                for (let k = 0; k < block.length; k++) {
+                    const x = block[k][0]
+                    const y = block[k][1]
+                    if (i === x && j === y) {
+                        match = true
+                    }
+                    if (match) {
+                        break
+                    }
+                }
+                if (match) {
+                    binary.push(this.binaryBlockOn)
+                } else {
+                    binary.push(this.binaryBlockOff)
+                }
+            }
+        }
+        return binary
+    }
+
+    /**
+     * 유니온에 존재하는 모든 블록 종류에 대한 정보 init
+     */
     getAllBlockType() {
         for (let k = 0; k < this.baseBlockType.length; k++) {
-            this.allBlockType[k] = []
+            this.allBlockType[k] = new Set()
             const baseBlockElement = this.baseBlockType[k]
             // 회전 및 뒤집기를 통해 8번 rotation을 하여 모든 타입의 블록 json으로 반환.
             let max = Math.max(...baseBlockElement.map(v => Math.max(v[0], v[1])))
@@ -187,15 +279,8 @@ class BlockType {
                     rotateBlock = rotateBlock.map(v => [max - v[1], v[0]]) // 90도 회전
                 }
                 let normalRotate = this.normalizeBlock(rotateBlock)
-                let existElement = false;
-                this.allBlockType[k].forEach(v => {
-                    if (JSON.stringify(normalRotate) === JSON.stringify(v)) {
-                        existElement = true
-                    }
-                })
-                if (!existElement) {
-                    this.allBlockType[k].push(normalRotate)
-                }
+
+                this.allBlockType[k].add(normalRotate)
             }
             // 뒤집어서 다시 4번 회전.
             let transBlock = baseBlockElement.map(v => [v[1], v[0]])
@@ -204,15 +289,7 @@ class BlockType {
                     transBlock = transBlock.map(v => [max - v[1], v[0]]) // 90도 회전
                 }
                 let transNormalRotate = this.normalizeBlock(transBlock)
-                let existElement = false;
-                this.allBlockType[k].forEach(v => {
-                    if (JSON.stringify(transNormalRotate) === JSON.stringify(v)) {
-                        existElement = true
-                    }
-                })
-                if (!existElement) {
-                    this.allBlockType[k].push(transNormalRotate)
-                }
+                this.allBlockType[k].add(transNormalRotate)
             }
         }
     }
@@ -229,7 +306,7 @@ class BlockType {
         let startArrIdx = this.baseBlockSizeIdx[len][0]
         let endArrIdx = this.baseBlockSizeIdx[len][1]
         for (let i = startArrIdx; i < endArrIdx + 1; i++) {
-            let blockType = this.allBlockType[i]
+            let blockType = Array.from(this.allBlockType[i])
             for (let j = 0; j < blockType.length; j++) {
                 let blockRotateType = blockType[j]
                 if (JSON.stringify(blockRotateType) === JSON.stringify(block)) {
@@ -256,12 +333,6 @@ class BlockType {
         return this.baseBlockType[blockIdx]
     }
 
-    normalizeBlock(block) {
-        let minX = Math.min(...block.map(v => v[0]))
-        let minY = Math.min(...block.map(v => v[1]))
-
-        return block.map(v => [v[0] - minX, v[1] - minY]).sort()
-    }
 }
 
 export default BlockType;

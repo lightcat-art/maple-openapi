@@ -11,7 +11,7 @@ export default class UnionRaiderSetting {
      * @param {*} setTable : 실시간 table 렌더링을 위함
      * @param {*} blockType : blockTypeInstance 활용
      */
-    constructor(name, raider, table, setTable, blockType) {
+    constructor(name, raider, table, setTable) {
         this.name = name
         this.raider = raider // raider는 기본적으로 unionRaiderResponse의 unionBlock으로 받는것이 원칙.
         this.parsedBlocks = []
@@ -52,6 +52,11 @@ export default class UnionRaiderSetting {
         return block.map(v => [v[0] - minX, v[1] - minY]).sort()
     }
 
+    /**
+     * 추후 중복요소 관리에 대해서 set 함수로 관리하기!
+     * @param {*} block 
+     * @returns 
+     */
     rotate(block) {
         // 회전 및 뒤집기를 통해 8번 rotation을 하여 모든 타입의 블록 json으로 반환.
         let max = Math.max(...block.map(v => Math.max(v[0], v[1])))
@@ -123,7 +128,7 @@ export default class UnionRaiderSetting {
             let dxyShuffle =
                 [
                     [[-1, 0], [0, -1], [0, 1], [1, 0]],
-                    [[0, -1], [-1, 0], [0, 1], [1, 0]],
+                    // [[0, -1], [-1, 0], [0, 1], [1, 0]],
                     // [[0, -1], [-1, 0], [1, 0], [0, 1]],
                     // [[-1, 0], [0, -1], [1, 0], [0, 1]]
                 ]
@@ -243,7 +248,7 @@ export default class UnionRaiderSetting {
                     let maxBlockSize = 0;
                     let curBlockSize = 0;
                     while (bfsResult.length == 0 && limitLoopCnt < 4) {
-                        bfsResult = this.bfs([[i, j]], this.table, this.blockType.blankBlockValue, failedBlocks)
+                        bfsResult = this.bfs([[i, j]], this.table, this.blockType.blankTableValue, failedBlocks)
                         if (maxBlockSize < bfsResult.length) {
                             maxBlockSize = bfsResult.length
                             this.dominatedBlocks.push(bfsResult)
@@ -251,7 +256,7 @@ export default class UnionRaiderSetting {
                         // console.log('failedBlocks = ', failedBlocks)
                         limitLoopCnt += 1
                     }
-                    // console.log('limitCnt = ',limitLoopCnt)
+                    console.log('limitCnt = ',limitLoopCnt)
                 }
             }
         }
