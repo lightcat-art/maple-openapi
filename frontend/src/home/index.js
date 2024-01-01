@@ -20,7 +20,9 @@ function HomeContent() {
 
 function HomeLayout() {
     return (
-            <div className="container-fluid bg-primary py-5 mb-5 main-bg">
-            </div>
+        <>
+            <div className="container-fluid bg-primary py-5 mb-5 main-bg"></div>
+        </>
+
     )
 }

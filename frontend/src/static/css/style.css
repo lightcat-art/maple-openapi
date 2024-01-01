@@ -42,5 +42,6 @@
 }
 
 body {
-    margin: -10;
+    width:100vw; 
+    height:100vh;
 }
