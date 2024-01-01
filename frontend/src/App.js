@@ -1,13 +1,15 @@
-import './App.css';
+import './static/css/style.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import * as React from 'react';
 import { UnionRaider } from './union';
+import { Home } from './home';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route exact path='/' element={<Home />} />
         {/* <Route exact path='/union' element={<UnionRaider />} /> */}
       </Routes>
     </BrowserRouter>

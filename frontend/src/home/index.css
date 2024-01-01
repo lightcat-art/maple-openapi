@@ -1,0 +1,9 @@
+/*** Hero Header ***/
+.main-bg {
+    background: linear-gradient(rgba(20, 20, 31, 0.877), rgba(20, 20, 31, 0.877)), url(../static/img/wallpaper/arcana/arcanadesktop_1920x1200.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100vw;
+    height: 100vh;
+}

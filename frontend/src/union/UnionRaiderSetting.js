@@ -1,5 +1,5 @@
 import BlockType from './BlockType';
-import { shuffle } from '../common/util'
+import { shuffle } from '../util/util'
 
 export default class UnionRaiderSetting {
 

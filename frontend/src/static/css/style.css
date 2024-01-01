@@ -1,0 +1,46 @@
+@font-face {
+    font-family: "trebuc";
+    src: url("../fonts/trebuc.ttf");
+}
+
+@font-face {
+    font-family: "maple-bold";
+    src: url("../fonts/MaplestoryFont_TTF/Maplestory_Bold.ttf");
+}
+
+@font-face {
+    font-family: "maple-light";
+    src: url("../fonts/MaplestoryFont_TTF/Maplestory_Light.ttf");
+}
+
+
+::-moz-selection {
+    /*mozilla*/
+    background: rgb(185, 220, 248);
+}
+
+::selection {
+    background: rgb(185, 220, 248);
+    /* color: #fff; */
+}
+
+/********** Template CSS **********/
+:root {
+    --primary: #ffffffdc;
+    --secondary: #FE8800;
+    --light: #F5F5F5;
+    --dark: #000000;
+
+}
+
+.layout {
+    font-family: 'maple-light';
+}
+
+.navbar-bg {
+    background-color: #27293f;
+}
+
+body {
+    margin: -10;
+}

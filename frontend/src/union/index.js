@@ -3,7 +3,7 @@ import * as React from 'react';
 import axios from 'axios';
 import UnionRaiderSetting from './UnionRaiderSetting';
 import BlockType from './BlockType';
-import { shuffle } from '../common/util'
+import { shuffle } from '../util/util'
 import { BasicTable } from './Table';
 
 export const UnionRaider = () => {
