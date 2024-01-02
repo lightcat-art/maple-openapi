@@ -56,7 +56,7 @@ class BlockType {
         this.closeTableValue = 0 // 유니온 지도에서 채울수 없는 부분
         this.blankTableValue = 1 // 유니온 지도에서 채워질 부분 (비어있는 부분)
         this.limitBlockSize = 5; // 한 블록의 최대 큐브 개수
-        this.limitBlockLength = 4; // 좌표평면상 블록의 최대 길이
+        this.limitBlockLength = 5; // 좌표평면상 블록의 최대 길이
         BlockType.instance = this;
     }
 
@@ -180,26 +180,35 @@ class BlockType {
 
     /**
      * map형태 ex) [{x: 24, y: 25}, ...] 로 되어있는 유니온 초기 오브젝트를 normalize
+     * --------
+     * 초기 오브젝트 x,y :
+     * 좌측으로 1칸씩 이동하면 x가 1씩 감소
+     * 우측으로 1칸씩 이동하면 x가 1씩 증가
+     * 아래로 1칸씩 이동하면 y가 1씩 감소
+     * 위로 1칸씩 이동하면 y가 1씩 증가
+     * -> 좌표평면 규칙이므로 matrix 형태로 변환시켜야함.
+     * --------
      * @param {*} block 
      * @returns 
      */
     normalizeOriginBlock(block) {
-        let minX = Math.min(...block.map(v => v.x))
         let minY = Math.min(...block.map(v => v.y))
+        let minX = Math.min(...block.map(v => v.x))
 
-        return block.map(v => [v.x - minX, v.y - minY]).sort()
+        return block.map(v => [v.y - minY, v.x - minX]).sort()
     }
 
     /**
-     * list형태 ex) [[1,2],[2,4],...] 로 되어있는 오브젝트 normalize
+     * 
+     * matrix 형태 ex) [[1,2],[2,4],...] 로 되어있는 오브젝트 normalize
      * @param {*} block 
      * @returns 
      */
     normalizeBlock(block) {
-        let minX = Math.min(...block.map(v => v[0]))
-        let minY = Math.min(...block.map(v => v[1]))
+        let minRow = Math.min(...block.map(v => v[0]))
+        let minCol = Math.min(...block.map(v => v[1]))
 
-        return block.map(v => [v[0] - minX, v[1] - minY]).sort()
+        return block.map(v => [v[0] - minRow, v[1] - minCol]).sort()
     }
 
     /**
@@ -262,6 +271,14 @@ class BlockType {
             }
         }
         return binary
+    }
+
+    checkTableBlank(value) {
+        if (value === this.blankTableValue) {
+            return true
+        } else {
+            return false
+        }
     }
 
     /**

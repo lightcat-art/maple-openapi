@@ -1,4 +1,5 @@
 // Array의 prototype을 지정해주고, shuffle이라는 이름을 가진 함수를 생성
+// 다차원배열이면 제일 앞에 존재하는 차원의 인덱스를 셔플
 Array.prototype.shuffle = function () {
     var length = this.length;
 
