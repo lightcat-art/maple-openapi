@@ -55,12 +55,12 @@ function HomeLayout() {
                 <h1 className="display-3 text-white mb-3 text-center animate__animated animate__slideInDown">MP.GG</h1>
                 {/* <input className="form-control border-0 rounded-pill" type="text" placeholder="캐릭터명"></input>
                 <button type="button" className="btn btn-primary rounded-pill">Search</button> */}
-                <div class="input-group md-form form-sm form-1 pl-0">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text cyan lighten-2" id="basic-text1"><i class="fas fa-search text-white"
+                <div className="input-group md-form form-sm form-1 pl-0">
+                    <div className="input-group-prepend">
+                        <span className="input-group-text cyan lighten-2" id="basic-text1"><i className="fas fa-search text-white"
                             aria-hidden="true"></i></span>
                     </div>
-                    <input class="form-control my-0 py-1" type="text" placeholder="Search" aria-label="Search" />
+                    <input className="form-control my-0 py-1" type="text" placeholder="Search" aria-label="Search" />
                 </div>
             </div>
         </div>

@@ -26,10 +26,15 @@ export default class UnionRaiderSetting2 {
         this.blocksBinary = Array.from(Array(this.blockType.limitBlockSize), () => Array())
         // 블록 종류별 개수 카운트
         this.blocksCount = Array.from(Array(this.blockType.limitBlockSize), () => Array(0))
+
+        // 결과
         this.resultBlocks = null;
         this.resultBlocksBinary = null;
         this.resultBlocksCount = null;
         this.resultTable = null;
+        this.resultDomiBlocks = null;
+        this.resultRecordTF = false;
+        this.resultTableStyle = null;
     }
     addFilledCount() {
         this.filledCount = this.filledCount + 1
@@ -73,6 +78,28 @@ export default class UnionRaiderSetting2 {
         })
     }
 
+    setTableStyleValue() {
+        this.resultTableStyleValue = JSON.parse(JSON.stringify(this.resultTable))
+        for (let i=0; i<this.resultDomiBlocks.length; i++){
+            const domiBlock = this.resultDomiBlocks[i]
+            const direction = this.blockType.checkDirection(domiBlock)
+            const color = this.blockType.getColorByBlock(this.blockType.normalizeBlock(domiBlock))
+            for (let j=0; j< domiBlock.length; j++) {
+                let v = domiBlock[j]
+                let styleValue = 0
+                styleValue += direction[j]
+                styleValue += color
+                this.resultTableStyleValue[v[0]][v[1]] = styleValue
+            }
+        }
+    }
+
+    classify() {
+        let domiBlocks = []
+        const scanTF = this.scan(this.table, this.blocks, this.blocksBinary, this.blocksCount, domiBlocks)
+        console.log('union classify :', scanTF)
+    }
+
     /**
      * 
      * @param {*} table 
@@ -82,6 +109,32 @@ export default class UnionRaiderSetting2 {
      * @param {*} domiBlocks 
      */
     scan(table, blocks, blocksBinary, blocksCount, domiBlocks) {
+
+        let matchTF = false
+
+        // 남아있는 블럭 개수 체크
+        let remainBlocksTF = false
+        blocksCount.forEach((sizeCnt) => {
+            sizeCnt.forEach((typeCnt) => {
+                if (typeCnt !== 0) {
+                    remainBlocksTF = true
+                }
+            })
+        })
+        if (!remainBlocksTF) {
+            matchTF = true
+            if (!this.resultRecordTF) {
+                this.resultBlocks = curBlocks
+                this.resultBlocksBinary = curBlocksBinary
+                this.resultBlocksCount = curBlocksCount
+                this.resultTable = curTable
+                this.resultDomiBlocks = curDomiBlocks
+                this.resultRecordTF = true
+            }
+            return matchTF
+        }
+
+
         let curTable = JSON.parse(JSON.stringify(table))
         let curBlocks = JSON.parse(JSON.stringify(blocks))
         let curBlocksBinary = JSON.parse(JSON.stringify(blocksBinary))
@@ -90,12 +143,15 @@ export default class UnionRaiderSetting2 {
 
         // 많이 느리다 싶으면 재귀함수 시작점을 현재 스캔실패 인덱스의 바로 다음인덱스로 지정..?
 
-        let matchTF = false
-        let backTF = false
+        // matchTF 가 false가 의미하는것
+        // 1. 하위함수에서 매칭이 되지 않는 블록이 존재하여 현재함수에서 모든 케이스까지 트라이했는데 매칭되는 케이스가 없음
+
+        let blankTF = false;
         for (let i = 0; i < curTable.length; i++) {
             for (let j = 0; j < curTable[0].length; j++) {
-                const blankTF = this.blockType.checkTableBlank(curTable[i][j])
+                blankTF = this.blockType.checkTableBlank(curTable[i][j])
                 if (blankTF) {
+                    // console.log('i=', i, ',j=', j, ', blankTF=', blankTF)
                     // 블록 사이즈 종류 회전타입별로 하나씩 스캔
                     for (let k = 0; k < blocksBinary.length; k++) {
                         const listBySize = blocksBinary[k]
@@ -106,6 +162,18 @@ export default class UnionRaiderSetting2 {
                                 const result = this.scanInner(i, j, curTable, blockTypeRotateBinary)
                                 if (result.length !== 0) {
                                     // matchTF = true
+                                     let testRemain = false
+                                     curTable.forEach((row) => {
+                                        row.forEach((elem) => {
+                                            if (elem !== 0) {
+                                                testRemain = true
+                                            }
+                                        })
+                                     })
+                                     if (!testRemain) {
+                                        console.log('test')
+                                     }
+
                                     curDomiBlocks.push(result)
                                     // 보유블럭 오브젝트들에서 점령된 블록 제거
                                     curBlocksCount[k][l] -= 1
@@ -114,30 +182,45 @@ export default class UnionRaiderSetting2 {
                                         curBlocksBinary[k].splice(l, 1)
                                     }
                                     matchTF = this.scan(curTable, curBlocks, curBlocksBinary, curBlocksCount, curDomiBlocks)
+                                    if (!matchTF) { // 유니온 배치판 및 점령블록 등 오브젝트 원래대로 되돌려놓기
+                                        curTable = JSON.parse(JSON.stringify(table))
+                                        curBlocks = JSON.parse(JSON.stringify(blocks))
+                                        curBlocksBinary = JSON.parse(JSON.stringify(blocksBinary))
+                                        curBlocksCount = JSON.parse(JSON.stringify(blocksCount))
+                                        curDomiBlocks = JSON.parse(JSON.stringify(domiBlocks))
+                                    }
                                 }
 
-                                if (matchTF) {break}
+                                if (matchTF) { break }
                             }
-                            if (matchTF) {break}
+                            if (matchTF) { break }
                         }
-                        if (matchTF) {break}
+                        if (matchTF) { break }
                     }
+
                     // 하위 재귀함수에서 실패한 케이스와 현재 함수에서 매칭되는게 없는 케이스를 구분해야함.
                     // 모든 소유한 블록을 스캔했는데 매칭되는게 없다면 상태를 저장하지 않고 상위 재귀함수 복귀
-                    if (!matchTF) {
-                        backTF = true
-                    }
                 }
-                if (backTF) { break }
-                // 비어있는 블록을 한번 체크하고 해당 블록에 연결된 모든 경우를 스캔했다면 무조건
-                // 다음 재귀함수로 넘어가거나 이전 재귀함수로 복귀해야함.
+                // 빈칸이 존재하지 않는다. -> 다음 빈칸 탐색
+                // 빈칸이 존재하여 이미 matchTF 여부를 판별하였다면 현재 함수에서 취할수 있는 행동은 없음.
+                if (blankTF) {break}
             }
-            if (backTF) { break }
+            if (blankTF) {break}
         }
-        if (backTF) { // 빈칸이 있는데 매칭되는게 없는경우 뒤로가기
+        if (!matchTF && blankTF) { // 뒤로가기
             return false
-        } else {
-            // 빈칸이 아예 없는 경우. 마지막까지 모두 빈칸을 체크했는데 없으면 테이블상태를 저장하고 재귀함수 종료.
+        } 
+        else { 
+            // 빈칸이 아예 없는 경우. (마지막까지 모두 빈칸을 체크했는데 없으면 테이블상태를 저장하고 재귀함수 종료)
+            // OR  하위함수에서부터 matching이 모두다 완료된 경우
+            if (!this.resultRecordTF) {
+                this.resultBlocks = curBlocks
+                this.resultBlocksBinary = curBlocksBinary
+                this.resultBlocksCount = curBlocksCount
+                this.resultTable = curTable
+                this.resultDomiBlocks = curDomiBlocks
+                this.resultRecordTF = true
+            }
             return true
         }
     }
@@ -151,23 +234,30 @@ export default class UnionRaiderSetting2 {
      * @returns 매칭되었다고 판단된 블록의 절대좌표
      */
     scanInner(row, col, curTable, blocksBinary) {
-        const startRowIdx = row - 4
-        const startColIdx = col
+        const startRowIdx = row - (this.blockType.limitBlockLength - 1)
+        const startColIdx = col - (this.blockType.limitBlockLength - 1)
         let sameTF = false
         let result = []
         for (let i = startRowIdx; i <= row; i++) {
             for (let j = startColIdx; j <= col; j++) {
-                if (i < 0 || j < 0 || i >= curTable.length || j >= curTable[0].length) {
-                    continue
-                }
+                // if (i < 0 || j < 0 ||
+                //     (i + (this.blockType.limitBlockLength - 1)) >= curTable.length ||
+                //     (j + (this.blockType.limitBlockLength - 1)) >= curTable[0].length) {
+                //     continue
+                // }
                 let regionBinary = []
                 let blocksAbsCoord = [] // 블록의 절대좌표
                 for (let k = 0; k < this.blockType.limitBlockLength; k++) {
                     for (let l = 0; l < this.blockType.limitBlockLength; l++) {
-                        regionBinary.push(curTable[i + k][j + l])
+                        if ((i + k) < 0 || (j + l) < 0 || (i + k) >= curTable.length
+                            || (j + l) >= curTable[0].length) {
+                            regionBinary.push(0)
+                        } else {
+                            regionBinary.push(curTable[i + k][j + l])
+                        }
 
                         // 블록의 절대좌표 미리 저장
-                        if (blocksBinary[k + l] === 1) {
+                        if (blocksBinary[k * 5 + l] === 1) {
                             blocksAbsCoord.push([i + k, j + l])
                         }
                     }
