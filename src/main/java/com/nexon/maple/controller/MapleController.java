@@ -97,7 +97,7 @@ public class MapleController {
     @GetMapping("/api/char/overall")
     public CharacterOverallResponse getCharOverall(CharacterOverallRequest request) {
 
-        LocalDate now = LocalDate.now().minusDays(1);
+        LocalDate now = LocalDate.now().minusDays(2);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedNow = now.format(formatter);
 

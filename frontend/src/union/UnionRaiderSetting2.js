@@ -28,6 +28,7 @@ export default class UnionRaiderSetting2 {
         this.blocksCount = []
         // 블록 사이즈 체크
         this.blocksSize = []
+        // this.blocksSuffleIdx = []
 
         // 결과
         this.resultBlocks = null;
@@ -76,9 +77,14 @@ export default class UnionRaiderSetting2 {
                 this.blocks.push(rotateBlocks)
                 this.blocksBinary.push(rotateBlocksBinary)
                 this.blocksCount.push(1)
+
             }
 
         })
+        // for (let i = 0; i < this.blocksCount; i++) {
+        //     this.blocksSuffleIdx.push(i)
+        // }
+        // this.blocksSuffleIdx.shuffle()
     }
 
     setTableStyleValue() {
@@ -112,7 +118,6 @@ export default class UnionRaiderSetting2 {
      * @param {*} domiBlocks 
      */
     scan(table, blocks, blocksBinary, blocksCount, domiBlocks) {
-
         let matchTF = false
 
         // 남아있는 블럭 개수 체크
@@ -142,7 +147,6 @@ export default class UnionRaiderSetting2 {
         let curBlocksCount = JSON.parse(JSON.stringify(blocksCount))
         let curDomiBlocks = JSON.parse(JSON.stringify(domiBlocks))
 
-        // 많이 느리다 싶으면 재귀함수 시작점을 현재 스캔실패 인덱스의 바로 다음인덱스로 지정..?
 
         // matchTF 가 false가 의미하는것
         // 1. 하위함수에서 매칭이 되지 않는 블록이 존재하여 현재함수에서 모든 케이스까지 트라이했는데 매칭되는 케이스가 없음
@@ -154,44 +158,38 @@ export default class UnionRaiderSetting2 {
                 if (blankTF) {
                     //스캔하기전에 현재 블록 기준으로 생성된 덩어리가 블록의 개수와 숫자를 고려할때 가능한 조합인지 체크
                     // 1. 블록덩어리 스캔 (bfs)
-                    console.log('i=', i, ', j=', j, ', blankTF=', blankTF)
+
                     const start = [[i, j]]
                     const blockDummy = this.bfs(start, JSON.parse(JSON.stringify(curTable)), this.blockType.closeTableValue)
                     // 2. 현재 남은 블록 개수와 숫자의 합 = 블록 덩어리 사이즈 경우가 있는지 체크 (dynamic programming)
                     const fittableTF = this.checkFittable(curBlocksCount, blockDummy.length)
 
+                    
                     if (fittableTF) {
+                        // let shuffleIdx = []
+                        // for (let s = 0; s < blocksBinary.length; s++) {
+                        //     shuffleIdx.push(s)
+                        // }
+                        // shuffleIdx.shuffle()
                         // 블록 사이즈 종류 회전타입별로 하나씩 스캔
                         for (let k = 0; k < blocksBinary.length; k++) {
                             if (blocksCount[k] === 0) { // 개수가 0인 블록은 사용하지 않기.
+                            // if (blocksCount[shuffleIdx[k]] === 0) { // 개수가 0인 블록은 사용하지 않기.
                                 continue
                             }
                             const listByType = blocksBinary[k]
+                            // const listByType = blocksBinary[shuffleIdx[k]]
                             for (let l = 0; l < listByType.length; l++) {
+                                if (i===0 && j===0){
+                                    console.log('i=', i, ', j=', j, ', blankTF=', blankTF)
+                                }
                                 const blockTypeRotateBinary = listByType[l]
                                 const result = this.scanInner(i, j, curTable, blockTypeRotateBinary)
                                 if (result.length !== 0) {
-                                    // matchTF = true
-                                    let testRemain = false
-                                    let remainSize = 0
-                                    curTable.forEach((row) => {
-                                        row.forEach((elem) => {
-                                            if (elem !== 0) {
-                                                testRemain = true
-                                                remainSize += 1
-                                            }
-                                        })
-                                    })
-                                    if (!testRemain) {
-                                        console.log('test')
-                                    }
-                                    if (remainSize < 20) {
-                                        console.log('test')
-                                    }
-
                                     curDomiBlocks.push(result)
                                     // 보유블럭 오브젝트들에서 점령된 블록 제거
                                     curBlocksCount[k] -= 1
+                                    // curBlocksCount[shuffleIdx[k]] -= 1
 
                                     matchTF = this.scan(curTable, curBlocks, curBlocksBinary, curBlocksCount, curDomiBlocks)
                                     if (!matchTF) { // 유니온 배치판 및 점령블록 등 오브젝트 원래대로 되돌려놓기
@@ -254,6 +252,7 @@ export default class UnionRaiderSetting2 {
      */
     scanInner(row, col, curTable, blocksBinary) {
         const startRowIdx = row - (this.blockType.limitBlockLength - 1)
+        // const startRowIdx = row
         const startColIdx = col - (this.blockType.limitBlockLength - 1)
         let sameTF = false
         let result = []
@@ -349,24 +348,24 @@ export default class UnionRaiderSetting2 {
         let numBlockElem = 0
         for (let i = 0; i < blocksCount.length; i++) {
             const blockCount = blocksCount[i]
-            for (let j=0; j<blockCount; j++){
+            for (let j = 0; j < blockCount; j++) {
                 numList.push(this.blocksSize[i])
             }
             numBlockElem += blocksCount[i] * this.blocksSize[i]
         }
-        console.log('현재 블록덩어리의 산정공간 : ', targetSum,', 소유한 블록리스트 : ', numList, ', 블록원자단위 개수:', numBlockElem)
+        // console.log('현재 블록덩어리의 산정공간 : ', targetSum, ', 소유한 블록리스트 : ', numList, ', 블록원자단위 개수:', numBlockElem)
         // 모든 블록 길이의 합이 더미사이즈 보다 작거나 같다면 가능한것으로 판단할것
         let sum = 0
         numList.forEach((v) => {
             sum += v
         })
         if (sum <= targetSum) {
-            console.log('remian table space is enough')
+            console.log('table space is enough')
             return true
         }
         let cache = new Map()
         const result = this.dp(targetSum, numList, cache)
-        console.log('dp result = ', result);
+        // console.log('dp result = ', result);
         if (result) {
             return true
         } else {
@@ -386,7 +385,7 @@ export default class UnionRaiderSetting2 {
         }
         let cache = new Map()
         const result = this.dp(targetSum, numList, cache)
-        console.log('dp result = ', result);
+        // console.log('dp result = ', result);
         if (result) {
             return true
         } else {
