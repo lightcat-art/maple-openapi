@@ -105,19 +105,16 @@ export default class UnionRaiderSetting2 {
 
     classify() {
         let domiBlocks = []
-        const scanTF = this.scan(this.table, this.blocksCount, domiBlocks)
+        let shuffleIdx = []
+        for (let i =0; i< this.blocksCount.length; i++){
+            shuffleIdx.push(i)
+        }
+        const scanTF = this.scan(this.table, this.blocksCount, domiBlocks, shuffleIdx)
         console.log('union classify :', scanTF)
     }
 
-    /**
-     * 
-     * @param {*} table 
-     * @param {*} blocks 
-     * @param {*} blocksBinary 
-     * @param {*} blocksCount 
-     * @param {*} domiBlocks 
-     */
-    scan(table, blocksCount, domiBlocks) {
+    
+    scan(table, blocksCount, domiBlocks, shuffleIdx) {
         let matchTF = false
 
         // 남아있는 블럭 개수 체크
@@ -142,6 +139,7 @@ export default class UnionRaiderSetting2 {
         let curTable = JSON.parse(JSON.stringify(table))
         let curBlocksCount = JSON.parse(JSON.stringify(blocksCount))
         let curDomiBlocks = JSON.parse(JSON.stringify(domiBlocks))
+        let curShuffleIdx = JSON.parse(JSON.stringify(shuffleIdx))
 
 
         // matchTF 가 false가 의미하는것
@@ -154,12 +152,10 @@ export default class UnionRaiderSetting2 {
                 if (blankTF) {
                     //스캔하기전에 현재 블록 기준으로 생성된 덩어리가 블록의 개수와 숫자를 고려할때 가능한 조합인지 체크
                     // 1. 블록덩어리 스캔 (bfs)
-
                     const start = [[i, j]]
                     const blockDummy = this.bfs(start, JSON.parse(JSON.stringify(curTable)), this.blockType.closeTableValue)
                     // 2. 현재 남은 블록 개수와 숫자의 합 = 블록 덩어리 사이즈 경우가 있는지 체크 (dynamic programming)
                     const fittableTF = this.checkFittable(curBlocksCount, blockDummy.length)
-
                     
                     if (fittableTF) {
                         // let shuffleIdx = []
@@ -167,14 +163,16 @@ export default class UnionRaiderSetting2 {
                         //     shuffleIdx.push(s)
                         // }
                         // shuffleIdx.shuffle()
+                        const idx = curShuffleIdx.shift()
+                        curShuffleIdx.push(idx)
                         // 블록 사이즈 종류 회전타입별로 하나씩 스캔
-                        for (let k = 0; k < this.blocksBinary.length; k++) {
-                            if (curBlocksCount[k] === 0) { // 개수가 0인 블록은 사용하지 않기.
-                            // if (blocksCount[shuffleIdx[k]] === 0) { // 개수가 0인 블록은 사용하지 않기.
+                        for (let k = 0; k < curShuffleIdx.length; k++) {
+                            // if (curBlocksCount[k] === 0) { // 개수가 0인 블록은 사용하지 않기.
+                            if (blocksCount[curShuffleIdx[k]] === 0) { // 개수가 0인 블록은 사용하지 않기.
                                 continue
                             }
-                            const listByType = this.blocksBinary[k]
-                            // const listByType = blocksBinary[shuffleIdx[k]]
+                            // const listByType = this.blocksBinary[k]
+                            const listByType = this.blocksBinary[curShuffleIdx[k]]
                             for (let l = 0; l < listByType.length; l++) {
                                 if (i===0 && j===0){
                                     console.log('i=', i, ', j=', j, ', blankTF=', blankTF)
@@ -184,10 +182,10 @@ export default class UnionRaiderSetting2 {
                                 if (result.length !== 0) {
                                     curDomiBlocks.push(result)
                                     // 보유블럭 오브젝트들에서 점령된 블록 제거
-                                    curBlocksCount[k] -= 1
-                                    // curBlocksCount[shuffleIdx[k]] -= 1
+                                    // curBlocksCount[k] -= 1
+                                    curBlocksCount[curShuffleIdx[k]] -= 1
 
-                                    matchTF = this.scan(curTable, curBlocksCount, curDomiBlocks)
+                                    matchTF = this.scan(curTable, curBlocksCount, curDomiBlocks, curShuffleIdx)
                                     if (!matchTF) { // 유니온 배치판 및 점령블록 등 오브젝트 원래대로 되돌려놓기
                                         curTable.length = 0
                                         curBlocksCount.length = 0
@@ -315,7 +313,8 @@ export default class UnionRaiderSetting2 {
         const direction = [[-1, 0], [1, 0], [0, 1], [0, -1]]
         let block = []
         let visit = start
-
+        table[start[0][0]][start[0][1]] = visitValue
+        
         while (visit.length > 0) {
             let [crow, ccol] = visit.shift()
             block.push([crow, ccol])
@@ -341,8 +340,11 @@ export default class UnionRaiderSetting2 {
             }
             numBlockElem += blocksCount[i] * this.blocksSize[i]
         }
-        // console.log('현재 블록덩어리의 산정공간 : ', targetSum, ', 소유한 블록리스트 : ', numList, ', 블록원자단위 개수:', numBlockElem)
+        console.log('현재 블록덩어리의 산정공간 : ', targetSum, ', 소유한 블록리스트 : ', numList, ', 블록원자단위 개수:', numBlockElem)
         // 모든 블록 길이의 합이 더미사이즈 보다 작거나 같다면 가능한것으로 판단할것
+        if (numBlockElem === 138) {
+            console.log('test')
+        }
         let sum = 0
         numList.forEach((v) => {
             sum += v
@@ -353,7 +355,7 @@ export default class UnionRaiderSetting2 {
         }
         let cache = new Map()
         const result = this.dp(targetSum, numList, cache)
-        // console.log('dp result = ', result);
+        console.log('dp result = ', result);
         if (result) {
             return true
         } else {
