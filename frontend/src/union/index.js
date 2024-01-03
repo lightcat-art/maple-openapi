@@ -57,12 +57,41 @@ export const UnionRaider = () => {
     //   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     // ]
     [
-    [1,1,1,1,1,1],
-    [1,1,1,1,1,1],
-    [1,1,1,1,1,1],
-    [1,1,1,1,1,1],
-    [1,1,1,1,1,1],
-    [1,1,1,1,1,1],]
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+      [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+      [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    ]
+    // [
+    // [1,1,1,1,1,1],
+    // [1,1,1,1,1,1],
+    // [1,1,1,1,1,1],
+    // [1,1,1,1,1,1],
+    // [1,1,1,1,1,1],
+    // [1,1,1,1,1,1],]
+
+    // [
+    //   [1,1,1,1,1],
+    //   [1,1,1,1,1],
+    //   [1,1,1,1,1],
+    //   [1,1,1,1,1],
+    //   [1,1,1,1,1]]
   const [table, setTable] = React.useState(defaultTable)
   const defaultTableStyle = blockType.getDefaultTableStyle(defaultTable)
   const [tableStyle, setTableStyle] = React.useState(defaultTableStyle)
@@ -85,11 +114,14 @@ export const UnionRaider = () => {
         // console.log('allBlockType=', blockType.allBlockType);
         // setTableStyle(blockType.getTableStyle(setting.table))
 
-        const setting = new UnionRaiderSetting2(param.nickname, response.data.userUnionRaiderResponse.unionBlock.shuffle(),
+        const setting = new UnionRaiderSetting2(param.nickname, response.data.userUnionRaiderResponse.unionBlock,
           JSON.parse(JSON.stringify(table)), setTable)
-        console.log('parse before = ', setting.blocks)
-        console.log('parse before = ', setting.blocks[0].length)
+
+        // console.log('fittable result= ',setting.checkFittableTest([4,4,4,4,4,5,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4], 65))
+
         setting.parseRaider()
+        console.log('parse blocks Size= ', setting.blocksSize)
+
         console.log('parse blocks= ', setting.blocks)
         console.log('parse blocks binary = ', setting.blocksBinary)
         console.log('parse count = ', setting.blocksCount)

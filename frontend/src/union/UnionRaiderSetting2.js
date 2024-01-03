@@ -21,11 +21,13 @@ export default class UnionRaiderSetting2 {
         this.filledCount = 0;
         this.blockType = new BlockType();
         // 블록 좌표형
-        this.blocks = Array.from(Array(this.blockType.limitBlockSize), () => Array())
+        this.blocks = []
         // 블록 바이너리형
-        this.blocksBinary = Array.from(Array(this.blockType.limitBlockSize), () => Array())
+        this.blocksBinary = []
         // 블록 종류별 개수 카운트
-        this.blocksCount = Array.from(Array(this.blockType.limitBlockSize), () => Array(0))
+        this.blocksCount = []
+        // 블록 사이즈 체크
+        this.blocksSize = []
 
         // 결과
         this.resultBlocks = null;
@@ -48,31 +50,32 @@ export default class UnionRaiderSetting2 {
         this.raider.forEach(block => {
             // const size = block.blockPosition.length;
             const normalizedBlock = this.blockType.normalizeOriginBlock(block.blockPosition)
-            const blockIdx = normalizedBlock.length - 1
+            // const blockIdx = normalizedBlock.length - 1
 
             // index = length -1 
-            let blockListBySize = this.blocks[blockIdx]
+            // let blockListBySize = this.blocks[blockIdx]
             let existType = false;
-            for (let i = 0; i < blockListBySize.length; i++) {
-                const type = blockListBySize[i]
+            for (let i = 0; i < this.blocks.length; i++) {
+                const type = this.blocks[i]
                 for (let j = 0; j < type.length; j++) {
                     const rotateType = type[j]
                     if (JSON.stringify(rotateType) === JSON.stringify(normalizedBlock)) {
                         existType = true;
-                        this.blocksCount[blockIdx][i] += 1;
+                        this.blocksCount[i] += 1;
                     }
                 }
             }
 
             if (!existType) {
+                this.blocksSize.push(normalizedBlock.length)
                 let rotateBlocks = this.blockType.rotate(normalizedBlock).sort();
                 let rotateBlocksBinary = []
                 rotateBlocks.forEach((block) => {
                     rotateBlocksBinary.push(this.blockType.transToBinary(block))
                 })
-                this.blocks[blockIdx].push(rotateBlocks)
-                this.blocksBinary[blockIdx].push(rotateBlocksBinary)
-                this.blocksCount[blockIdx].push(1)
+                this.blocks.push(rotateBlocks)
+                this.blocksBinary.push(rotateBlocksBinary)
+                this.blocksCount.push(1)
             }
 
         })
@@ -80,11 +83,11 @@ export default class UnionRaiderSetting2 {
 
     setTableStyleValue() {
         this.resultTableStyleValue = JSON.parse(JSON.stringify(this.resultTable))
-        for (let i=0; i<this.resultDomiBlocks.length; i++){
+        for (let i = 0; i < this.resultDomiBlocks.length; i++) {
             const domiBlock = this.resultDomiBlocks[i]
             const direction = this.blockType.checkDirection(domiBlock)
             const color = this.blockType.getColorByBlock(this.blockType.normalizeBlock(domiBlock))
-            for (let j=0; j< domiBlock.length; j++) {
+            for (let j = 0; j < domiBlock.length; j++) {
                 let v = domiBlock[j]
                 let styleValue = 0
                 styleValue += direction[j]
@@ -114,21 +117,19 @@ export default class UnionRaiderSetting2 {
 
         // 남아있는 블럭 개수 체크
         let remainBlocksTF = false
-        blocksCount.forEach((sizeCnt) => {
-            sizeCnt.forEach((typeCnt) => {
-                if (typeCnt !== 0) {
-                    remainBlocksTF = true
-                }
-            })
+        blocksCount.forEach((typeCnt) => {
+            if (typeCnt !== 0) {
+                remainBlocksTF = true
+            }
         })
         if (!remainBlocksTF) {
             matchTF = true
             if (!this.resultRecordTF) {
-                this.resultBlocks = curBlocks
-                this.resultBlocksBinary = curBlocksBinary
-                this.resultBlocksCount = curBlocksCount
-                this.resultTable = curTable
-                this.resultDomiBlocks = curDomiBlocks
+                this.resultBlocks = blocks
+                this.resultBlocksBinary = blocksBinary
+                this.resultBlocksCount = blocksCount
+                this.resultTable = table
+                this.resultDomiBlocks = domiBlocks
                 this.resultRecordTF = true
             }
             return matchTF
@@ -151,38 +152,54 @@ export default class UnionRaiderSetting2 {
             for (let j = 0; j < curTable[0].length; j++) {
                 blankTF = this.blockType.checkTableBlank(curTable[i][j])
                 if (blankTF) {
-                    // console.log('i=', i, ',j=', j, ', blankTF=', blankTF)
-                    // 블록 사이즈 종류 회전타입별로 하나씩 스캔
-                    for (let k = 0; k < blocksBinary.length; k++) {
-                        const listBySize = blocksBinary[k]
-                        for (let l = 0; l < listBySize.length; l++) {
-                            const listByType = listBySize[l]
-                            for (let m = 0; m < listByType.length; m++) {
-                                const blockTypeRotateBinary = listByType[m]
+                    //스캔하기전에 현재 블록 기준으로 생성된 덩어리가 블록의 개수와 숫자를 고려할때 가능한 조합인지 체크
+                    // 1. 블록덩어리 스캔 (bfs)
+                    console.log('i=', i, ', j=', j, ', blankTF=', blankTF)
+                    const start = [[i, j]]
+                    const blockDummy = this.bfs(start, JSON.parse(JSON.stringify(curTable)), this.blockType.closeTableValue)
+                    // 2. 현재 남은 블록 개수와 숫자의 합 = 블록 덩어리 사이즈 경우가 있는지 체크 (dynamic programming)
+                    const fittableTF = this.checkFittable(curBlocksCount, blockDummy.length)
+
+                    if (fittableTF) {
+                        // 블록 사이즈 종류 회전타입별로 하나씩 스캔
+                        for (let k = 0; k < blocksBinary.length; k++) {
+                            if (blocksCount[k] === 0) { // 개수가 0인 블록은 사용하지 않기.
+                                continue
+                            }
+                            const listByType = blocksBinary[k]
+                            for (let l = 0; l < listByType.length; l++) {
+                                const blockTypeRotateBinary = listByType[l]
                                 const result = this.scanInner(i, j, curTable, blockTypeRotateBinary)
                                 if (result.length !== 0) {
                                     // matchTF = true
-                                     let testRemain = false
-                                     curTable.forEach((row) => {
+                                    let testRemain = false
+                                    let remainSize = 0
+                                    curTable.forEach((row) => {
                                         row.forEach((elem) => {
                                             if (elem !== 0) {
                                                 testRemain = true
+                                                remainSize += 1
                                             }
                                         })
-                                     })
-                                     if (!testRemain) {
+                                    })
+                                    if (!testRemain) {
                                         console.log('test')
-                                     }
+                                    }
+                                    if (remainSize < 20) {
+                                        console.log('test')
+                                    }
 
                                     curDomiBlocks.push(result)
                                     // 보유블럭 오브젝트들에서 점령된 블록 제거
-                                    curBlocksCount[k][l] -= 1
-                                    if (curBlocksCount[k][l] === 0) {
-                                        curBlocks[k].splice(l, 1)
-                                        curBlocksBinary[k].splice(l, 1)
-                                    }
+                                    curBlocksCount[k] -= 1
+
                                     matchTF = this.scan(curTable, curBlocks, curBlocksBinary, curBlocksCount, curDomiBlocks)
                                     if (!matchTF) { // 유니온 배치판 및 점령블록 등 오브젝트 원래대로 되돌려놓기
+                                        curTable.length = 0
+                                        curBlocks.length = 0
+                                        curBlocksBinary.length = 0
+                                        curBlocksCount.length = 0
+                                        curDomiBlocks.length = 0
                                         curTable = JSON.parse(JSON.stringify(table))
                                         curBlocks = JSON.parse(JSON.stringify(blocks))
                                         curBlocksBinary = JSON.parse(JSON.stringify(blocksBinary))
@@ -190,27 +207,29 @@ export default class UnionRaiderSetting2 {
                                         curDomiBlocks = JSON.parse(JSON.stringify(domiBlocks))
                                     }
                                 }
-
                                 if (matchTF) { break }
                             }
                             if (matchTF) { break }
                         }
-                        if (matchTF) { break }
                     }
-
                     // 하위 재귀함수에서 실패한 케이스와 현재 함수에서 매칭되는게 없는 케이스를 구분해야함.
                     // 모든 소유한 블록을 스캔했는데 매칭되는게 없다면 상태를 저장하지 않고 상위 재귀함수 복귀
                 }
                 // 빈칸이 존재하지 않는다. -> 다음 빈칸 탐색
                 // 빈칸이 존재하여 이미 matchTF 여부를 판별하였다면 현재 함수에서 취할수 있는 행동은 없음.
-                if (blankTF) {break}
+                if (blankTF) { break }
             }
-            if (blankTF) {break}
+            if (blankTF) { break }
         }
         if (!matchTF && blankTF) { // 뒤로가기
+            curTable.length = 0
+            curBlocks.length = 0
+            curBlocksBinary.length = 0
+            curBlocksCount.length = 0
+            curDomiBlocks.length = 0
             return false
-        } 
-        else { 
+        }
+        else {
             // 빈칸이 아예 없는 경우. (마지막까지 모두 빈칸을 체크했는데 없으면 테이블상태를 저장하고 재귀함수 종료)
             // OR  하위함수에서부터 matching이 모두다 완료된 경우
             if (!this.resultRecordTF) {
@@ -297,7 +316,130 @@ export default class UnionRaiderSetting2 {
         }
     }
 
+    /**
+     * 
+     * @param {*} start :시작 좌표
+     * @param {*} table 
+     * @param {*} visitValue  : 방문처리할 값
+     */
+    bfs(start, table, visitValue) {
+        const lenRow = table.length
+        const lenCol = table[0].length
+        const direction = [[-1, 0], [1, 0], [0, 1], [0, -1]]
+        let block = []
+        let visit = start
 
+        while (visit.length > 0) {
+            let [crow, ccol] = visit.shift()
+            block.push([crow, ccol])
+            for (let i = 0; i < direction.length; i++) {
+                let nrow = crow + direction[i][0]
+                let ncol = ccol + direction[i][1]
+                if (0 <= ncol && 0 <= nrow && ncol < lenCol && nrow < lenRow && (table[nrow][ncol] !== visitValue)) {
+                    visit.push([nrow, ncol])
+                    table[nrow][ncol] = visitValue
+                }
+            }
+        }
+        return block
+    }
+
+    checkFittable(blocksCount, targetSum) {
+        let numList = []
+        let numBlockElem = 0
+        for (let i = 0; i < blocksCount.length; i++) {
+            const blockCount = blocksCount[i]
+            for (let j=0; j<blockCount; j++){
+                numList.push(this.blocksSize[i])
+            }
+            numBlockElem += blocksCount[i] * this.blocksSize[i]
+        }
+        console.log('현재 블록덩어리의 산정공간 : ', targetSum,', 소유한 블록리스트 : ', numList, ', 블록원자단위 개수:', numBlockElem)
+        // 모든 블록 길이의 합이 더미사이즈 보다 작거나 같다면 가능한것으로 판단할것
+        let sum = 0
+        numList.forEach((v) => {
+            sum += v
+        })
+        if (sum <= targetSum) {
+            console.log('remian table space is enough')
+            return true
+        }
+        let cache = new Map()
+        const result = this.dp(targetSum, numList, cache)
+        console.log('dp result = ', result);
+        if (result) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    checkFittableTest(numList, targetSum) {
+        // 모든 블록 길이의 합이 더미사이즈 보다 작거나 같다면 가능한것으로 판단할것
+        let sum = 0
+        numList.forEach((v) => {
+            sum += v
+        })
+        if (sum <= targetSum) {
+            console.log('remian table space is enough')
+            return true
+        }
+        let cache = new Map()
+        const result = this.dp(targetSum, numList, cache)
+        console.log('dp result = ', result);
+        if (result) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    // cache :  6 : [1,2,3] 과 같이 map으로 활용
+    dp(targetSum, numList, cacheMap) {
+        if (targetSum < 0) {
+            return null
+        } else if (targetSum === 0) {
+            return []
+        }
+
+        if (cacheMap.has(targetSum)) {
+            let usable = true
+            let cacheList = cacheMap[targetSum]
+            cacheList.forEach((cache) => {
+                cache.forEach((v) => {
+                    if (!numList.includes(v)) {
+                        usable = false
+                    }
+                })
+
+            })
+            if (usable) { return cacheList }
+        }
+
+
+        for (let i = 0; i < numList.length; i++) {
+            let copyNumList = JSON.parse(JSON.stringify(numList))
+            copyNumList.slice(i, 1)
+            const resultInner = this.dp(targetSum - numList[i], copyNumList, cacheMap)
+            // null 넘어왔다면 경우의 수 조합이 없는것으로 간주하고 넘어가기
+            if (!resultInner) {
+                continue
+            }
+            let result = []
+            resultInner.forEach((v) => {
+                result.push(v)
+            })
+            result.push(numList[i])
+            if (cacheMap.has(targetSum)) {
+                cacheMap[targetSum].push(result)
+            } else {
+                cacheMap[targetSum] = [result]
+            }
+            return result
+        }
+        // 다 돌았는데도 반환되는게 없으면 null 반환
+        return null
+    }
 
 
 
