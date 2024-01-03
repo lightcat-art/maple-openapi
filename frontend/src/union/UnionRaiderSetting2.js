@@ -342,7 +342,11 @@ export default class UnionRaiderSetting2 {
         let numMap = {}
         let numBlockElem = 0
         for (let i = 0; i < blocksCount.length; i++) {
-            numMap[this.blocksSize[i]] = blocksCount[i]
+            if (this.blocksSize[i] in numMap) {
+                numMap[this.blocksSize[i]] = numMap[this.blocksSize[i]] + blocksCount[i]
+            } else {
+                numMap[this.blocksSize[i]] = blocksCount[i]
+            }
             
             numBlockElem += blocksCount[i] * this.blocksSize[i]
         }
