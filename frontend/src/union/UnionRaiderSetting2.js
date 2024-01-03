@@ -106,15 +106,16 @@ export default class UnionRaiderSetting2 {
     classify() {
         let domiBlocks = []
         let shuffleIdx = []
-        for (let i =0; i< this.blocksCount.length; i++){
+        for (let i = 0; i < this.blocksCount.length; i++) {
             shuffleIdx.push(i)
         }
         const scanTF = this.scan(this.table, this.blocksCount, domiBlocks, shuffleIdx)
         console.log('union classify :', scanTF)
     }
 
-    
+
     scan(table, blocksCount, domiBlocks, shuffleIdx) {
+
         let matchTF = false
 
         // 남아있는 블럭 개수 체크
@@ -152,11 +153,15 @@ export default class UnionRaiderSetting2 {
                 if (blankTF) {
                     //스캔하기전에 현재 블록 기준으로 생성된 덩어리가 블록의 개수와 숫자를 고려할때 가능한 조합인지 체크
                     // 1. 블록덩어리 스캔 (bfs)
+                    const startScan = performance.now()
                     const start = [[i, j]]
+                    console.time('bfs time')
                     const blockDummy = this.bfs(start, JSON.parse(JSON.stringify(curTable)), this.blockType.closeTableValue)
+                    console.timeEnd('bfs time')
+                    console.time('checkFittable time')
                     // 2. 현재 남은 블록 개수와 숫자의 합 = 블록 덩어리 사이즈 경우가 있는지 체크 (dynamic programming)
                     const fittableTF = this.checkFittable(curBlocksCount, blockDummy.length)
-                    
+                    console.timeEnd('checkFittable time')
                     if (fittableTF) {
                         // let shuffleIdx = []
                         // for (let s = 0; s < blocksBinary.length; s++) {
@@ -174,7 +179,7 @@ export default class UnionRaiderSetting2 {
                             // const listByType = this.blocksBinary[k]
                             const listByType = this.blocksBinary[curShuffleIdx[k]]
                             for (let l = 0; l < listByType.length; l++) {
-                                if (i===0 && j===0){
+                                if (i === 0 && j === 0) {
                                     console.log('i=', i, ', j=', j, ', blankTF=', blankTF)
                                 }
                                 const blockTypeRotateBinary = listByType[l]
@@ -200,6 +205,8 @@ export default class UnionRaiderSetting2 {
                             if (matchTF) { break }
                         }
                     }
+                    const endScan = performance.now()
+                    console.log('scan time = ', endScan - startScan, 'i=', i, ',j=', j, ', dummysize = ', blockDummy.length)
                     // 하위 재귀함수에서 실패한 케이스와 현재 함수에서 매칭되는게 없는 케이스를 구분해야함.
                     // 모든 소유한 블록을 스캔했는데 매칭되는게 없다면 상태를 저장하지 않고 상위 재귀함수 복귀
                 }
@@ -209,6 +216,7 @@ export default class UnionRaiderSetting2 {
             }
             if (blankTF) { break }
         }
+
         if (!matchTF && blankTF) { // 뒤로가기
             curTable.length = 0
             curBlocksCount.length = 0
@@ -314,7 +322,7 @@ export default class UnionRaiderSetting2 {
         let block = []
         let visit = start
         table[start[0][0]][start[0][1]] = visitValue
-        
+
         while (visit.length > 0) {
             let [crow, ccol] = visit.shift()
             block.push([crow, ccol])
@@ -331,30 +339,27 @@ export default class UnionRaiderSetting2 {
     }
 
     checkFittable(blocksCount, targetSum) {
-        let numList = []
+        let numMap = {}
         let numBlockElem = 0
         for (let i = 0; i < blocksCount.length; i++) {
-            const blockCount = blocksCount[i]
-            for (let j = 0; j < blockCount; j++) {
-                numList.push(this.blocksSize[i])
-            }
+            numMap[this.blocksSize[i]] = blocksCount[i]
+            
             numBlockElem += blocksCount[i] * this.blocksSize[i]
         }
-        console.log('현재 블록덩어리의 산정공간 : ', targetSum, ', 소유한 블록리스트 : ', numList, ', 블록원자단위 개수:', numBlockElem)
+        console.log('현재 블록덩어리의 산정공간 : ', targetSum, ', 소유한 블록리스트 : ', numMap, ', 블록원자단위 개수:', numBlockElem)
         // 모든 블록 길이의 합이 더미사이즈 보다 작거나 같다면 가능한것으로 판단할것
-        if (numBlockElem === 138) {
-            console.log('test')
-        }
         let sum = 0
-        numList.forEach((v) => {
-            sum += v
-        })
+        let keyList = Object.keys(numMap)
+        for (let i = 0; i < keyList.length; i++) {
+            const key = parseInt(keyList[i])
+            sum += key * numMap[key]
+        }
         if (sum <= targetSum) {
             console.log('table space is enough')
             return true
         }
         let cache = new Map()
-        const result = this.dp(targetSum, numList, cache)
+        const result = this.dp2(targetSum, numMap, cache)
         console.log('dp result = ', result);
         if (result) {
             return true
@@ -370,12 +375,13 @@ export default class UnionRaiderSetting2 {
             sum += v
         })
         if (sum <= targetSum) {
-            console.log('remian table space is enough')
+            console.log('table space is enough')
             return true
         }
         let cache = new Map()
+        // const result = this.dp2(targetSum, numList, numCount, cache)
         const result = this.dp(targetSum, numList, cache)
-        // console.log('dp result = ', result);
+        console.log('dp result = ', result);
         if (result) {
             return true
         } else {
@@ -408,8 +414,11 @@ export default class UnionRaiderSetting2 {
 
         for (let i = 0; i < numList.length; i++) {
             let copyNumList = JSON.parse(JSON.stringify(numList))
-            copyNumList.slice(i, 1)
-            const resultInner = this.dp(targetSum - numList[i], copyNumList, cacheMap)
+            let curValue = copyNumList.splice(i, 1)
+            if (i === 24) {
+                console.log('test')
+            }
+            const resultInner = this.dp(targetSum - curValue, copyNumList, cacheMap)
             // null 넘어왔다면 경우의 수 조합이 없는것으로 간주하고 넘어가기
             if (!resultInner) {
                 continue
@@ -418,9 +427,115 @@ export default class UnionRaiderSetting2 {
             resultInner.forEach((v) => {
                 result.push(v)
             })
-            result.push(numList[i])
+            result.push(curValue)
             if (cacheMap.has(targetSum)) {
-                cacheMap[targetSum].push(result)
+                cacheMap[targetSum].add(result.sort())
+            } else {
+                cacheMap[targetSum] = new Set(result)
+            }
+            let resultCheck = 0;
+            result.forEach((v) => {
+                resultCheck += v
+            })
+            return result
+        }
+        // 다 돌았는데도 반환되는게 없으면 null 반환
+        return null
+    }
+
+
+    /**
+     * 
+     * @param {*} numMap  key : 블록사이즈 , value : 블록의 개수
+     * @param {*} targetSum 
+     * @returns 
+     */
+    checkFittableTest2(numMap, targetSum) {
+        // 모든 블록 길이의 합이 더미사이즈 보다 작거나 같다면 가능한것으로 판단할것
+        let sum = 0
+        let keyList = Object.keys(numMap)
+        for (let i = 0; i < keyList.length; i++) {
+            const key = parseInt(keyList[i])
+            sum += key * numMap[key]
+        }
+        if (sum <= targetSum) {
+            console.log('table space is enough')
+            return true
+        }
+        let cache = new Map()
+        const result = this.dp2(targetSum, numMap, cache)
+        console.log('dp result = ', result);
+        if (result) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    // cache :  6 : [1,2,3] 과 같이 map으로 활용
+    dp2(targetSum, numMap, cacheMap) {
+        if (targetSum < 0) {
+            return null
+        } else if (targetSum === 0) {
+            return new Map()
+        }
+
+        const numKeyList = Object.keys(numMap)
+        if (targetSum in cacheMap) {
+            let usable = false
+            let cacheList = cacheMap[targetSum]
+            let usableCache = null;
+            for (let i = 0; i < cacheList.length; i++) {
+                const cache = cacheList[i]
+                const cacheKeyList = Object.keys(cache)
+                for (let j = 0; j < cacheKeyList.length; j++) {
+                    const cacheKey = parseInt(cacheKeyList[i])
+                    if (cacheKey in numMap && numMap[cacheKey] >= cache[cacheKey]) {
+                        usable = true
+                        usableCache = cache
+                    }
+                }
+            }
+            if (usable) { return usableCache }
+        }
+
+        for (let i = 0; i < numKeyList.length; i++) {
+            const num = parseInt(numKeyList[i])
+            if (numMap[num] === 0) {
+                continue
+            }
+            let copyNumMap = JSON.parse(JSON.stringify(numMap))
+            copyNumMap[num] = copyNumMap[num] - 1
+            
+            const resultInner = this.dp2(targetSum - num, copyNumMap, cacheMap)
+            // null 넘어왔다면 경우의 수 조합이 없는것으로 간주하고 넘어가기
+            if (!resultInner) {
+                continue
+            }
+            let result = {}
+            result[num] = 1
+            // console.log('result type = ',typeof(result))
+
+            let resultInnerKeyList = Object.keys(resultInner)
+            for(let j=0; j<resultInnerKeyList.length; j++){
+                let key = parseInt(resultInnerKeyList[j])
+                if (key in result) {
+                    result[key] += resultInner[key]
+                } else {
+                    result[key] = resultInner[key]
+                }
+            }
+
+            if (targetSum in cacheMap) {
+                let exist = false
+                cacheMap[targetSum].forEach((cache) => {
+                    if (JSON.stringify(cache) === JSON.stringify(result)) {
+                        exist = true
+                    }
+                })
+                if (!exist) {
+                    cacheMap[targetSum].push(result)
+                }
             } else {
                 cacheMap[targetSum] = [result]
             }
@@ -430,7 +545,34 @@ export default class UnionRaiderSetting2 {
         return null
     }
 
+    testMapSorting() {
+        const map1 = { 1: 20, 2: 40 }
+        const map2 = { 2: 40, 1: 20 }
+        if (JSON.stringify(map1) === JSON.stringify(map2)) { // 같음.
+            console.log('no regards order same')
+        }
 
+        console.log(JSON.stringify(map1), ': ', JSON.stringify(map2))
+        if (map1 === map2) { // 같지 않음.
+            console.log('ordering same')
+        }
+        let map1keyList = Object.keys(map1)
+        for (let i = 0; i < map1keyList.length; i++) {
+            console.log('key=', map1keyList[i], ', value = ', map1[map1keyList[i]])
+        }
+    }
+
+    testMapNullCheck() {
+        const map1 = {}
+        if (!map1) {  // 있는것으로 간주.
+            console.log('map is empty')
+        }
+        const map1KeyList = Object.keys(map1) 
+        console.log('map key list = ',map1KeyList)  // Array(0)
+    }
+
+
+    
 
 
 
