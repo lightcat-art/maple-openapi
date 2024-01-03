@@ -105,7 +105,7 @@ export default class UnionRaiderSetting2 {
 
     classify() {
         let domiBlocks = []
-        const scanTF = this.scan(this.table, this.blocks, this.blocksBinary, this.blocksCount, domiBlocks)
+        const scanTF = this.scan(this.table, this.blocksCount, domiBlocks)
         console.log('union classify :', scanTF)
     }
 
@@ -117,7 +117,7 @@ export default class UnionRaiderSetting2 {
      * @param {*} blocksCount 
      * @param {*} domiBlocks 
      */
-    scan(table, blocks, blocksBinary, blocksCount, domiBlocks) {
+    scan(table, blocksCount, domiBlocks) {
         let matchTF = false
 
         // 남아있는 블럭 개수 체크
@@ -130,8 +130,6 @@ export default class UnionRaiderSetting2 {
         if (!remainBlocksTF) {
             matchTF = true
             if (!this.resultRecordTF) {
-                this.resultBlocks = blocks
-                this.resultBlocksBinary = blocksBinary
                 this.resultBlocksCount = blocksCount
                 this.resultTable = table
                 this.resultDomiBlocks = domiBlocks
@@ -142,8 +140,6 @@ export default class UnionRaiderSetting2 {
 
 
         let curTable = JSON.parse(JSON.stringify(table))
-        let curBlocks = JSON.parse(JSON.stringify(blocks))
-        let curBlocksBinary = JSON.parse(JSON.stringify(blocksBinary))
         let curBlocksCount = JSON.parse(JSON.stringify(blocksCount))
         let curDomiBlocks = JSON.parse(JSON.stringify(domiBlocks))
 
@@ -172,12 +168,12 @@ export default class UnionRaiderSetting2 {
                         // }
                         // shuffleIdx.shuffle()
                         // 블록 사이즈 종류 회전타입별로 하나씩 스캔
-                        for (let k = 0; k < blocksBinary.length; k++) {
-                            if (blocksCount[k] === 0) { // 개수가 0인 블록은 사용하지 않기.
+                        for (let k = 0; k < this.blocksBinary.length; k++) {
+                            if (curBlocksCount[k] === 0) { // 개수가 0인 블록은 사용하지 않기.
                             // if (blocksCount[shuffleIdx[k]] === 0) { // 개수가 0인 블록은 사용하지 않기.
                                 continue
                             }
-                            const listByType = blocksBinary[k]
+                            const listByType = this.blocksBinary[k]
                             // const listByType = blocksBinary[shuffleIdx[k]]
                             for (let l = 0; l < listByType.length; l++) {
                                 if (i===0 && j===0){
@@ -191,16 +187,12 @@ export default class UnionRaiderSetting2 {
                                     curBlocksCount[k] -= 1
                                     // curBlocksCount[shuffleIdx[k]] -= 1
 
-                                    matchTF = this.scan(curTable, curBlocks, curBlocksBinary, curBlocksCount, curDomiBlocks)
+                                    matchTF = this.scan(curTable, curBlocksCount, curDomiBlocks)
                                     if (!matchTF) { // 유니온 배치판 및 점령블록 등 오브젝트 원래대로 되돌려놓기
                                         curTable.length = 0
-                                        curBlocks.length = 0
-                                        curBlocksBinary.length = 0
                                         curBlocksCount.length = 0
                                         curDomiBlocks.length = 0
                                         curTable = JSON.parse(JSON.stringify(table))
-                                        curBlocks = JSON.parse(JSON.stringify(blocks))
-                                        curBlocksBinary = JSON.parse(JSON.stringify(blocksBinary))
                                         curBlocksCount = JSON.parse(JSON.stringify(blocksCount))
                                         curDomiBlocks = JSON.parse(JSON.stringify(domiBlocks))
                                     }
@@ -221,8 +213,6 @@ export default class UnionRaiderSetting2 {
         }
         if (!matchTF && blankTF) { // 뒤로가기
             curTable.length = 0
-            curBlocks.length = 0
-            curBlocksBinary.length = 0
             curBlocksCount.length = 0
             curDomiBlocks.length = 0
             return false
@@ -231,8 +221,6 @@ export default class UnionRaiderSetting2 {
             // 빈칸이 아예 없는 경우. (마지막까지 모두 빈칸을 체크했는데 없으면 테이블상태를 저장하고 재귀함수 종료)
             // OR  하위함수에서부터 matching이 모두다 완료된 경우
             if (!this.resultRecordTF) {
-                this.resultBlocks = curBlocks
-                this.resultBlocksBinary = curBlocksBinary
                 this.resultBlocksCount = curBlocksCount
                 this.resultTable = curTable
                 this.resultDomiBlocks = curDomiBlocks
