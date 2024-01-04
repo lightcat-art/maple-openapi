@@ -248,33 +248,48 @@ export default class UnionRaiderSetting2 {
         const startRowIdx = row - (this.blockType.limitBlockLength - 1)
         // const startRowIdx = row
         const startColIdx = col - (this.blockType.limitBlockLength - 1)
-        let sameTF = false
+
+        const endRowIdx = row
+        const endColIdx = col
+
+        
         let result = []
-        for (let i = startRowIdx; i <= row; i++) {
-            for (let j = startColIdx; j <= col; j++) {
-                // if (i < 0 || j < 0 ||
-                //     (i + (this.blockType.limitBlockLength - 1)) >= curTable.length ||
-                //     (j + (this.blockType.limitBlockLength - 1)) >= curTable[0].length) {
-                //     continue
-                // }
-                let regionBinary = []
+        for (let i = startRowIdx; i <= endRowIdx; i++) {
+            for (let j = startColIdx; j <= endColIdx; j++) {
+                /**
+                    한번 비교할때 테이블 배열은 이미 만들어져있고 따라서 배열복사가 필요없음
+                    정해진 index (25개) 에 대해서 &연산 시 바로바로 해당 블록원소와 같은지 아닌지 체크 / 다르다면 블록이 들어가지 않는 모양이므로
+                    다음 스캔영역으로 넘어감.
+                 */
+
+
+                let sameTF = true
+                // let regionBinary = []
                 let blocksAbsCoord = [] // 블록의 절대좌표
+                //5x5 판을 스캔한다
                 for (let k = 0; k < this.blockType.limitBlockLength; k++) {
                     for (let l = 0; l < this.blockType.limitBlockLength; l++) {
+                        let blockBinaryValue = blocksBinary[k * 5 + l]
+                        let regionValue = -1
                         if ((i + k) < 0 || (j + l) < 0 || (i + k) >= curTable.length
                             || (j + l) >= curTable[0].length) {
-                            regionBinary.push(0)
+                            // 영역밖위범위가 스캔될때는 0으로 인식
+                            regionValue = 0
                         } else {
-                            regionBinary.push(curTable[i + k][j + l])
+                            regionValue = curTable[i + k][j + l]
                         }
-
+                        if ((blockBinaryValue & regionValue) !== blockBinaryValue) {
+                            // 블록이 있어야할 공간에 유니온 배치판이 막혀있는 경우임.
+                            sameTF = false
+                        }
+                        if (!sameTF) { break }
                         // 블록의 절대좌표 미리 저장
-                        if (blocksBinary[k * 5 + l] === 1) {
+                        if (blockBinaryValue === 1) {
                             blocksAbsCoord.push([i + k, j + l])
                         }
                     }
+                    if (!sameTF) { break }
                 }
-                sameTF = this.compareBinary(regionBinary, blocksBinary)
                 if (sameTF) {
                     result = blocksAbsCoord
                     // 매칭되면 유니온 배치판 점령도 업데이트
@@ -347,7 +362,7 @@ export default class UnionRaiderSetting2 {
             } else {
                 numMap[this.blocksSize[i]] = blocksCount[i]
             }
-            
+
             numBlockElem += blocksCount[i] * this.blocksSize[i]
         }
         console.log('현재 블록덩어리의 산정공간 : ', targetSum, ', 소유한 블록리스트 : ', numMap, ', 블록원자단위 개수:', numBlockElem)
@@ -510,7 +525,7 @@ export default class UnionRaiderSetting2 {
             }
             let copyNumMap = JSON.parse(JSON.stringify(numMap))
             copyNumMap[num] = copyNumMap[num] - 1
-            
+
             const resultInner = this.dp2(targetSum - num, copyNumMap, cacheMap)
             // null 넘어왔다면 경우의 수 조합이 없는것으로 간주하고 넘어가기
             if (!resultInner) {
@@ -521,7 +536,7 @@ export default class UnionRaiderSetting2 {
             // console.log('result type = ',typeof(result))
 
             let resultInnerKeyList = Object.keys(resultInner)
-            for(let j=0; j<resultInnerKeyList.length; j++){
+            for (let j = 0; j < resultInnerKeyList.length; j++) {
                 let key = parseInt(resultInnerKeyList[j])
                 if (key in result) {
                     result[key] += resultInner[key]
@@ -548,37 +563,4 @@ export default class UnionRaiderSetting2 {
         // 다 돌았는데도 반환되는게 없으면 null 반환
         return null
     }
-
-    testMapSorting() {
-        const map1 = { 1: 20, 2: 40 }
-        const map2 = { 2: 40, 1: 20 }
-        if (JSON.stringify(map1) === JSON.stringify(map2)) { // 같음.
-            console.log('no regards order same')
-        }
-
-        console.log(JSON.stringify(map1), ': ', JSON.stringify(map2))
-        if (map1 === map2) { // 같지 않음.
-            console.log('ordering same')
-        }
-        let map1keyList = Object.keys(map1)
-        for (let i = 0; i < map1keyList.length; i++) {
-            console.log('key=', map1keyList[i], ', value = ', map1[map1keyList[i]])
-        }
-    }
-
-    testMapNullCheck() {
-        const map1 = {}
-        if (!map1) {  // 있는것으로 간주.
-            console.log('map is empty')
-        }
-        const map1KeyList = Object.keys(map1) 
-        console.log('map key list = ',map1KeyList)  // Array(0)
-    }
-
-
-    
-
-
-
-
 }

@@ -30,7 +30,7 @@ class BlockType {
             // '#ffffff'
         ]
         this.blockTypeColor = [
-            '#030000',
+            '#330707',
             '#5f3535',
             '#805858',
             '#6b1111',
