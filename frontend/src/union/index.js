@@ -9,7 +9,7 @@ import { BasicTable } from './Table';
 
 export const UnionRaider = () => {
   // const [charOverall, setCharOverall] = React.useState('-')
-  const param = { nickname: '겨울' }
+  const param = { nickname: '뉴비섀' }
   const blockType = new BlockType();
   const defaultTable =
     // [
