@@ -11,12 +11,10 @@ export default class UnionRaiderSetting2 {
      * @param {*} setTable : 실시간 table 렌더링을 위함
      * @param {*} blockType : blockTypeInstance 활용
      */
-    constructor(name, raider, table, setTable) {
-        this.name = name
+    constructor(raider, table) {
         this.raider = raider // raider는 기본적으로 unionRaiderResponse의 unionBlock으로 받는것이 원칙.
         this.table = table
         this.copyTable = JSON.parse(JSON.stringify(table))
-        this.setTable = setTable;
         this.dominatedBlocks = []
         this.filledCount = 0;
         this.blockType = new BlockType();
