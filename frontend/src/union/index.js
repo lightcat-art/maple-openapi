@@ -6,34 +6,35 @@ import UnionRaiderSetting2 from './UnionRaiderSetting2';
 import BlockType from './BlockType';
 import { shuffle } from '../util/util'
 import { BasicTable } from './Table';
+import WebWorker from '../util/worker'
+import worker from './UnionWorker'
+
+// let unionWorker = new WebWorker(worker)
+const unionWorkerContext = React.createContext(new WebWorker(worker))
+
+const handleClick = (cnt, unionWorker, setResult) => {
+  // Send a message to the worker
+
+  if (unionWorker) {
+    unionWorker.postMessage(cnt); // Send the number 5 to the worker
+    unionWorker.addEventListener('message', (event) => {
+      const sortedList = event.data;
+      // console.log('click sortedList = ', sortedList)
+      setResult(sortedList);
+    });
+  }
+
+  return () => {
+    unionWorker.terminate()
+    console.log('worker terminate')
+  }
+};
 
 export const UnionRaider = () => {
   // const [charOverall, setCharOverall] = React.useState('-')
   const param = { nickname: '뉴비섀' }
   const blockType = new BlockType();
   const defaultTable =
-    // [
-    //   [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0],
-    //   [0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0],
-    //   [0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0],
-    //   [0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0],
-    //   [0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0],
-    //   [0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0],
-    //   [0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0],
-    //   [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0],
-    // ]
     [
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -56,36 +57,36 @@ export const UnionRaider = () => {
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]
-    // [
-    //   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    //   [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    //   [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    //   [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
-    //   [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
-    //   [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    //   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    // ]
+  // [
+  //   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+  //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+  //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+  //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+  //   [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+  //   [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+  //   [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+  //   [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+  //   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  // ]
 
-    // [
-    //   [1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1],]
+  // [
+  //   [1, 1, 1, 1, 1, 1],
+  //   [1, 1, 1, 1, 1, 1],
+  //   [1, 1, 1, 1, 1, 1],
+  //   [1, 1, 1, 1, 1, 1],
+  //   [1, 1, 1, 1, 1, 1],
+  //   [1, 1, 1, 1, 1, 1],]
 
   // [
   //   [1,1,1,1,1],
@@ -93,55 +94,47 @@ export const UnionRaider = () => {
   //   [1,1,1,1,1],
   //   [1,1,1,1,1],
   //   [1,1,1,1,1]]
+
+
   const [table, setTable] = React.useState(defaultTable)
   const defaultTableStyle = blockType.getDefaultTableStyle(defaultTable)
   const [tableStyle, setTableStyle] = React.useState(defaultTableStyle)
+  const [testInput, setTestInput] = React.useState(1)
+  const [result, setResult] = React.useState(null);
+  // const [worker, setWorker] = React.useState(null);
+  const unionWorker = React.useContext(unionWorkerContext)
+  // let users = [1,3,4,2,2,4,5]
   React.useEffect(() => {
     axios.get('/api/char/overall', { params: param })
       .then(response => {
         console.log(response.data)
-        // 0이 유니온블록을 채워야 하는곳 , -1은 채우지 못하는 곳 or 이미 채워진곳
-
-        // const setting = new UnionRaiderSetting(param.nickname, response.data.userUnionRaiderResponse.unionBlock.shuffle(),
-        //   JSON.parse(JSON.stringify(table)), setTable);
-        // setting.parseRaider();
-        // console.log('parsed blocks=', setting.parsedBlocks,
-        //   ', length =', setting.parsedBlocks.length);
-        // console.log('dominated blocks = ', setting.classify())
-        // // console.log('filled count=', setting.filledCount)
-        // // console.log('state table = ', table) //
-        // console.log('result table = ', setting.table)
-
-        // console.log('allBlockType=', blockType.allBlockType);
-        // setTableStyle(blockType.getTableStyle(setting.table))
-
-        const setting = new UnionRaiderSetting2(param.nickname, response.data.userUnionRaiderResponse.unionBlock,
-          JSON.parse(JSON.stringify(table)), setTable)
-
-        // console.log('fittable result= ', setting.checkFittableTest2({4:31, 5:2}, 117))
-        // console.log('fittable result= ', setting.checkFittableTest2({4:32, 5:2}, 117))
-
-        setting.parseRaider()
-        console.log('parse blocks Size= ', setting.blocksSize)
-        console.log('parse blocks= ', setting.blocks)
-        console.log('parse blocks binary = ', setting.blocksBinary)
-        console.log('parse count = ', setting.blocksCount)
-        setting.classify()
-        console.log('result count = ', setting.resultBlocksCount)
-        console.log('result table= ', setting.resultTable)
-        console.log('result domiBlocks=', setting.resultDomiBlocks)
-        setting.setTableStyleValue()
-        setTableStyle(blockType.getTableStyle(setting.resultTableStyleValue))
-
-
       })
       .catch(error => console.log(error))
+
+      // setTestInput(1)
+    // let users = [1,3,4,2,2,4,5]
+    // unionWorker = new WebWorker(worker)
+    unionWorker.postMessage(1);
+    unionWorker.addEventListener('message', (event) => {
+      const sortedList = event.data;
+      // console.log('listener executing')
+      setResult(sortedList);
+    });
+
+    return () => {
+      unionWorker.terminate()
+      console.log('worker terminate')
+    }
   }, []);
+
+
 
 
   return (
     <div>
       <BasicTable value={table} style={tableStyle}></BasicTable>
+      {/* <button onClick={handleClick(testInput, unionWorker, setResult)}>Calculate in Web Worker</button> */}
+      <div>{result}</div>
     </div>
   );
 }
