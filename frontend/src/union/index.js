@@ -2,7 +2,6 @@ import './index.css'
 import * as React from 'react';
 import axios from 'axios';
 import UnionRaiderSetting from './UnionRaiderSetting';
-import UnionRaiderSetting2 from './UnionRaiderSetting2';
 import BlockType from './BlockType';
 import { shuffle } from '../util/util'
 import { BasicTable } from './Table';
@@ -12,9 +11,10 @@ import worker from './UnionWorker'
 // let unionWorker = new WebWorker(worker)
 const unionWorkerContext = React.createContext(new WebWorker(worker))
 
+
 export const UnionRaider = () => {
   // const [charOverall, setCharOverall] = React.useState('-')
-  const param = { nickname: '뉴비섀' }
+  const param = { nickname: '마하포드' }
   const blockType = new BlockType();
   const defaultTable =
     [
@@ -88,7 +88,8 @@ export const UnionRaider = () => {
   const [resetButtonHidden, setResetButtonHidden] = React.useState(true)
   const [responseUnionBlock, setResponseUnionBlock] = React.useState([])
 
-
+  
+  const unionWorker = React.useContext(unionWorkerContext)
   const handleFormSubmit = (e) => {
     unionWorker.postMessage({unionBlock: responseUnionBlock, table: table, cnt: 1})
     setSubmitButtonDisabled(true)
@@ -123,7 +124,6 @@ export const UnionRaider = () => {
     setResult(null)
   }
 
-  const unionWorker = React.useContext(unionWorkerContext)
   const requestParam = {}
   // let users = [1,3,4,2,2,4,5]
   React.useEffect(() => {
@@ -131,20 +131,22 @@ export const UnionRaider = () => {
       .then(response => {
         console.log(response.data)
         setResponseUnionBlock(response.data.userUnionRaiderResponse.unionBlock)
+        // const setting = new UnionRaiderSetting2(response.data.userUnionRaiderResponse.unionBlock, JSON.parse(JSON.stringify(table)))
       })
       .catch(error => console.log(error))
 
-    // unionWorker = new WebWorker(worker)
-    // unionWorker.postMessage(1);
+
     
 
     unionWorker.addEventListener('message', (event) => {
-      const sortedList = event.data;
-      // console.log('listener executing')
-      setResult(sortedList);
+      const result = event.data;
+      console.log('listener executing')
+      console.log('result = ', result)
+      // setResult(sortedList);
     });
 
-    // const setting = new UnionRaiderSetting2(e.data.unionBlock, JSON.parse(JSON.stringify(e.data.table)))
+
+
     // setting.parseRaider()
     // console.log('parse blocks Size= ', setting.blocksSize)
     // console.log('parse blocks= ', setting.blocks)
