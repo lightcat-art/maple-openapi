@@ -43,7 +43,10 @@ export default () => {
     console.log('result count = ', setting.resultBlocksCount)
     console.log('result table= ', setting.resultTable)
     console.log('result domiBlocks=', setting.resultDomiBlocks)
-    postMessage({table: setting.resultTable, domiBlocks: setting.resultDomiBlocks})
+    setting.setTableStyleValue()
+    const tableStyle = setting.getTableStyle(setting.resultTableStyle)
+
+    postMessage({ table: tableStyle })
 
     console.log('worker end')
 
@@ -90,7 +93,10 @@ export default () => {
     }
     addFilledCount() {
       this.filledCount = this.filledCount + 1
-    }  
+    }
+    addProcessCount() {
+      this.processCount = this.processCount + 1
+    }
 
     parseRaider() {
       console.log('parseRaider start')
@@ -138,7 +144,7 @@ export default () => {
     }
 
     setTableStyleValue() {
-      this.resultTableStyleValue = JSON.parse(JSON.stringify(this.resultTable))
+      this.resultTableStyle = JSON.parse(JSON.stringify(this.resultTable))
       for (let i = 0; i < this.resultDomiBlocks.length; i++) {
         const domiBlock = this.resultDomiBlocks[i]
         const direction = this.blockType.checkDirection(domiBlock)
@@ -148,9 +154,13 @@ export default () => {
           let styleValue = 0
           styleValue += direction[j]
           styleValue += color
-          this.resultTableStyleValue[v[0]][v[1]] = styleValue
+          this.resultTableStyle[v[0]][v[1]] = styleValue
         }
       }
+    }
+
+    getTableStyle() {
+      return this.blockType.getTableStyle(this.resultTableStyle)
     }
 
     classify() {
@@ -219,9 +229,12 @@ export default () => {
               // for (let s = 0; s < blocksBinary.length; s++) {
               //     shuffleIdx.push(s)
               // }
-              // shuffleIdx.shuffle()
+              // curShuffleIdx.shuffle()
               const idx = curShuffleIdx.shift()
               curShuffleIdx.push(idx)
+              if (i===5 && j===0) {
+                console.log('test')
+              }
               // 블록 사이즈 종류 회전타입별로 하나씩 스캔
               for (let k = 0; k < curShuffleIdx.length; k++) {
                 // if (curBlocksCount[k] === 0) { // 개수가 0인 블록은 사용하지 않기.
@@ -238,6 +251,16 @@ export default () => {
                     // 보유블럭 오브젝트들에서 점령된 블록 제거
                     // curBlocksCount[k] -= 1
                     curBlocksCount[curShuffleIdx[k]] -= 1
+
+                    // 실시간 렌더링 하기위함.
+                    this.addProcessCount()
+                    this.resultTable = curTable
+                    this.resultDomiBlocks = curDomiBlocks
+                    this.setTableStyleValue()
+                    // this.getTableStyle()
+                    if (this.processCount % 1 === 0) {
+                      postMessage({ table: this.getTableStyle() })
+                    }
 
                     matchTF = this.scan(curTable, curBlocksCount, curDomiBlocks, curShuffleIdx)
                     if (!matchTF) { // 유니온 배치판 및 점령블록 등 오브젝트 원래대로 되돌려놓기
@@ -427,7 +450,7 @@ export default () => {
         return true
       }
       let cache = new Map()
-      const result = this.dp2(targetSum, numMap, cache)
+      const result = this.dp(targetSum, numMap, cache)
       // console.log('dp result = ', result);
       if (result) {
         return true
@@ -436,89 +459,13 @@ export default () => {
       }
     }
 
-    checkFittableTest(numList, targetSum) {
-      // 모든 블록 길이의 합이 더미사이즈 보다 작거나 같다면 가능한것으로 판단할것
-      let sum = 0
-      numList.forEach((v) => {
-        sum += v
-      })
-      if (sum <= targetSum) {
-        console.log('table space is enough')
-        return true
-      }
-      let cache = new Map()
-      // const result = this.dp2(targetSum, numList, numCount, cache)
-      const result = this.dp(targetSum, numList, cache)
-      console.log('dp result = ', result);
-      if (result) {
-        return true
-      } else {
-        return false
-      }
-    }
-
-    // cache :  6 : [1,2,3] 과 같이 map으로 활용
-    dp(targetSum, numList, cacheMap) {
-      if (targetSum < 0) {
-        return null
-      } else if (targetSum === 0) {
-        return []
-      }
-
-      if (cacheMap.has(targetSum)) {
-        let usable = true
-        let cacheList = cacheMap[targetSum]
-        cacheList.forEach((cache) => {
-          cache.forEach((v) => {
-            if (!numList.includes(v)) {
-              usable = false
-            }
-          })
-
-        })
-        if (usable) { return cacheList }
-      }
-
-
-      for (let i = 0; i < numList.length; i++) {
-        let copyNumList = JSON.parse(JSON.stringify(numList))
-        let curValue = copyNumList.splice(i, 1)
-        if (i === 24) {
-          console.log('test')
-        }
-        const resultInner = this.dp(targetSum - curValue, copyNumList, cacheMap)
-        // null 넘어왔다면 경우의 수 조합이 없는것으로 간주하고 넘어가기
-        if (!resultInner) {
-          continue
-        }
-        let result = []
-        resultInner.forEach((v) => {
-          result.push(v)
-        })
-        result.push(curValue)
-        if (cacheMap.has(targetSum)) {
-          cacheMap[targetSum].add(result.sort())
-        } else {
-          cacheMap[targetSum] = new Set(result)
-        }
-        let resultCheck = 0;
-        result.forEach((v) => {
-          resultCheck += v
-        })
-        return result
-      }
-      // 다 돌았는데도 반환되는게 없으면 null 반환
-      return null
-    }
-
-
     /**
      * 
      * @param {*} numMap  key : 블록사이즈 , value : 블록의 개수
      * @param {*} targetSum 
      * @returns 
      */
-    checkFittableTest2(numMap, targetSum) {
+    checkFittableTest(numMap, targetSum) {
       // 모든 블록 길이의 합이 더미사이즈 보다 작거나 같다면 가능한것으로 판단할것
       let sum = 0
       let keyList = Object.keys(numMap)
@@ -531,7 +478,7 @@ export default () => {
         return true
       }
       let cache = new Map()
-      const result = this.dp2(targetSum, numMap, cache)
+      const result = this.dp(targetSum, numMap, cache)
       console.log('dp result = ', result);
       if (result) {
         return true
@@ -541,7 +488,7 @@ export default () => {
     }
 
     // cache :  6 : [1,2,3] 과 같이 map으로 활용
-    dp2(targetSum, numMap, cacheMap) {
+    dp(targetSum, numMap, cacheMap) {
       if (targetSum < 0) {
         return null
       } else if (targetSum === 0) {
@@ -575,7 +522,7 @@ export default () => {
         let copyNumMap = JSON.parse(JSON.stringify(numMap))
         copyNumMap[num] = copyNumMap[num] - 1
 
-        const resultInner = this.dp2(targetSum - num, copyNumMap, cacheMap)
+        const resultInner = this.dp(targetSum - num, copyNumMap, cacheMap)
         // null 넘어왔다면 경우의 수 조합이 없는것으로 간주하고 넘어가기
         if (!resultInner) {
           continue
@@ -967,6 +914,32 @@ export default () => {
     }
 
   }
+
+  // Array의 prototype을 지정해주고, shuffle이라는 이름을 가진 함수를 생성
+  // 다차원배열이면 제일 앞에 존재하는 차원의 인덱스를 셔플
+  Array.prototype.shuffle = function () {
+    var length = this.length;
+
+    // 아래에서 length 후위 감소 연산자를 사용하면서 결국 0이된다.
+    // 프로그래밍에서 0은 false를 의미하기에 0이되면 종료.
+    while (length) {
+
+      // 랜덤한 배열 index 추출
+      var index = Math.floor((length--) * Math.random());
+
+      // 배열의 끝에서부터 0번째 아이템을 순차적으로 대입
+      var temp = this[length];
+
+      // 랜덤한 위치의 값을 맨뒤(this[length])부터 셋팅
+      this[length] = this[index];
+
+      // 랜덤한 위치에 위에 설정한 temp값 셋팅
+      this[index] = temp;
+    }
+
+    // 배열을 리턴해준다.
+    return this;
+  };
 }
 
 
