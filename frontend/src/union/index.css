@@ -18,3 +18,8 @@
     margin-right: auto;
     margin-top: 20vh;
 }
+
+.Selected{
+    background: rgb(177, 177, 177);
+    user-select: none;
+}
