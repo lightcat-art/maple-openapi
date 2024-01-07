@@ -9,8 +9,8 @@ import WebWorker from '../util/worker'
 import worker from './UnionWorker'
 
 // let unionWorker = new WebWorker(worker)
-const unionWorkerContext = React.createContext(new WebWorker(worker))
-
+// const unionWorkerContext = React.createContext(new WebWorker(worker))
+let unionWorker = new WebWorker().getUnionWorker(worker)
 
 export const UnionRaider = () => {
   // const [charOverall, setCharOverall] = React.useState('-')
@@ -89,9 +89,9 @@ export const UnionRaider = () => {
   const [responseUnionBlock, setResponseUnionBlock] = React.useState([])
 
   
-  const unionWorker = React.useContext(unionWorkerContext)
   const handleFormSubmit = (e) => {
     console.log('submit')
+    unionWorker = new WebWorker().getUnionWorker(worker)
     unionWorker.postMessage({unionBlock: responseUnionBlock, table: table, cnt: 1})
     setSubmitButtonDisabled(true)
     setPauseButtonHidden(false)
@@ -104,6 +104,7 @@ export const UnionRaider = () => {
   }
 
   const handleFormPause = (e) => {
+    // console.log('dispatcher event = ',unionWorker.dispatchEvent(new Event('stop')))
     setSubmitButtonDisabled(true)
     setPauseButtonHidden(true)
     setContinueButtonHidden(false)
@@ -118,8 +119,9 @@ export const UnionRaider = () => {
   }
 
   const handleFormReset = (e) => {
-    unionWorker.terminate()
-    // setTableStyle(defaultTableStyle)
+    new WebWorker().clearUnionWorker()
+    setTable(defaultTable)
+    setTableStyle(defaultTableStyle)
     console.log('worker terminate')
     setSubmitButtonDisabled(false)
     setPauseButtonHidden(true)
@@ -141,13 +143,15 @@ export const UnionRaider = () => {
 
 
     
-
+    console.log('useEffect unionWorker = ', unionWorker)
     unionWorker.addEventListener('message', (event) => {
       const result = event.data;
       // console.log('listener executing')
       // console.log('result = ', result)
       setTableStyle(result.table);
+
     });
+
 
 
 
@@ -163,11 +167,11 @@ export const UnionRaider = () => {
     // setting.setTableStyleValue()
     // setTableStyle(blockType.getTableStyle(setting.resultTableStyleValue))
 
-    return () => {
-      unionWorker.terminate()
-      console.log('worker terminate')
-    }
-  }, []);
+    // return () => {
+    //   unionWorker.terminate()
+    //   console.log('worker terminate')
+    // }
+  }, [unionWorker]);
 
 
   return (

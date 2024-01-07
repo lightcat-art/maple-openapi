@@ -1,37 +1,15 @@
 
-// if ('function' === typeof importScripts) {
-//   self.importScripts("efef.js") // eslint-disable-line no-restricted-globals
-// }
-// if (navigator.serviceWorker) {
-//   navigator.serviceWorker.register('src/union/UnionWorker.js', { scope: 'src/union' })
-//     .then(function(reg) {
-//       console.log('[Companion]', 'Service worker registered!');
-//     });
-// }
 export default () => {
   self.addEventListener('message', e => { // eslint-disable-line no-restricted-globals
     if (!e) return;
     let cnt = e.data.cnt;
+
     console.log('Received message from main thread : ', e.data)
     console.log('Received union block : ', e.data.unionBlock)
     console.log('Received table : ', e.data.table)
     console.log('Received cnt : ', e.data.cnt)
 
-    // console.log('Received unionRaider : ', JSON.parse(e.data.setting)
     console.log('union worker thread execute')
-
-    // console.log('setting = ',setting)
-    // while (true) {
-    //   // postMessage(cnt++);
-    //   cnt++
-    //   if (cnt % 98924 === 0) {
-    //     postMessage(cnt)
-    //   }
-    //   if (cnt >= 100000000) {
-    //     break
-    //   }
-    // }
-    // postMessage(cnt++);
 
     const setting = new UnionRaiderSetting(e.data.unionBlock, JSON.parse(JSON.stringify(e.data.table)))
     setting.parseRaider()
@@ -49,8 +27,8 @@ export default () => {
     postMessage({ table: tableStyle })
 
     console.log('worker end')
-
   })
+
 
 
   class UnionRaiderSetting {
@@ -232,7 +210,7 @@ export default () => {
               // curShuffleIdx.shuffle()
               const idx = curShuffleIdx.shift()
               curShuffleIdx.push(idx)
-              if (i===5 && j===0) {
+              if (i === 5 && j === 0) {
                 console.log('test')
               }
               // 블록 사이즈 종류 회전타입별로 하나씩 스캔
@@ -258,7 +236,7 @@ export default () => {
                     this.resultDomiBlocks = curDomiBlocks
                     this.setTableStyleValue()
                     // this.getTableStyle()
-                    if (this.processCount % 1 === 0) {
+                    if (this.processCount % 25 === 0) {
                       postMessage({ table: this.getTableStyle() })
                     }
 
