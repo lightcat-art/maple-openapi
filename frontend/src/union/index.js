@@ -94,9 +94,9 @@ export const UnionRaider = () => {
     unionWorker = new WebWorker().getUnionWorker(worker)
     unionWorker.postMessage({unionBlock: responseUnionBlock, table: table, cnt: 1})
     setSubmitButtonDisabled(true)
-    setPauseButtonHidden(false)
+    setPauseButtonHidden(true)
     setContinueButtonHidden(true)
-    setResetButtonHidden(true)
+    setResetButtonHidden(false)
     e.preventDefault() // event의 클릭 기본동작 방지
     // 유니온 배치 작업이 완료되었는지 체크후 에러로 보이는 상황이라면 버튼락 풀기
     // setButtonDisabled(false)
@@ -104,7 +104,6 @@ export const UnionRaider = () => {
   }
 
   const handleFormPause = (e) => {
-    // console.log('dispatcher event = ',unionWorker.dispatchEvent(new Event('stop')))
     setSubmitButtonDisabled(true)
     setPauseButtonHidden(true)
     setContinueButtonHidden(false)
@@ -143,7 +142,6 @@ export const UnionRaider = () => {
 
 
     
-    console.log('useEffect unionWorker = ', unionWorker)
     unionWorker.addEventListener('message', (event) => {
       const result = event.data;
       // console.log('listener executing')
@@ -151,6 +149,11 @@ export const UnionRaider = () => {
       setTableStyle(result.table);
 
     });
+
+    // unionWorker.addEventListener('stop', (event) => {
+    //   const result = event.data;
+    //   console.log('result = ', result)
+    // });
 
 
 

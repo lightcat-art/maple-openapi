@@ -9,8 +9,6 @@ export default () => {
     console.log('Received table : ', e.data.table)
     console.log('Received cnt : ', e.data.cnt)
 
-    console.log('union worker thread execute')
-
     const setting = new UnionRaiderSetting(e.data.unionBlock, JSON.parse(JSON.stringify(e.data.table)))
     setting.parseRaider()
     console.log('parse blocks Size= ', setting.blocksSize)
@@ -28,7 +26,6 @@ export default () => {
 
     console.log('worker end')
   })
-
 
 
   class UnionRaiderSetting {
