@@ -64,6 +64,7 @@ export default () => {
       this.resultDomiBlocks = null;
       this.resultRecordTF = false;
       this.resultTableStyle = null;
+
       console.log('test setting')
     }
     addFilledCount() {
@@ -119,7 +120,7 @@ export default () => {
     }
 
     setTableStyleValue() {
-      this.resultTableStyle = JSON.parse(JSON.stringify(this.resultTable))
+      this.resultTableStyle = JSON.parse(JSON.stringify(this.table))
       for (let i = 0; i < this.resultDomiBlocks.length; i++) {
         const domiBlock = this.resultDomiBlocks[i]
         const direction = this.blockType.checkDirection(domiBlock)
@@ -145,9 +146,194 @@ export default () => {
       for (let i = 0; i < this.blocksCount.length; i++) {
         shuffleIdx.push(i)
       }
-      const scanTF = this.scan(this.table, this.blocksCount, domiBlocks, shuffleIdx)
+      // const scanTF = this.scan(this.table, this.blocksCount, domiBlocks, shuffleIdx)
+      const scanResult = this.scanImprove(this.table, this.blocksCount, domiBlocks, shuffleIdx)
       console.timeEnd('classify')
-      console.log('union classify :', scanTF)
+      console.log('union classify :', scanResult)
+    }
+
+    scanImprove(table, blocksCount, domiBlocks, shuffleIdx) {
+
+      let matchTF = false
+
+      // 남아있는 블럭 개수 체크
+      let remainBlocksTF = false
+      blocksCount.forEach((typeCnt) => {
+        if (typeCnt !== 0) {
+          remainBlocksTF = true
+        }
+      })
+      if (!remainBlocksTF) {
+        // matchTF = true
+        if (!this.resultRecordTF) {
+          this.resultBlocksCount = blocksCount
+          this.resultTable = table
+          this.resultDomiBlocks = domiBlocks
+          this.resultRecordTF = true
+        }
+        return {blocksCount: blocksCount, domiBlocks: domiBlocks}
+      }
+
+
+      let curTable = JSON.parse(JSON.stringify(table))
+      let curBlocksCount = JSON.parse(JSON.stringify(blocksCount))
+      let curDomiBlocks = JSON.parse(JSON.stringify(domiBlocks))
+      let curShuffleIdx = JSON.parse(JSON.stringify(shuffleIdx))
+
+      
+      let savePointBlocksCount = JSON.parse(JSON.stringify(blocksCount))
+      let savePointDomiBlocks = JSON.parse(JSON.stringify(domiBlocks))
+
+
+      // matchTF 가 false가 의미하는것
+      // 1. 하위함수에서 매칭이 되지 않는 블록이 존재하여 현재함수에서 모든 케이스까지 트라이했는데 매칭되는 케이스가 없음
+
+      // 모든 블록더미를 bfs로 탐색
+      const blockDummyList = this.findAllBlockDummy(JSON.parse(JSON.stringify(table)))
+      // 작은 더미부터 돌린다.
+      /**
+       * for (블록더미 리스트) {
+       *  0. 테이블 빈칸 스캔
+       *  1. 블록더미와 소유블록 조합가능성 체크 - 조합이 되지 않는다면 아예 모든 스캔 취소하고 상위재귀함수로 복귀
+       *  2. 블록 회전타입별로 하나씩 체크
+       *  3. 맞는 회전타입이 있으면 점령도미블록에 넣고 재귀함수 선언
+       *  4. 
+       * }
+       */
+      const idxByDummySize = this.sortingByBlockDummySize(blockDummyList)
+
+
+      for (let m = 0; m < blockDummyList.length; m++) {
+        const blockDummy = blockDummyList[idxByDummySize[m][0]]
+        let dummyScanTable = this.createDummyRegionTable(table, blockDummy)
+        const savePointTable = JSON.parse(JSON.stringify(dummyScanTable))
+        const fittableTF = this.checkFittable(curBlocksCount, blockDummy.length)
+        if (fittableTF) {
+
+          let blankTF = false
+          for (let i = 0; i < dummyScanTable.length; i++) {
+            for (let j = 0; j < dummyScanTable[0].length; j++) {
+              
+              blankTF = this.blockType.checkTableBlank(dummyScanTable[i][j])
+              if (blankTF) {
+                curShuffleIdx.shuffle()
+                // const idx = curShuffleIdx.shift()
+                // curShuffleIdx.push(idx)
+                // 블록 사이즈 종류 회전타입별로 하나씩 스캔
+                for (let k = 0; k < curShuffleIdx.length; k++) {
+                  if (blocksCount[curShuffleIdx[k]] === 0) { // 개수가 0인 블록은 사용하지 않기.
+                    continue
+                  }
+                  const listByType = this.blocksBinary[curShuffleIdx[k]]
+                  for (let l = 0; l < listByType.length; l++) {
+                    const blockTypeRotateBinary = listByType[l]
+                    
+                    const result = this.scanInner(i, j, dummyScanTable, blockTypeRotateBinary) //매칭되면 유니온 배치판 업데이트 됨.
+                    if (result.length !== 0) {
+                      curDomiBlocks.push(result)
+                      // 보유블럭 오브젝트들에서 점령된 블록 제거
+                      // curBlocksCount[k] -= 1
+                      curBlocksCount[curShuffleIdx[k]] -= 1
+  
+                      // 실시간 렌더링 하기위함.
+                      this.addProcessCount()
+                      this.resultDomiBlocks = curDomiBlocks
+                      this.setTableStyleValue()
+                      if (this.processCount % 25 === 0) {
+                        postMessage({ table: this.getTableStyle() })
+                      }
+  
+                      let blocksInfo = this.scanImprove(dummyScanTable, curBlocksCount, curDomiBlocks, curShuffleIdx)
+                      if (!blocksInfo) { // 자식 함수에서 매칭실패로 판단되는 경우 유니온 배치판 및 점령블록 등 오브젝트 원래대로 되돌려놓기
+                        // 기본적으로 matchTF 가 false이므로 굳이 다시 세팅해줄 필요가 없음.
+                        dummyScanTable.length = 0
+                        curBlocksCount.length = 0
+                        curDomiBlocks.length = 0
+                        dummyScanTable = JSON.parse(JSON.stringify(savePointTable))
+                        curBlocksCount = JSON.parse(JSON.stringify(savePointBlocksCount))
+                        curDomiBlocks = JSON.parse(JSON.stringify(savePointDomiBlocks))
+                      } else {
+                        savePointBlocksCount = JSON.parse(JSON.stringify(blocksInfo['blocksCount']))
+                        savePointDomiBlocks = JSON.parse(JSON.stringify(blocksInfo['domiBlocks']))
+                        matchTF = true
+                      }
+                    }
+                    if (matchTF) { break }
+                  }
+                  if (matchTF) { break }
+                }
+                // 한번 빈칸을 스캔했으면 그다음빈칸은 자식 재귀함수에서 실행해야하므로 빠져나가기
+                break
+              }
+            }
+            if (blankTF) { break } // 한번 빈칸을 스캔했으면 그다음빈칸은 자식 재귀함수에서 실행해야하므로 빠져나가기
+          }
+        } else { // 어느 하나의 블록더미라도 조합가능성이 전혀 존재하지 않는 경우 매칭실패로 판단
+          matchTF = false
+        }
+
+        // 특정 더미 블록에서 딱 맞는 배치가 없다고 판단되는 경우 다음 블록더미를 스캔하지 않고 상위 재귀함수로 복귀
+        if (!matchTF) {
+          break
+        }
+      }
+
+      if (!matchTF) { // 뒤로가기
+        curTable.length = 0
+        curBlocksCount.length = 0
+        curDomiBlocks.length = 0
+        return null
+      }
+      else {
+        // 분기된 더미에서 다 찾을 경우도 포함이므로 굳이 result에 저장할 필요가 없음.
+        // if (!this.resultRecordTF) {
+        //   this.resultBlocksCount = curBlocksCount
+        //   this.resultTable = curTable
+        //   this.resultDomiBlocks = curDomiBlocks
+        //   this.resultRecordTF = true
+        // }
+        return { blocksCount: savePointBlocksCount, domiBlocks: savePointDomiBlocks }
+      }
+    }
+
+
+
+    findAllBlockDummy(table) {
+      let blockDummyList = []
+      for (let i = 0; i < table.length; i++) {
+        for (let j = 0; j < table[0].length; j++) {
+          if (table[i][j] !== this.blockType.closeTableValue) {
+            const start = [[i, j]]
+            const blockDummy = this.bfs(start, table, this.blockType.closeTableValue)
+            blockDummyList.push(blockDummy)
+          }
+        }
+      }
+      return blockDummyList
+    }
+
+    /**
+     * 블록더미사이즈 오름차순으로 배열인덱스정보를 리턴
+     * @param {*} blockDummyList 
+     * @returns [[배열인덱스, 더미사이즈],[배열인덱스, 더미사이즈],[배열인덱스, 더미사이즈]...]
+     */
+    sortingByBlockDummySize(blockDummyList) {
+      let sortable = []
+      for (let i = 0; i < blockDummyList.length; i++) {
+        sortable.push([i, blockDummyList[i].length])
+      }
+      sortable.sort(function (a, b) {
+        return a[1] - b[1];
+      })
+      return sortable
+    }
+
+    createDummyRegionTable(table, blockDummy) {
+      let result = Array.from(new Array(table.length), () => new Array(table[0].length).fill(this.blockType.closeTableValue))
+      for (let i = 0; i < blockDummy.length; i++) {
+        result[blockDummy[i][0]][blockDummy[i][1]] = this.blockType.blankTableValue
+      }
+      return result
     }
 
 
@@ -190,15 +376,10 @@ export default () => {
           if (blankTF) {
             //스캔하기전에 현재 블록 기준으로 생성된 덩어리가 블록의 개수와 숫자를 고려할때 가능한 조합인지 체크
             // 1. 블록덩어리 스캔 (bfs)
-            // const startScan = performance.now()
             const start = [[i, j]]
-            // console.time('bfs time')
             const blockDummy = this.bfs(start, JSON.parse(JSON.stringify(curTable)), this.blockType.closeTableValue)
-            // console.timeEnd('bfs time')
-            // console.time('checkFittable time')
             // 2. 현재 남은 블록 개수와 숫자의 합 = 블록 덩어리 사이즈 경우가 있는지 체크 (dynamic programming)
             const fittableTF = this.checkFittable(curBlocksCount, blockDummy.length)
-            // console.timeEnd('checkFittable time')
             if (fittableTF) {
               // let shuffleIdx = []
               // for (let s = 0; s < blocksBinary.length; s++) {
@@ -605,7 +786,7 @@ export default () => {
         for (let j = 0; j < table[0].length; j++) {
           let cellStyleMap = {}
           cellStyleMap.direction = []
-          cellStyleMap['background'] = this.defaultBlockTypeColor
+          cellStyleMap['background'] = this.closeTableColor
           style[i][j] = cellStyleMap
         }
       }

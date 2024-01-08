@@ -24,7 +24,7 @@ Array.prototype.shuffle = function () {
     return this;
 };
 
-export default class util {
+export default class Util {
     /** 2차원 배열 compare */
     compareObj2D(a, b) {
         let sameTF = true
@@ -81,7 +81,7 @@ export default class util {
     }
 
 
-    testMapSorting() {
+    testMapDifferentOrderCompare() {
         const map1 = { 1: 20, 2: 40 }
         const map2 = { 2: 40, 1: 20 }
         if (JSON.stringify(map1) === JSON.stringify(map2)) { // 같음.
@@ -153,5 +153,42 @@ export default class util {
         console.timeEnd('for compare')
         console.log(sameTF)
 
+    }
+
+    testListSorting() {
+        // const a = [[[1,2], [3,4],[5,6]], [[1,2], [3,4],[5,6], [7,8]]]
+        // a.sort()
+        // console.log('testListSorting=',a.sort())
+        // const b = [[[1,2], [3,4],[5,6], [7,8]], [[1,2], [3,4],[5,6]]]
+        // console.log('testListSorting=',b.sort())
+        // const c = [[[1,1],[1,1],[1,1],[1,1]], [[1,1],[1,1],[1,1]]]
+        // console.log('testListSorting=',c.sort())
+        // const d = [[[1,1],[1,1],[1,1]],[[1,1],[1,1],[1,1],[1,1]]]
+        // console.log('testListSorting=',d.sort())
+
+        const a = [[[6, 6], [6, 6], [6, 6], [6, 6]], [[6, 6], [1, 1], [1, 1]]]
+        console.log('testListSorting=', a.sort())
+        const d = [[[1, 1], [1, 1], [1, 1], [1, 1]], [[9, 9], [9, 9], [9, 9]],]
+        console.log('testListSorting=', d.sort())
+    }
+
+    testListSorting2() {
+        let sortable = [[4,6],[1,6],[2,5],[3,5],[5,4]] // 2번째 원소를 기준으로 sorting
+        
+        sortable.sort(function(a,b) {
+          return a[1] - b[1];
+        })
+        console.log(sortable)
+    }
+
+    testMapSorting() {
+        const map1 = { 4: 1, 6: 2, 1:3, 2:4} // 키 자동 오름차순 정렬됨.
+        console.log(map1)
+        console.log(Object.keys(map1))
+        Object.keys(map1).forEach((v) => {
+            console.log(v)
+        })
+        // map1.sort()
+        // console.log(map1)
     }
 }

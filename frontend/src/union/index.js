@@ -3,7 +3,7 @@ import * as React from 'react';
 import axios from 'axios';
 import UnionRaiderSetting from './UnionRaiderSetting';
 import BlockType from './BlockType';
-import { shuffle } from '../util/util'
+import Util from '../util/util'
 import { BasicTable } from './Table';
 import WebWorker from '../util/worker'
 import worker from './UnionWorker'
@@ -118,6 +118,7 @@ export const UnionRaider = () => {
 
   const handleFormReset = (e) => {
     new WebWorker().clearUnionWorker()
+    unionWorker = new WebWorker().getUnionWorker(worker)
     // setTable(table)
     setTableStyle(defaultTableStyle)
     console.log('worker terminate')
