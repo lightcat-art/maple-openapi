@@ -79,7 +79,7 @@ export const UnionRaider = () => {
 
 
   const [table, setTable] = React.useState(defaultTable)
-  const defaultTableStyle = blockType.getDefaultTableStyle(defaultTable)
+  const defaultTableStyle = blockType.getDefaultTableStyle(table)
   const [tableStyle, setTableStyle] = React.useState(defaultTableStyle)
   const [result, setResult] = React.useState(null)
   const [submitButtonDisabled, setSubmitButtonDisabled] = React.useState(false)
@@ -90,7 +90,6 @@ export const UnionRaider = () => {
 
   
   const handleFormSubmit = (e) => {
-    console.log('submit')
     unionWorker = new WebWorker().getUnionWorker(worker)
     unionWorker.postMessage({unionBlock: responseUnionBlock, table: table, cnt: 1})
     setSubmitButtonDisabled(true)
@@ -119,7 +118,7 @@ export const UnionRaider = () => {
 
   const handleFormReset = (e) => {
     new WebWorker().clearUnionWorker()
-    setTable(defaultTable)
+    // setTable(table)
     setTableStyle(defaultTableStyle)
     console.log('worker terminate')
     setSubmitButtonDisabled(false)
@@ -128,6 +127,7 @@ export const UnionRaider = () => {
     setResetButtonHidden(true)
     setResult(null)
   }
+
 
   const requestParam = {}
   // let users = [1,3,4,2,2,4,5]
@@ -146,40 +146,17 @@ export const UnionRaider = () => {
       const result = event.data;
       // console.log('listener executing')
       // console.log('result = ', result)
+      // setTable(table)
       setTableStyle(result.table);
 
     });
 
-    // unionWorker.addEventListener('stop', (event) => {
-    //   const result = event.data;
-    //   console.log('result = ', result)
-    // });
-
-
-
-
-    // setting.parseRaider()
-    // console.log('parse blocks Size= ', setting.blocksSize)
-    // console.log('parse blocks= ', setting.blocks)
-    // console.log('parse blocks binary = ', setting.blocksBinary)
-    // console.log('parse count = ', setting.blocksCount)
-    // setting.classify()
-    // console.log('result count = ', setting.resultBlocksCount)
-    // console.log('result table= ', setting.resultTable)
-    // console.log('result domiBlocks=', setting.resultDomiBlocks)
-    // setting.setTableStyleValue()
-    // setTableStyle(blockType.getTableStyle(setting.resultTableStyleValue))
-
-    // return () => {
-    //   unionWorker.terminate()
-    //   console.log('worker terminate')
-    // }
   }, [unionWorker]);
 
 
   return (
     <div>
-      <BasicTable value={table} style={tableStyle}></BasicTable>
+      <BasicTable setTable={setTable} style={tableStyle} ></BasicTable>
       {/* <button onClick={handleClick(testInput, unionWorker, setResult)}>Calculate in Web Worker</button> */}
       <div><Button action={handleFormSubmit} disabled={submitButtonDisabled} title="submit"></Button></div>
       <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
