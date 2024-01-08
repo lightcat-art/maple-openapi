@@ -119,7 +119,7 @@ export const UnionRaider = () => {
   const handleFormReset = (e) => {
     new WebWorker().clearUnionWorker()
     // setTable(table)
-    // setTableStyle(tableStyle)
+    setTableStyle(defaultTableStyle)
     console.log('worker terminate')
     setSubmitButtonDisabled(false)
     setPauseButtonHidden(true)
@@ -146,7 +146,7 @@ export const UnionRaider = () => {
       const result = event.data;
       // console.log('listener executing')
       // console.log('result = ', result)
-      setTable(table)
+      // setTable(table)
       setTableStyle(result.table);
 
     });
