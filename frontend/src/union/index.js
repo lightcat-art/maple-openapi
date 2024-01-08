@@ -90,7 +90,6 @@ export const UnionRaider = () => {
 
   
   const handleFormSubmit = (e) => {
-    console.log('submit')
     unionWorker = new WebWorker().getUnionWorker(worker)
     unionWorker.postMessage({unionBlock: responseUnionBlock, table: table, cnt: 1})
     setSubmitButtonDisabled(true)
@@ -119,8 +118,8 @@ export const UnionRaider = () => {
 
   const handleFormReset = (e) => {
     new WebWorker().clearUnionWorker()
-    // setTable([...table])
-    // setTableStyle([...tableStyle])
+    // setTable(table)
+    // setTableStyle(tableStyle)
     console.log('worker terminate')
     setSubmitButtonDisabled(false)
     setPauseButtonHidden(true)
@@ -128,6 +127,7 @@ export const UnionRaider = () => {
     setResetButtonHidden(true)
     setResult(null)
   }
+
 
   const requestParam = {}
   // let users = [1,3,4,2,2,4,5]
@@ -151,30 +151,6 @@ export const UnionRaider = () => {
 
     });
 
-    // unionWorker.addEventListener('stop', (event) => {
-    //   const result = event.data;
-    //   console.log('result = ', result)
-    // });
-
-
-
-
-    // setting.parseRaider()
-    // console.log('parse blocks Size= ', setting.blocksSize)
-    // console.log('parse blocks= ', setting.blocks)
-    // console.log('parse blocks binary = ', setting.blocksBinary)
-    // console.log('parse count = ', setting.blocksCount)
-    // setting.classify()
-    // console.log('result count = ', setting.resultBlocksCount)
-    // console.log('result table= ', setting.resultTable)
-    // console.log('result domiBlocks=', setting.resultDomiBlocks)
-    // setting.setTableStyleValue()
-    // setTableStyle(blockType.getTableStyle(setting.resultTableStyleValue))
-
-    // return () => {
-    //   unionWorker.terminate()
-    //   console.log('worker terminate')
-    // }
   }, [unionWorker]);
 
 

@@ -6,14 +6,10 @@ import * as React from 'react';
 export function BasicTable({ style , setTable}) {
 
     // This array defines [iniRow, iniCol, endRow, endCol]
-    // const [select, setSelect] = React.useState([null,null,null,null])
     const [select, setSelect] = React.useState([])
-    const [selectMode, setSelectMode] = React.useState(true) // 선택모드 인지, 해제모드 인지 세팅
-    // const [selectClassCache, setSelectClassCache] = React.useState(new Array(style.length), ()=> new Array(style[0].length).fill(''))
-
     // This variable will control if the user is dragging or not
     const [drag, setDrag] = React.useState(false)
-    const [selectedRowCol, setSelectedRowCol] = React.useState([])
+    const [selectMode, setSelectMode] = React.useState(true) // 선택모드 인지, 해제모드 인지 세팅
 
 
     React.useEffect(() => {
