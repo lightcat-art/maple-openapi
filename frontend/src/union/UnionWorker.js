@@ -568,21 +568,21 @@ export default () => {
         // '#ffffff'
       ]
       this.blockTypeColor = [
-        '#330707',
-        '#5f3535',
-        '#805858',
-        '#6b1111',
-        '#8f2ca8',
-        '#af4545',
-        '#eee000',
-        '#7e1c3bf1',
-        '#babcd4',
-        '#004c8a',
-        '#f7c7c7',
-        '#fca7a7',
-        '#2ec948',
-        '#3dccb9',
-        '#29a9c9'
+        '#330707', // z-asym
+        '#5f3535', // z-sym
+        '#805858', // +
+        '#6b1111', // T
+        '#8f2ca8', // I
+        '#af4545', // thumb
+        '#eee000', // z
+        '#7e1c3bf1', // T
+        '#babcd4', // L
+        '#004c8a', // I
+        '#f7c7c7', // square
+        '#fca7a7', // I
+        '#2ec948', // L
+        '#3dccb9', // I
+        '#29a9c9' // dot
       ]
       this.baseBlockSizeIdx = { 5: [0, 5], 4: [6, 10], 3: [11, 12], 2: [13, 13], 1: [14, 14] }
       this.blockDirection = { 1: 'borderTop', 2: 'borderLeft', 4: 'borderRight', 8: 'borderBottom' }

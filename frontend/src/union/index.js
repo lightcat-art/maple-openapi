@@ -79,7 +79,7 @@ export const UnionRaider = () => {
 
 
   const [table, setTable] = React.useState(defaultTable)
-  const defaultTableStyle = blockType.getDefaultTableStyle(defaultTable)
+  const defaultTableStyle = blockType.getDefaultTableStyle(table)
   const [tableStyle, setTableStyle] = React.useState(defaultTableStyle)
   const [result, setResult] = React.useState(null)
   const [submitButtonDisabled, setSubmitButtonDisabled] = React.useState(false)
@@ -119,8 +119,8 @@ export const UnionRaider = () => {
 
   const handleFormReset = (e) => {
     new WebWorker().clearUnionWorker()
-    setTable(defaultTable)
-    setTableStyle(defaultTableStyle)
+    // setTable([...table])
+    // setTableStyle([...tableStyle])
     console.log('worker terminate')
     setSubmitButtonDisabled(false)
     setPauseButtonHidden(true)
@@ -146,6 +146,7 @@ export const UnionRaider = () => {
       const result = event.data;
       // console.log('listener executing')
       // console.log('result = ', result)
+      setTable(table)
       setTableStyle(result.table);
 
     });
@@ -179,7 +180,7 @@ export const UnionRaider = () => {
 
   return (
     <div>
-      <BasicTable value={table} style={tableStyle}></BasicTable>
+      <BasicTable setTable={setTable} style={tableStyle} ></BasicTable>
       {/* <button onClick={handleClick(testInput, unionWorker, setResult)}>Calculate in Web Worker</button> */}
       <div><Button action={handleFormSubmit} disabled={submitButtonDisabled} title="submit"></Button></div>
       <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
