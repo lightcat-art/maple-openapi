@@ -20,7 +20,7 @@ export default () => {
     console.log('result table= ', setting.resultTable)
     console.log('result domiBlocks=', setting.resultDomiBlocks)
     setting.setTableStyleValue()
-    const tableStyle = setting.getTableStyle(setting.resultTableStyle)
+    const tableStyle = setting.getTableStyle()
 
     postMessage({ table: tableStyle })
 
