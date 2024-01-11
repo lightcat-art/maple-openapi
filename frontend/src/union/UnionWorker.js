@@ -222,30 +222,25 @@ export default () => {
               
               blankTF = this.blockType.checkTableBlank(dummyScanTable[i][j])
               if (blankTF) {
-                if (i===9 && j===11) {
-                  console.log('test')
-                }
                 // curShuffleIdx.shuffle()
-                const idx = curShuffleIdx.shift()
-                curShuffleIdx.push(idx)
+                for(let s=0; s<1; s++) {
+                  const idx = curShuffleIdx.shift()
+                  curShuffleIdx.push(idx)
+                }
                 // 블록 사이즈 종류 회전타입별로 하나씩 스캔
                 for (let k = 0; k < curShuffleIdx.length; k++) {
-
+                  if (curBlocksCount[curShuffleIdx[k]] === 0) { // 개수가 0인 블록은 사용하지 않기.
+                    continue
+                  }
                   const listByType = this.blocksBinary[curShuffleIdx[k]]
                   for (let l = 0; l < listByType.length; l++) {
-                    if (blocksCount[curShuffleIdx[k]] === 0) { // 개수가 0인 블록은 사용하지 않기.
-                      continue
-                    }
+
                     const blockTypeRotateBinary = listByType[l]
                     
                     const result = this.scanInner(i, j, dummyScanTable, blockTypeRotateBinary) //매칭되면 유니온 배치판 업데이트 됨.
                     if (result.length !== 0) {
                       curDomiBlocks.push(result)
                       // 보유블럭 오브젝트들에서 점령된 블록 제거
-                      // curBlocksCount[k] -= 1
-                      if (curBlocksCount[curShuffleIdx[k]] === 0 ) {
-                        console.log('test')
-                      }
                       curBlocksCount[curShuffleIdx[k]] -= 1
   
                       // 실시간 렌더링 하기위함.
@@ -253,7 +248,7 @@ export default () => {
                       this.resultBlocksCount = curBlocksCount
                       this.resultDomiBlocks = curDomiBlocks
                       this.setTableStyleValue()
-                      if (this.processCount % 30 === 0) {
+                      if (this.processCount % 1 === 0) {
                         postMessage({ table: this.getTableStyle() })
                       }
   
