@@ -19,10 +19,14 @@ export default () => {
     console.log('result count = ', setting.resultBlocksCount)
     console.log('result table= ', setting.resultTable)
     console.log('result domiBlocks=', setting.resultDomiBlocks)
-    setting.setTableStyleValue()
-    const tableStyle = setting.getTableStyle()
+    if (setting.resultDomiBlocks) {
+      setting.setTableStyleValue()
+      const tableStyle = setting.getTableStyle()
+      postMessage({ table: tableStyle })
+    } else {
+      postMessage(null)
+    }
 
-    postMessage({ table: tableStyle })
 
     console.log('worker end')
   })
@@ -154,7 +158,7 @@ export default () => {
 
     scanImprove(table, blocksCount, domiBlocks, shuffleIdx) {
 
-      let matchTF = false
+      
 
       // 남아있는 블럭 개수 체크
       let remainBlocksTF = false
@@ -203,7 +207,9 @@ export default () => {
       const idxByDummySize = this.sortingByBlockDummySize(blockDummyList)
 
 
+      let matchTF = false
       for (let m = 0; m < blockDummyList.length; m++) {
+        matchTF = false // 매치여부 블록더미별로 초기화
         const blockDummy = blockDummyList[idxByDummySize[m][0]]
         let dummyScanTable = this.createDummyRegionTable(table, blockDummy)
         const savePointTable = JSON.parse(JSON.stringify(dummyScanTable))
@@ -216,9 +222,9 @@ export default () => {
               
               blankTF = this.blockType.checkTableBlank(dummyScanTable[i][j])
               if (blankTF) {
-                curShuffleIdx.shuffle()
-                // const idx = curShuffleIdx.shift()
-                // curShuffleIdx.push(idx)
+                // curShuffleIdx.shuffle()
+                const idx = curShuffleIdx.shift()
+                curShuffleIdx.push(idx)
                 // 블록 사이즈 종류 회전타입별로 하나씩 스캔
                 for (let k = 0; k < curShuffleIdx.length; k++) {
                   if (blocksCount[curShuffleIdx[k]] === 0) { // 개수가 0인 블록은 사용하지 않기.
@@ -237,9 +243,10 @@ export default () => {
   
                       // 실시간 렌더링 하기위함.
                       this.addProcessCount()
+                      this.resultBlocksCount = curBlocksCount
                       this.resultDomiBlocks = curDomiBlocks
                       this.setTableStyleValue()
-                      if (this.processCount % 25 === 0) {
+                      if (this.processCount % 30 === 0) {
                         postMessage({ table: this.getTableStyle() })
                       }
   
@@ -278,7 +285,7 @@ export default () => {
         }
       }
 
-      if (!matchTF) { // 뒤로가기
+      if (blockDummyList.length !== 0 && !matchTF) { // 뒤로가기
         curTable.length = 0
         curBlocksCount.length = 0
         curDomiBlocks.length = 0

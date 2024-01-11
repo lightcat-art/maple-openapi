@@ -148,7 +148,9 @@ export const UnionRaider = () => {
       // console.log('listener executing')
       // console.log('result = ', result)
       // setTable(table)
-      setTableStyle(result.table);
+      if (result) {
+        setTableStyle(result.table);
+      }
 
     });
 
