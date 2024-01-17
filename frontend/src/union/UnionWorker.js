@@ -4,10 +4,18 @@ export default () => {
     if (!e) return;
     let cnt = e.data.cnt;
 
+    // self.importScripts('http://localhost:3000/BlockTypeTest.js') // eslint-disable-line no-restricted-globals
+    // const importTest = new BlockTypeTest()
+    // importTest.test()
+    
     console.log('Received message from main thread : ', e.data)
     console.log('Received union block : ', e.data.unionBlock)
     console.log('Received table : ', e.data.table)
     console.log('Received cnt : ', e.data.cnt)
+
+
+    let o = execute()
+    console.log('result = ',o)
 
     const setting = new UnionRaiderSetting(e.data.unionBlock, JSON.parse(JSON.stringify(e.data.table)))
     setting.parseRaider()
@@ -28,9 +36,65 @@ export default () => {
     }
 
 
-    console.log('worker end')
+    // console.log('worker end')
   })
 
+  async function execute() {
+    let threads = []
+
+    threads.push(new PromiseTest(1))
+    threads.push(new PromiseTest(2))
+    threads.push(new PromiseTest(3))
+    threads.push(new PromiseTest(4))
+    const a = threads[0].classify()
+    const b = threads[1].classify()
+    const c = threads[2].classify()
+    const d = threads[3].classify()
+
+    console.log('a=',a,', b=',b,',c=',c,',d=',d)
+
+    const o = await Promise.race([a, b, c, d])
+    console.log('race o = ',o)
+    return o
+  }
+
+  class PromiseTest {
+    constructor(num) {
+      // this.table = table
+      // this.blocks = blocks
+      this.num = num
+    }
+
+    async classify() {
+      this.result = await this.scan()
+      return this.result
+    }
+
+    async scan() {
+      switch(this.num) {
+        case 1:
+          await this.sleep(1000)
+          console.log('1')
+          return "1"
+        case 2:
+          await this.sleep(2000)
+          console.log('2')
+          return "2"
+        case 3:
+          await this.sleep(3000)
+          console.log('3')
+          return "3"
+        case 4:
+          await this.sleep(4000)
+          console.log('4')
+          return "4"
+      }
+    }
+
+    sleep(ms) {    
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+  }
 
   class UnionRaiderSetting {
 
