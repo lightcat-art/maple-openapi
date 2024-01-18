@@ -7,24 +7,21 @@ export default () => {
     // self.importScripts('http://localhost:3000/BlockTypeTest.js') // eslint-disable-line no-restricted-globals
     // const importTest = new BlockTypeTest()
     // importTest.test()
-    
+
     console.log('Received message from main thread : ', e.data)
     console.log('Received union block : ', e.data.unionBlock)
     console.log('Received table : ', e.data.table)
     console.log('Received cnt : ', e.data.cnt)
 
 
-    let o = execute()
-    console.log('result = ',o)
+    // let o = execute()
+    // console.log('result = ', o)
 
     const setting = new UnionRaiderSetting(e.data.unionBlock, JSON.parse(JSON.stringify(e.data.table)))
     setting.parseRaider()
-    console.log('parse blocks Size= ', setting.blocksSize)
     console.log('parse blocks= ', setting.blocks)
-    console.log('parse blocks binary = ', setting.blocksBinary)
-    console.log('parse count = ', setting.blocksCount)
     setting.classify()
-    console.log('result count = ', setting.resultBlocksCount)
+    console.log('result count = ', setting.resultBlocks)
     console.log('result table= ', setting.resultTable)
     console.log('result domiBlocks=', setting.resultDomiBlocks)
     if (setting.resultDomiBlocks) {
@@ -51,10 +48,10 @@ export default () => {
     const c = threads[2].classify()
     const d = threads[3].classify()
 
-    console.log('a=',a,', b=',b,',c=',c,',d=',d)
+    console.log('a=', a, ', b=', b, ',c=', c, ',d=', d)
 
     const o = await Promise.race([a, b, c, d])
-    console.log('race o = ',o)
+    console.log('race o = ', o)
     return o
   }
 
@@ -71,7 +68,7 @@ export default () => {
     }
 
     async scan() {
-      switch(this.num) {
+      switch (this.num) {
         case 1:
           await this.sleep(1000)
           console.log('1')
@@ -91,8 +88,24 @@ export default () => {
       }
     }
 
-    sleep(ms) {    
+    sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
+    }
+  }
+
+  class BaseBlock {
+    constructor(count, size, coord, binary) {
+      this.size = size
+      this.count = count
+      this.binary = binary
+      this.coord = coord
+    }
+  }
+
+  class Block extends BaseBlock {
+    constructor(count, size, coord, binary, rotates) {
+      super(count, size, coord, binary)
+      this.rotates = rotates
     }
   }
 
@@ -116,23 +129,31 @@ export default () => {
       this.blockType = new BlockType();
       // 블록 좌표형
       this.blocks = []
-      // 블록 바이너리형
-      this.blocksBinary = []
-      // 블록 종류별 개수 카운트
-      this.blocksCount = []
-      // 블록 사이즈 체크
-      this.blocksSize = []
-      // this.blocksSuffleIdx = []
+      // // 블록 바이너리형
+      // this.blocksBinary = []
+      // // 블록 종류별 개수 카운트
+      // this.blocksCount = []
+      // // 블록 사이즈 체크
+      // this.blocksSize = []
+      // // this.blocksSuffleIdx = []
+
 
       // 결과
       this.resultBlocks = null;
-      this.resultBlocksBinary = null;
-      this.resultBlocksCount = null;
+      // this.resultBlocksBinary = null;
+      // this.resultBlocksCount = null;
       this.resultTable = null;
       this.resultDomiBlocks = null;
       this.resultRecordTF = false;
       this.resultTableStyle = null;
 
+
+      this.binaryBlockOn = 1 // 블록바이너리표현 :  블록이 있는 부분
+      this.binaryBlockOff = 0 // 블록바이너리표현 : 블록이 없는 부분
+      this.closeTableValue = 0 // 유니온 지도에서 채울수 없는 부분
+      this.blankTableValue = 1 // 유니온 지도에서 채워질 부분 (비어있는 부분)
+      this.limitBlockSize = 5; // 한 블록의 최대 큐브 개수
+      this.limitBlockLength = 5; // 좌표평면상 블록의 최대 길이
       console.log('test setting')
     }
     addFilledCount() {
@@ -142,6 +163,9 @@ export default () => {
       this.processCount = this.processCount + 1
     }
 
+
+
+
     parseRaider() {
       console.log('parseRaider start')
       if (!this.raider) {
@@ -149,42 +173,125 @@ export default () => {
         return;
       }
       this.raider.forEach(block => {
-        // const size = block.blockPosition.length;
-        const normalizedBlock = this.blockType.normalizeOriginBlock(block.blockPosition)
-        // const blockIdx = normalizedBlock.length - 1
-
-        // index = length -1 
-        // let blockListBySize = this.blocks[blockIdx]
+        const normalizedBlock = this.normalizeOriginBlock(block.blockPosition)
         let existType = false;
+
         for (let i = 0; i < this.blocks.length; i++) {
-          const type = this.blocks[i]
-          for (let j = 0; j < type.length; j++) {
-            const rotateType = type[j]
-            if (JSON.stringify(rotateType) === JSON.stringify(normalizedBlock)) {
-              existType = true;
-              this.blocksCount[i] += 1;
+          const block = this.blocks[i]
+          for (let j = 0; j < block.rotates.length; j++) {
+            const rotate = block.rotates[j]
+            if (JSON.stringify(rotate.coord) === JSON.stringify(normalizedBlock)) {
+              existType = true
+              block.count++
             }
           }
         }
-
         if (!existType) {
-          this.blocksSize.push(normalizedBlock.length)
-          let rotateBlocks = this.blockType.rotate(normalizedBlock).sort();
-          let rotateBlocksBinary = []
+          let rotates = []
+          let rotateBlocks = this.rotate(normalizedBlock)
           rotateBlocks.forEach((block) => {
-            rotateBlocksBinary.push(this.blockType.transToBinary(block))
+            rotates.push(new BaseBlock(1, block.length, block, this.transToBinary(block)))
           })
-          this.blocks.push(rotateBlocks)
-          this.blocksBinary.push(rotateBlocksBinary)
-          this.blocksCount.push(1)
-
+          const block = new Block(1, normalizedBlock.length, normalizedBlock, this.transToBinary(normalizedBlock), rotates)
+          this.blocks.push(block)
         }
-
       })
-      // for (let i = 0; i < this.blocksCount; i++) {
-      //     this.blocksSuffleIdx.push(i)
-      // }
-      // this.blocksSuffleIdx.shuffle()
+    }
+
+    /**
+    *  * map형태 ex) [{x: 24, y: 25}, ...] 로 되어있는 유니온 초기 오브젝트를 normalize
+    * --------
+    * 초기 오브젝트 x,y :
+    * 좌측으로 1칸씩 이동하면 x가 1씩 감소
+    * 우측으로 1칸씩 이동하면 x가 1씩 증가
+    * 아래로 1칸씩 이동하면 y가 1씩 감소
+    * 위로 1칸씩 이동하면 y가 1씩 증가
+    * -> 좌표평면 규칙이므로 matrix 형태로 변환시켜야함.
+    * --------
+    * @param {*} block 
+    * @returns 
+    */
+    normalizeOriginBlock(block) {
+      let minY = Math.min(...block.map(v => v.y))
+      let minX = Math.min(...block.map(v => v.x))
+
+      return block.map(v => [v.y - minY, v.x - minX]).sort()
+    }
+
+    /**
+ * 
+ * matrix 형태 ex) [[1,2],[2,4],...] 로 되어있는 오브젝트 normalize
+ * @param {*} block 
+ * @returns 
+ */
+    normalizeBlock(block) {
+      let minRow = Math.min(...block.map(v => v[0]))
+      let minCol = Math.min(...block.map(v => v[1]))
+
+      return block.map(v => [v[0] - minRow, v[1] - minCol]).sort()
+    }
+
+
+    /**
+    * 현재 블록에 대해 회전 시 블록 종류 반환.
+    * @param {*} block 
+    * @returns 
+    */
+    rotate(block) {
+      // 회전 및 뒤집기를 통해 8번 rotation을 하여 모든 타입의 블록 json으로 반환.
+      let max = Math.max(...block.map(v => Math.max(v[0], v[1])))
+      let allBlockType = new Set()
+      let rotateBlock = JSON.parse(JSON.stringify(block))
+      for (let i = 0; i < 4; i++) {
+        if (i > 0) {
+          rotateBlock = rotateBlock.map(v => [max - v[1], v[0]]) // 90도 회전
+        }
+        let normalRotate = this.normalizeBlock(rotateBlock)
+        allBlockType.add(JSON.stringify(normalRotate))
+      }
+      // 뒤집어서 다시 4번 회전.
+      let transBlock = block.map(v => [v[1], v[0]])
+      for (let i = 0; i < 4; i++) {
+        if (i > 0) {
+          transBlock = transBlock.map(v => [max - v[1], v[0]]) // 90도 회전
+        }
+        let transNormalRotate = this.normalizeBlock(transBlock)
+        allBlockType.add(JSON.stringify(transNormalRotate))
+      }
+      let result = []
+      allBlockType.forEach((v) => {
+        result.push(JSON.parse(v))
+      })
+      return Array.from(result)
+    }
+
+    /**
+    * 블록이 존재하는 곳은 this.binaryBlockOn, 나머지는 this.binaryBlockOff
+    * @param {*} block 
+    */
+    transToBinary(block) {
+      let binary = []
+      for (let i = 0; i < this.limitBlockLength; i++) {
+        for (let j = 0; j < this.limitBlockLength; j++) {
+          let match = false
+          for (let k = 0; k < block.length; k++) {
+            const x = block[k][0]
+            const y = block[k][1]
+            if (i === x && j === y) {
+              match = true
+            }
+            if (match) {
+              break
+            }
+          }
+          if (match) {
+            binary.push(this.binaryBlockOn)
+          } else {
+            binary.push(this.binaryBlockOff)
+          }
+        }
+      }
+      return binary
     }
 
     setTableStyleValue() {
@@ -211,45 +318,44 @@ export default () => {
       console.time('classify')
       let domiBlocks = []
       let shuffleIdx = []
-      for (let i = 0; i < this.blocksCount.length; i++) {
+      for (let i = 0; i < this.blocks.length; i++) {
         shuffleIdx.push(i)
       }
-      // const scanTF = this.scan(this.table, this.blocksCount, domiBlocks, shuffleIdx)
-      const scanResult = this.scanImprove(this.table, this.blocksCount, domiBlocks, shuffleIdx)
+      const scanResult = this.scanImprove(this.table, this.blocks, domiBlocks, shuffleIdx)
       console.timeEnd('classify')
       console.log('union classify :', scanResult)
     }
 
-    scanImprove(table, blocksCount, domiBlocks, shuffleIdx) {
+    scanImprove(table, blocks, domiBlocks, shuffleIdx) {
 
-      
+
 
       // 남아있는 블럭 개수 체크
       let remainBlocksTF = false
-      blocksCount.forEach((typeCnt) => {
-        if (typeCnt !== 0) {
+      blocks.forEach((block) => {
+        if (block.count !== 0) {
           remainBlocksTF = true
         }
       })
       if (!remainBlocksTF) {
         // matchTF = true
         if (!this.resultRecordTF) {
-          this.resultBlocksCount = blocksCount
+          this.resultBlocks = blocks
           this.resultTable = table
           this.resultDomiBlocks = domiBlocks
           this.resultRecordTF = true
         }
-        return {blocksCount: blocksCount, domiBlocks: domiBlocks}
+        return { blocks: blocks, domiBlocks: domiBlocks }
       }
 
 
       let curTable = JSON.parse(JSON.stringify(table))
-      let curBlocksCount = JSON.parse(JSON.stringify(blocksCount))
+      let curBlocks = JSON.parse(JSON.stringify(blocks))
       let curDomiBlocks = JSON.parse(JSON.stringify(domiBlocks))
       let curShuffleIdx = JSON.parse(JSON.stringify(shuffleIdx))
 
-      
-      let savePointBlocksCount = JSON.parse(JSON.stringify(blocksCount))
+
+      let savePointBlocks = JSON.parse(JSON.stringify(blocks))
       let savePointDomiBlocks = JSON.parse(JSON.stringify(domiBlocks))
 
 
@@ -277,58 +383,58 @@ export default () => {
         const blockDummy = blockDummyList[idxByDummySize[m][0]]
         let dummyScanTable = this.createDummyRegionTable(table, blockDummy)
         const savePointTable = JSON.parse(JSON.stringify(dummyScanTable))
-        const fittableTF = this.checkFittable(curBlocksCount, blockDummy.length)
+        const fittableTF = this.checkFittable(curBlocks, blockDummy.length)
         if (fittableTF) {
 
           let blankTF = false
           for (let i = 0; i < dummyScanTable.length; i++) {
             for (let j = 0; j < dummyScanTable[0].length; j++) {
-              
-              blankTF = this.blockType.checkTableBlank(dummyScanTable[i][j])
+
+              blankTF = this.checkTableBlank(dummyScanTable[i][j])
               if (blankTF) {
                 // curShuffleIdx.shuffle()
-                for(let s=0; s<1; s++) {
+                for (let s = 0; s < 1; s++) {
                   const idx = curShuffleIdx.shift()
                   curShuffleIdx.push(idx)
                 }
                 // 블록 사이즈 종류 회전타입별로 하나씩 스캔
                 for (let k = 0; k < curShuffleIdx.length; k++) {
-                  if (curBlocksCount[curShuffleIdx[k]] === 0) { // 개수가 0인 블록은 사용하지 않기.
+                  if (curBlocks[curShuffleIdx[k]].count === 0) { // 개수가 0인 블록은 사용하지 않기.
                     continue
                   }
-                  const listByType = this.blocksBinary[curShuffleIdx[k]]
-                  for (let l = 0; l < listByType.length; l++) {
+                  const listByType = this.blocks[curShuffleIdx[k]]
+                  for (let l = 0; l < listByType.rotates.length; l++) {
 
-                    const blockTypeRotateBinary = listByType[l]
-                    
-                    const result = this.scanInner(i, j, dummyScanTable, blockTypeRotateBinary) //매칭되면 유니온 배치판 업데이트 됨.
+                    const blockTypeRotate = listByType.rotates[l]
+
+                    const result = this.scanInner(i, j, dummyScanTable, blockTypeRotate.binary) //매칭되면 유니온 배치판 업데이트 됨.
                     if (result.length !== 0) {
                       curDomiBlocks.push(result)
                       // 보유블럭 오브젝트들에서 점령된 블록 제거
-                      curBlocksCount[curShuffleIdx[k]] -= 1
-  
+                      curBlocks[curShuffleIdx[k]].count--
+
                       // 실시간 렌더링 하기위함.
                       this.addProcessCount()
-                      this.resultBlocksCount = curBlocksCount
+                      this.resultBlocks = curBlocks
                       this.resultDomiBlocks = curDomiBlocks
                       this.setTableStyleValue()
                       if (this.processCount % 1 === 0) {
                         postMessage({ table: this.getTableStyle() })
                       }
-  
-                      let blocksInfo = this.scanImprove(dummyScanTable, curBlocksCount, curDomiBlocks, curShuffleIdx)
+
+                      let blocksInfo = this.scanImprove(dummyScanTable, curBlocks, curDomiBlocks, curShuffleIdx)
                       if (!blocksInfo) { // 자식 함수에서 매칭실패로 판단되는 경우 유니온 배치판 및 점령블록 등 오브젝트 원래대로 되돌려놓기
                         // 기본적으로 matchTF 가 false이므로 굳이 다시 세팅해줄 필요가 없음.
                         dummyScanTable.length = 0
-                        curBlocksCount.length = 0
+                        curBlocks.length = 0
                         curDomiBlocks.length = 0
                         dummyScanTable = JSON.parse(JSON.stringify(savePointTable))
-                        curBlocksCount = JSON.parse(JSON.stringify(savePointBlocksCount))
+                        curBlocks = JSON.parse(JSON.stringify(savePointBlocks))
                         curDomiBlocks = JSON.parse(JSON.stringify(savePointDomiBlocks))
                       } else {
-                        savePointBlocksCount = JSON.parse(JSON.stringify(blocksInfo['blocksCount']))
+                        savePointBlocks = JSON.parse(JSON.stringify(blocksInfo['blocks']))
                         savePointDomiBlocks = JSON.parse(JSON.stringify(blocksInfo['domiBlocks']))
-                        curBlocksCount = JSON.parse(JSON.stringify(blocksInfo['blocksCount']))
+                        curBlocks = JSON.parse(JSON.stringify(blocksInfo['blocks']))
                         curDomiBlocks = JSON.parse(JSON.stringify(blocksInfo['domiBlocks']))
 
                         matchTF = true
@@ -356,7 +462,7 @@ export default () => {
 
       if (blockDummyList.length !== 0 && !matchTF) { // 뒤로가기
         curTable.length = 0
-        curBlocksCount.length = 0
+        curBlocks.length = 0
         curDomiBlocks.length = 0
         return null
       }
@@ -368,7 +474,15 @@ export default () => {
         //   this.resultDomiBlocks = curDomiBlocks
         //   this.resultRecordTF = true
         // }
-        return { blocksCount: savePointBlocksCount, domiBlocks: savePointDomiBlocks }
+        return { blocks: savePointBlocks, domiBlocks: savePointDomiBlocks }
+      }
+    }
+
+    checkTableBlank(value) {
+      if (value === this.blankTableValue) {
+        return true
+      } else {
+        return false
       }
     }
 
@@ -378,9 +492,9 @@ export default () => {
       let blockDummyList = []
       for (let i = 0; i < table.length; i++) {
         for (let j = 0; j < table[0].length; j++) {
-          if (table[i][j] !== this.blockType.closeTableValue) {
+          if (table[i][j] !== this.closeTableValue) {
             const start = [[i, j]]
-            const blockDummy = this.bfs(start, table, this.blockType.closeTableValue)
+            const blockDummy = this.bfs(start, table, this.closeTableValue)
             blockDummyList.push(blockDummy)
           }
         }
@@ -405,139 +519,11 @@ export default () => {
     }
 
     createDummyRegionTable(table, blockDummy) {
-      let result = Array.from(new Array(table.length), () => new Array(table[0].length).fill(this.blockType.closeTableValue))
+      let result = Array.from(new Array(table.length), () => new Array(table[0].length).fill(this.closeTableValue))
       for (let i = 0; i < blockDummy.length; i++) {
-        result[blockDummy[i][0]][blockDummy[i][1]] = this.blockType.blankTableValue
+        result[blockDummy[i][0]][blockDummy[i][1]] = this.blankTableValue
       }
       return result
-    }
-
-
-    scan(table, blocksCount, domiBlocks, shuffleIdx) {
-
-      let matchTF = false
-
-      // 남아있는 블럭 개수 체크
-      let remainBlocksTF = false
-      blocksCount.forEach((typeCnt) => {
-        if (typeCnt !== 0) {
-          remainBlocksTF = true
-        }
-      })
-      if (!remainBlocksTF) {
-        matchTF = true
-        if (!this.resultRecordTF) {
-          this.resultBlocksCount = blocksCount
-          this.resultTable = table
-          this.resultDomiBlocks = domiBlocks
-          this.resultRecordTF = true
-        }
-        return matchTF
-      }
-
-
-      let curTable = JSON.parse(JSON.stringify(table))
-      let curBlocksCount = JSON.parse(JSON.stringify(blocksCount))
-      let curDomiBlocks = JSON.parse(JSON.stringify(domiBlocks))
-      let curShuffleIdx = JSON.parse(JSON.stringify(shuffleIdx))
-
-
-      // matchTF 가 false가 의미하는것
-      // 1. 하위함수에서 매칭이 되지 않는 블록이 존재하여 현재함수에서 모든 케이스까지 트라이했는데 매칭되는 케이스가 없음
-
-      let blankTF = false;
-      for (let i = 0; i < curTable.length; i++) {
-        for (let j = 0; j < curTable[0].length; j++) {
-          blankTF = this.blockType.checkTableBlank(curTable[i][j])
-          if (blankTF) {
-            //스캔하기전에 현재 블록 기준으로 생성된 덩어리가 블록의 개수와 숫자를 고려할때 가능한 조합인지 체크
-            // 1. 블록덩어리 스캔 (bfs)
-            const start = [[i, j]]
-            const blockDummy = this.bfs(start, JSON.parse(JSON.stringify(curTable)), this.blockType.closeTableValue)
-            // 2. 현재 남은 블록 개수와 숫자의 합 = 블록 덩어리 사이즈 경우가 있는지 체크 (dynamic programming)
-            const fittableTF = this.checkFittable(curBlocksCount, blockDummy.length)
-            if (fittableTF) {
-              // let shuffleIdx = []
-              // for (let s = 0; s < blocksBinary.length; s++) {
-              //     shuffleIdx.push(s)
-              // }
-              // curShuffleIdx.shuffle()
-              const idx = curShuffleIdx.shift()
-              curShuffleIdx.push(idx)
-              if (i === 5 && j === 0) {
-                console.log('test')
-              }
-              // 블록 사이즈 종류 회전타입별로 하나씩 스캔
-              for (let k = 0; k < curShuffleIdx.length; k++) {
-                // if (curBlocksCount[k] === 0) { // 개수가 0인 블록은 사용하지 않기.
-                if (blocksCount[curShuffleIdx[k]] === 0) { // 개수가 0인 블록은 사용하지 않기.
-                  continue
-                }
-                // const listByType = this.blocksBinary[k]
-                const listByType = this.blocksBinary[curShuffleIdx[k]]
-                for (let l = 0; l < listByType.length; l++) {
-                  const blockTypeRotateBinary = listByType[l]
-                  const result = this.scanInner(i, j, curTable, blockTypeRotateBinary)
-                  if (result.length !== 0) {
-                    curDomiBlocks.push(result)
-                    // 보유블럭 오브젝트들에서 점령된 블록 제거
-                    // curBlocksCount[k] -= 1
-                    curBlocksCount[curShuffleIdx[k]] -= 1
-
-                    // 실시간 렌더링 하기위함.
-                    this.addProcessCount()
-                    this.resultTable = curTable
-                    this.resultDomiBlocks = curDomiBlocks
-                    this.setTableStyleValue()
-                    // this.getTableStyle()
-                    if (this.processCount % 25 === 0) {
-                      postMessage({ table: this.getTableStyle() })
-                    }
-
-                    matchTF = this.scan(curTable, curBlocksCount, curDomiBlocks, curShuffleIdx)
-                    if (!matchTF) { // 유니온 배치판 및 점령블록 등 오브젝트 원래대로 되돌려놓기
-                      curTable.length = 0
-                      curBlocksCount.length = 0
-                      curDomiBlocks.length = 0
-                      curTable = JSON.parse(JSON.stringify(table))
-                      curBlocksCount = JSON.parse(JSON.stringify(blocksCount))
-                      curDomiBlocks = JSON.parse(JSON.stringify(domiBlocks))
-                    }
-                  }
-                  if (matchTF) { break }
-                }
-                if (matchTF) { break }
-              }
-            }
-            // const endScan = performance.now()
-            // console.log('scan time = ', endScan - startScan, 'i=', i, ',j=', j, ', dummysize = ', blockDummy.length)
-            // 하위 재귀함수에서 실패한 케이스와 현재 함수에서 매칭되는게 없는 케이스를 구분해야함.
-            // 모든 소유한 블록을 스캔했는데 매칭되는게 없다면 상태를 저장하지 않고 상위 재귀함수 복귀
-          }
-          // 빈칸이 존재하지 않는다. -> 다음 빈칸 탐색
-          // 빈칸이 존재하여 이미 matchTF 여부를 판별하였다면 현재 함수에서 취할수 있는 행동은 없음.
-          if (blankTF) { break }
-        }
-        if (blankTF) { break }
-      }
-
-      if (!matchTF && blankTF) { // 뒤로가기
-        curTable.length = 0
-        curBlocksCount.length = 0
-        curDomiBlocks.length = 0
-        return false
-      }
-      else {
-        // 빈칸이 아예 없는 경우. (마지막까지 모두 빈칸을 체크했는데 없으면 테이블상태를 저장하고 재귀함수 종료)
-        // OR  하위함수에서부터 matching이 모두다 완료된 경우
-        if (!this.resultRecordTF) {
-          this.resultBlocksCount = curBlocksCount
-          this.resultTable = curTable
-          this.resultDomiBlocks = curDomiBlocks
-          this.resultRecordTF = true
-        }
-        return true
-      }
     }
 
     /**
@@ -549,9 +535,9 @@ export default () => {
      * @returns 매칭되었다고 판단된 블록의 절대좌표
      */
     scanInner(row, col, curTable, blocksBinary) {
-      const startRowIdx = row - (this.blockType.limitBlockLength - 1)
+      const startRowIdx = row - (this.limitBlockLength - 1)
       // const startRowIdx = row
-      const startColIdx = col - (this.blockType.limitBlockLength - 1)
+      const startColIdx = col - (this.limitBlockLength - 1)
 
       const endRowIdx = row
       const endColIdx = col
@@ -571,8 +557,8 @@ export default () => {
           // let regionBinary = []
           let blocksAbsCoord = [] // 블록의 절대좌표
           //5x5 판을 스캔한다
-          for (let k = 0; k < this.blockType.limitBlockLength; k++) {
-            for (let l = 0; l < this.blockType.limitBlockLength; l++) {
+          for (let k = 0; k < this.limitBlockLength; k++) {
+            for (let l = 0; l < this.limitBlockLength; l++) {
               let blockBinaryValue = blocksBinary[k * 5 + l]
               let regionValue = -1
               if ((i + k) < 0 || (j + l) < 0 || (i + k) >= curTable.length
@@ -598,7 +584,7 @@ export default () => {
             result = blocksAbsCoord
             // 매칭되면 유니온 배치판 점령도 업데이트
             blocksAbsCoord.forEach((coord) => {
-              curTable[coord[0]][coord[1]] = this.blockType.closeTableValue
+              curTable[coord[0]][coord[1]] = this.closeTableValue
             })
             return result
           }
@@ -657,17 +643,17 @@ export default () => {
       return block
     }
 
-    checkFittable(blocksCount, targetSum) {
+    checkFittable(blocks, targetSum) {
       let numMap = {}
       let numBlockElem = 0
-      for (let i = 0; i < blocksCount.length; i++) {
-        if (this.blocksSize[i] in numMap) {
-          numMap[this.blocksSize[i]] = numMap[this.blocksSize[i]] + blocksCount[i]
+      for (let i = 0; i < blocks.length; i++) {
+        if (blocks[i].size in numMap) {
+          numMap[blocks[i].size] = numMap[blocks[i].size] + blocks[i].count
         } else {
-          numMap[this.blocksSize[i]] = blocksCount[i]
+          numMap[blocks[i].size] = blocks[i].count
         }
 
-        numBlockElem += blocksCount[i] * this.blocksSize[i]
+        numBlockElem += blocks[i].count * blocks[i].size
       }
       // console.log('현재 블록덩어리의 산정공간 : ', targetSum, ', 소유한 블록리스트 : ', numMap, ', 블록원자단위 개수:', numBlockElem)
       // 모든 블록 길이의 합이 더미사이즈 보다 작거나 같다면 가능한것으로 판단할것
@@ -869,6 +855,19 @@ export default () => {
       return style
     }
 
+    /**
+* 
+* matrix 형태 ex) [[1,2],[2,4],...] 로 되어있는 오브젝트 normalize
+* @param {*} block 
+* @returns 
+*/
+    normalizeBlock(block) {
+      let minRow = Math.min(...block.map(v => v[0]))
+      let minCol = Math.min(...block.map(v => v[1]))
+
+      return block.map(v => [v[0] - minRow, v[1] - minCol]).sort()
+    }
+
     getTableStyle(table) {
       let style = Array.from(Array(table.length), () => Array(table[0].length).fill({}))
 
@@ -973,100 +972,12 @@ export default () => {
       return result
     }
 
-    /**
-     * map형태 ex) [{x: 24, y: 25}, ...] 로 되어있는 유니온 초기 오브젝트를 normalize
-     * --------
-     * 초기 오브젝트 x,y :
-     * 좌측으로 1칸씩 이동하면 x가 1씩 감소
-     * 우측으로 1칸씩 이동하면 x가 1씩 증가
-     * 아래로 1칸씩 이동하면 y가 1씩 감소
-     * 위로 1칸씩 이동하면 y가 1씩 증가
-     * -> 좌표평면 규칙이므로 matrix 형태로 변환시켜야함.
-     * --------
-     * @param {*} block 
-     * @returns 
-     */
-    normalizeOriginBlock(block) {
-      let minY = Math.min(...block.map(v => v.y))
-      let minX = Math.min(...block.map(v => v.x))
 
-      return block.map(v => [v.y - minY, v.x - minX]).sort()
-    }
 
-    /**
-     * 
-     * matrix 형태 ex) [[1,2],[2,4],...] 로 되어있는 오브젝트 normalize
-     * @param {*} block 
-     * @returns 
-     */
-    normalizeBlock(block) {
-      let minRow = Math.min(...block.map(v => v[0]))
-      let minCol = Math.min(...block.map(v => v[1]))
 
-      return block.map(v => [v[0] - minRow, v[1] - minCol]).sort()
-    }
 
-    /**
-     * 현재 블록에 대해 회전 시 블록 종류 반환.
-     * @param {*} block 
-     * @returns 
-     */
-    rotate(block) {
-      // 회전 및 뒤집기를 통해 8번 rotation을 하여 모든 타입의 블록 json으로 반환.
-      let max = Math.max(...block.map(v => Math.max(v[0], v[1])))
-      let allBlockType = new Set()
-      let rotateBlock = JSON.parse(JSON.stringify(block))
-      for (let i = 0; i < 4; i++) {
-        if (i > 0) {
-          rotateBlock = rotateBlock.map(v => [max - v[1], v[0]]) // 90도 회전
-        }
-        let normalRotate = this.normalizeBlock(rotateBlock)
-        allBlockType.add(JSON.stringify(normalRotate))
-      }
-      // 뒤집어서 다시 4번 회전.
-      let transBlock = block.map(v => [v[1], v[0]])
-      for (let i = 0; i < 4; i++) {
-        if (i > 0) {
-          transBlock = transBlock.map(v => [max - v[1], v[0]]) // 90도 회전
-        }
-        let transNormalRotate = this.normalizeBlock(transBlock)
-        allBlockType.add(JSON.stringify(transNormalRotate))
-      }
-      let result = []
-      allBlockType.forEach((v) => {
-        result.push(JSON.parse(v))
-      })
-      return Array.from(result)
-    }
 
-    /**
-     * 블록이 존재하는 곳은 this.binaryBlockOn, 나머지는 this.binaryBlockOff
-     * @param {*} block 
-     */
-    transToBinary(block) {
-      let binary = []
-      for (let i = 0; i < this.limitBlockLength; i++) {
-        for (let j = 0; j < this.limitBlockLength; j++) {
-          let match = false
-          for (let k = 0; k < block.length; k++) {
-            const x = block[k][0]
-            const y = block[k][1]
-            if (i === x && j === y) {
-              match = true
-            }
-            if (match) {
-              break
-            }
-          }
-          if (match) {
-            binary.push(this.binaryBlockOn)
-          } else {
-            binary.push(this.binaryBlockOff)
-          }
-        }
-      }
-      return binary
-    }
+
 
     checkTableBlank(value) {
       if (value === this.blankTableValue) {

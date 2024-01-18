@@ -14,7 +14,7 @@ let unionWorker = new WebWorker().getUnionWorker(worker)
 
 export const UnionRaider = () => {
   // const [charOverall, setCharOverall] = React.useState('-')
-  const param = { nickname: '맑음' }
+  const param = { nickname: '마하포드' }
   const blockType = new BlockType();
   const defaultTable =
     // [
