@@ -18,7 +18,7 @@ export default () => {
     // console.log('result = ', o)
 
     const setting = new UnionRaiderSetting(e.data.unionBlock, JSON.parse(JSON.stringify(e.data.table)))
-    setting.parseRaider()
+    // setting.parseRaider()
     console.log('parse blocks= ', setting.blocks)
     setting.classify()
     console.log('result count = ', setting.resultBlocks)
@@ -119,8 +119,8 @@ export default () => {
      * @param {*} setTable : 실시간 table 렌더링을 위함
      * @param {*} blockType : blockTypeInstance 활용
      */
-    constructor(raider, table) {
-      this.raider = raider // raider는 기본적으로 unionRaiderResponse의 unionBlock으로 받는것이 원칙.
+    constructor(requestBlocks, table) {
+      this.requestBlocks = requestBlocks // raider는 기본적으로 unionRaiderResponse의 unionBlock으로 받는것이 원칙.
       this.table = table
       this.copyTable = JSON.parse(JSON.stringify(table))
       this.dominatedBlocks = []
@@ -168,11 +168,11 @@ export default () => {
 
     parseRaider() {
       console.log('parseRaider start')
-      if (!this.raider) {
-        console.log("raider information is null. character name = " + this.name);
+      if (!this.requestBlocks) {
+        console.log("raider information is null.");
         return;
       }
-      this.raider.forEach(block => {
+      this.requestBlocks.forEach(block => {
         const normalizedBlock = this.normalizeOriginBlock(block.blockPosition)
         let existType = false;
 
@@ -316,11 +316,16 @@ export default () => {
 
     classify() {
       console.time('classify')
+      this.parseRaider()
       let domiBlocks = []
       let shuffleIdx = []
       for (let i = 0; i < this.blocks.length; i++) {
         shuffleIdx.push(i)
       }
+
+      // this.blocks.sort(function (a, b) {
+      //   return b.size * b.count - a.size * a.count
+      // })
       const scanResult = this.scanImprove(this.table, this.blocks, domiBlocks, shuffleIdx)
       console.timeEnd('classify')
       console.log('union classify :', scanResult)
@@ -330,13 +335,21 @@ export default () => {
 
 
 
+      let curTable = JSON.parse(JSON.stringify(table))
+      let curBlocks = JSON.parse(JSON.stringify(blocks))
+      let curDomiBlocks = JSON.parse(JSON.stringify(domiBlocks))
+      let curShuffleIdx = JSON.parse(JSON.stringify(shuffleIdx))
+
+      curBlocks.sort(function (a, b) {
+        return b.size * b.count - a.size * a.count
+      })
+      
+
       // 남아있는 블럭 개수 체크
       let remainBlocksTF = false
-      blocks.forEach((block) => {
-        if (block.count !== 0) {
-          remainBlocksTF = true
-        }
-      })
+      if (curBlocks[0].count !== 0) {
+        remainBlocksTF = true
+      }
       if (!remainBlocksTF) {
         // matchTF = true
         if (!this.resultRecordTF) {
@@ -345,18 +358,13 @@ export default () => {
           this.resultDomiBlocks = domiBlocks
           this.resultRecordTF = true
         }
-        return { blocks: blocks, domiBlocks: domiBlocks }
+        return { blocks: curBlocks, domiBlocks: curDomiBlocks }
       }
 
-
-      let curTable = JSON.parse(JSON.stringify(table))
-      let curBlocks = JSON.parse(JSON.stringify(blocks))
-      let curDomiBlocks = JSON.parse(JSON.stringify(domiBlocks))
-      let curShuffleIdx = JSON.parse(JSON.stringify(shuffleIdx))
+      let savePointBlocks = JSON.parse(JSON.stringify(curBlocks))
+      let savePointDomiBlocks = JSON.parse(JSON.stringify(curDomiBlocks))
 
 
-      let savePointBlocks = JSON.parse(JSON.stringify(blocks))
-      let savePointDomiBlocks = JSON.parse(JSON.stringify(domiBlocks))
 
 
       // matchTF 가 false가 의미하는것
@@ -374,13 +382,13 @@ export default () => {
        *  4. 
        * }
        */
-      const idxByDummySize = this.sortingByBlockDummySize(blockDummyList)
-
+      // const idxByDummySize = this.sortingByBlockDummySize(blockDummyList)
+      blockDummyList.sort(function (a, b) { return a.length - b.length })
 
       let matchTF = false
       for (let m = 0; m < blockDummyList.length; m++) {
         matchTF = false // 매치여부 블록더미별로 초기화
-        const blockDummy = blockDummyList[idxByDummySize[m][0]]
+        const blockDummy = blockDummyList[m]
         let dummyScanTable = this.createDummyRegionTable(table, blockDummy)
         const savePointTable = JSON.parse(JSON.stringify(dummyScanTable))
         const fittableTF = this.checkFittable(curBlocks, blockDummy.length)
@@ -393,16 +401,17 @@ export default () => {
               blankTF = this.checkTableBlank(dummyScanTable[i][j])
               if (blankTF) {
                 // curShuffleIdx.shuffle()
-                for (let s = 0; s < 1; s++) {
-                  const idx = curShuffleIdx.shift()
-                  curShuffleIdx.push(idx)
-                }
+                // for (let s = 0; s < 1; s++) {
+                //   const idx = curShuffleIdx.shift()
+                //   curShuffleIdx.push(idx)
+                // }
+
                 // 블록 사이즈 종류 회전타입별로 하나씩 스캔
-                for (let k = 0; k < curShuffleIdx.length; k++) {
-                  if (curBlocks[curShuffleIdx[k]].count === 0) { // 개수가 0인 블록은 사용하지 않기.
+                for (let k = 0; k < curBlocks.length; k++) {
+                  if (curBlocks[k].count === 0) { // 개수가 0인 블록은 사용하지 않기.
                     continue
                   }
-                  const listByType = this.blocks[curShuffleIdx[k]]
+                  const listByType = curBlocks[k]
                   for (let l = 0; l < listByType.rotates.length; l++) {
 
                     const blockTypeRotate = listByType.rotates[l]
@@ -411,7 +420,7 @@ export default () => {
                     if (result.length !== 0) {
                       curDomiBlocks.push(result)
                       // 보유블럭 오브젝트들에서 점령된 블록 제거
-                      curBlocks[curShuffleIdx[k]].count--
+                      curBlocks[k].count--
 
                       // 실시간 렌더링 하기위함.
                       this.addProcessCount()
