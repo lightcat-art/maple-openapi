@@ -14,7 +14,7 @@ export default () => {
     console.log('Received cnt : ', e.data.cnt)
 
 
-    // let o = execute()
+    let o = execute(e.data.table, e.data.unionBlock)
     // console.log('result = ', o)
 
     const setting = new UnionRaiderSetting(e.data.unionBlock, JSON.parse(JSON.stringify(e.data.table)))
@@ -36,23 +36,51 @@ export default () => {
     // console.log('worker end')
   })
 
-  async function execute() {
+  async function execute(table, unionBlock) {
     let threads = []
+    let yxSym = [], origSym = [],  yxOrigSym = []
+    for (let i = 0; i < table[0].length; i++) {
+      yxSym[i] = [];
+      for (let j = 0; j < table.length; j++)
+        yxSym[i][j] = table[j][i]
+    }
+    for (let i = 0; i < table.length; i++) {
+      origSym[i] = [];
+      for (let j = 0; j < table[0].length; j++)
+        origSym[i][j] = table[table.length - 1 - i][table[0].length - 1 - j]
+    }
+    for (let i = 0; i < table[0].length; i++) {
+      yxOrigSym[i] = [];
+      for (let j = 0; j < table.length; j++)
+        yxOrigSym[i][j] = table[table.length - 1 - j][table[0].length - 1 - i]
+    }
 
-    threads.push(new PromiseTest(1))
-    threads.push(new PromiseTest(2))
-    threads.push(new PromiseTest(3))
-    threads.push(new PromiseTest(4))
+
+    threads.push(new UnionRaiderSetting(unionBlock, table, true))
+    threads.push(new UnionRaiderSetting(unionBlock, yxSym, false))
+    threads.push(new UnionRaiderSetting(unionBlock, origSym, false))
+    threads.push(new UnionRaiderSetting(unionBlock, yxOrigSym, false))
     const a = threads[0].classify()
     const b = threads[1].classify()
     const c = threads[2].classify()
     const d = threads[3].classify()
-
-    console.log('a=', a, ', b=', b, ',c=', c, ',d=', d)
-
-    const o = await Promise.race([a, b, c, d])
+    let o = await Promise.race([a, b, c, d])
+    // let o = await Promise.race([a])
     console.log('race o = ', o)
-    return o
+    for (let thread of threads) {
+      console.log('stop request')
+      thread.stopRequest()
+    }
+    
+    if (threads[0].complete) {
+      console.log('origin success')
+    } else if (threads[1].complete) {
+      console.log('yxSym success')
+    } else if (threads[2].complete) {
+      console.log('origSym success')
+    } else if (threads[3].complete) {
+      console.log('yxOrigSym success')
+    }
   }
 
   class PromiseTest {
@@ -119,42 +147,34 @@ export default () => {
      * @param {*} setTable : 실시간 table 렌더링을 위함
      * @param {*} blockType : blockTypeInstance 활용
      */
-    constructor(requestBlocks, table) {
+    constructor(requestBlocks, table, realtimeRender) {
       this.requestBlocks = requestBlocks // raider는 기본적으로 unionRaiderResponse의 unionBlock으로 받는것이 원칙.
       this.table = table
-      this.copyTable = JSON.parse(JSON.stringify(table))
+      this.realtimeRender = realtimeRender
       this.dominatedBlocks = []
       this.filledCount = 0
       this.processCount = 0
       this.blockType = new BlockType();
       // 블록 좌표형
       this.blocks = []
-      // // 블록 바이너리형
-      // this.blocksBinary = []
-      // // 블록 종류별 개수 카운트
-      // this.blocksCount = []
-      // // 블록 사이즈 체크
-      // this.blocksSize = []
-      // // this.blocksSuffleIdx = []
-
 
       // 결과
       this.resultBlocks = null;
-      // this.resultBlocksBinary = null;
-      // this.resultBlocksCount = null;
       this.resultTable = null;
       this.resultDomiBlocks = null;
-      this.resultRecordTF = false;
       this.resultTableStyle = null;
-
-
+      
+      
       this.binaryBlockOn = 1 // 블록바이너리표현 :  블록이 있는 부분
       this.binaryBlockOff = 0 // 블록바이너리표현 : 블록이 없는 부분
       this.closeTableValue = 0 // 유니온 지도에서 채울수 없는 부분
       this.blankTableValue = 1 // 유니온 지도에서 채워질 부분 (비어있는 부분)
       this.limitBlockSize = 5; // 한 블록의 최대 큐브 개수
       this.limitBlockLength = 5; // 좌표평면상 블록의 최대 길이
-      console.log('test setting')
+      
+      this.complete = false;
+      this.stop = false
+      this.originCheck = false // 원테이블 정보인지 지역더미테이블 정보인지 체크.
     }
     addFilledCount() {
       this.filledCount = this.filledCount + 1
@@ -299,7 +319,7 @@ export default () => {
       for (let i = 0; i < this.resultDomiBlocks.length; i++) {
         const domiBlock = this.resultDomiBlocks[i]
         const direction = this.blockType.checkDirection(domiBlock)
-        const color = this.blockType.getColorByBlock(this.blockType.normalizeBlock(domiBlock))
+        const color = this.blockType.getColorByBlock(this.normalizeBlock(domiBlock))
         for (let j = 0; j < domiBlock.length; j++) {
           let v = domiBlock[j]
           let styleValue = 0
@@ -314,8 +334,11 @@ export default () => {
       return this.blockType.getTableStyle(this.resultTableStyle)
     }
 
-    classify() {
-      console.time('classify')
+    stopRequest() {
+      this.stop = true
+    }
+
+    async classify() {
       this.parseRaider()
       let domiBlocks = []
       let shuffleIdx = []
@@ -326,14 +349,15 @@ export default () => {
       // this.blocks.sort(function (a, b) {
       //   return b.size * b.count - a.size * a.count
       // })
-      const scanResult = this.scanImprove(this.table, this.blocks, domiBlocks, shuffleIdx)
-      console.timeEnd('classify')
-      console.log('union classify :', scanResult)
+      const scanResult = await this.scanImprove(this.table, this.blocks, domiBlocks, shuffleIdx)
+      return scanResult
     }
 
-    scanImprove(table, blocks, domiBlocks, shuffleIdx) {
-
-
+    async scanImprove(table, blocks, domiBlocks, shuffleIdx) {
+      
+      if (this.stop) {
+        return null
+      }
 
       let curTable = JSON.parse(JSON.stringify(table))
       let curBlocks = JSON.parse(JSON.stringify(blocks))
@@ -343,7 +367,7 @@ export default () => {
       curBlocks.sort(function (a, b) {
         return b.size * b.count - a.size * a.count
       })
-      
+
 
       // 남아있는 블럭 개수 체크
       let remainBlocksTF = false
@@ -352,11 +376,11 @@ export default () => {
       }
       if (!remainBlocksTF) {
         // matchTF = true
-        if (!this.resultRecordTF) {
+        if (!this.complete) {
           this.resultBlocks = blocks
           this.resultTable = table
           this.resultDomiBlocks = domiBlocks
-          this.resultRecordTF = true
+          this.complete = true
         }
         return { blocks: curBlocks, domiBlocks: curDomiBlocks }
       }
@@ -366,12 +390,19 @@ export default () => {
 
 
 
-
       // matchTF 가 false가 의미하는것
       // 1. 하위함수에서 매칭이 되지 않는 블록이 존재하여 현재함수에서 모든 케이스까지 트라이했는데 매칭되는 케이스가 없음
 
+      let origin = false
       // 모든 블록더미를 bfs로 탐색
       const blockDummyList = this.findAllBlockDummy(JSON.parse(JSON.stringify(table)))
+      // 지역더미테이블정보인지 원테이블정보인지 체크.
+      if (blockDummyList.length === 1 && !this.originCheck) {
+        origin = true
+      } else if (blockDummyList.length > 1 && !this.originCheck) {
+        this.originCheck = true
+        origin = true
+      } 
       // 작은 더미부터 돌린다.
       /**
        * for (블록더미 리스트) {
@@ -384,7 +415,7 @@ export default () => {
        */
       // const idxByDummySize = this.sortingByBlockDummySize(blockDummyList)
       blockDummyList.sort(function (a, b) { return a.length - b.length })
-
+      
       let matchTF = false
       for (let m = 0; m < blockDummyList.length; m++) {
         matchTF = false // 매치여부 블록더미별로 초기화
@@ -424,14 +455,17 @@ export default () => {
 
                       // 실시간 렌더링 하기위함.
                       this.addProcessCount()
-                      this.resultBlocks = curBlocks
-                      this.resultDomiBlocks = curDomiBlocks
-                      this.setTableStyleValue()
-                      if (this.processCount % 1 === 0) {
-                        postMessage({ table: this.getTableStyle() })
+                      if (this.realtimeRender) {
+                        this.resultBlocks = curBlocks
+                        this.resultDomiBlocks = curDomiBlocks
+                        this.setTableStyleValue()
+                        if (this.processCount % 20 === 0) {
+                          postMessage({ table: this.getTableStyle() })
+                        }
                       }
 
-                      let blocksInfo = this.scanImprove(dummyScanTable, curBlocks, curDomiBlocks, curShuffleIdx)
+
+                      let blocksInfo = await this.scanImprove(dummyScanTable, curBlocks, curDomiBlocks, curShuffleIdx)
                       if (!blocksInfo) { // 자식 함수에서 매칭실패로 판단되는 경우 유니온 배치판 및 점령블록 등 오브젝트 원래대로 되돌려놓기
                         // 기본적으로 matchTF 가 false이므로 굳이 다시 세팅해줄 필요가 없음.
                         dummyScanTable.length = 0
@@ -449,15 +483,15 @@ export default () => {
                         matchTF = true
                       }
                     }
-                    if (matchTF) { break }
+                    if (matchTF || this.stop) { break }
                   }
-                  if (matchTF) { break }
+                  if (matchTF || this.stop) { break }
                 }
                 // 한번 빈칸을 스캔했으면 그다음빈칸은 자식 재귀함수에서 실행해야하므로 빠져나가기
                 break
               }
             }
-            if (blankTF) { break } // 한번 빈칸을 스캔했으면 그다음빈칸은 자식 재귀함수에서 실행해야하므로 빠져나가기
+            if (blankTF || this.stop) { break } // 한번 빈칸을 스캔했으면 그다음빈칸은 자식 재귀함수에서 실행해야하므로 빠져나가기
           }
         } else { // 어느 하나의 블록더미라도 조합가능성이 전혀 존재하지 않는 경우 매칭실패로 판단
           matchTF = false
@@ -469,7 +503,7 @@ export default () => {
         }
       }
 
-      if (blockDummyList.length !== 0 && !matchTF) { // 뒤로가기
+      if ((blockDummyList.length !== 0 && !matchTF) || this.stop) { // 뒤로가기
         curTable.length = 0
         curBlocks.length = 0
         curDomiBlocks.length = 0
@@ -483,6 +517,9 @@ export default () => {
         //   this.resultDomiBlocks = curDomiBlocks
         //   this.resultRecordTF = true
         // }
+        if (origin) {
+          this.complete = true
+        }
         return { blocks: savePointBlocks, domiBlocks: savePointDomiBlocks }
       }
     }
