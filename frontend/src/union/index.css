@@ -30,3 +30,12 @@
     background-color: rgb(173, 173, 173);
 }
 
+.region-cell-top {
+    /* border-top: 2px solid black; */
+    /* border-left: 2px solid black; */
+    border-bottom: 2px solid black;
+}
+.region-cell-bottom {
+    border-left: 2px solid black;
+    border-bottom: 2px solid black;
+}

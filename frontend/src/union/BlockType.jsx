@@ -30,21 +30,21 @@ class BlockType {
             // '#ffffff'
         ]
         this.blockTypeColor = [
-            '#330707',
-            '#5f3535',
-            '#805858',
-            '#6b1111',
-            '#8f2ca8',
-            '#af4545',
-            '#eee000',
-            '#7e1c3bf1',
-            '#babcd4',
-            '#004c8a',
-            '#f7c7c7',
-            '#fca7a7',
-            '#2ec948',
-            '#3dccb9',
-            '#29a9c9'
+            '#330707', // z-asym
+            '#5f3535', // z-sym
+            '#805858', // +
+            '#6b1111', // T
+            '#8f2ca8', // I
+            '#af4545', // thumb
+            '#eee000', // z
+            '#7e1c3bf1', // T
+            '#babcd4', // L
+            '#004c8a', // I
+            '#f7c7c7', // square
+            '#fca7a7', // I
+            '#2ec948', // L
+            '#3dccb9', // I
+            '#29a9c9' // dot
         ]
         this.baseBlockSizeIdx = { 5: [0, 5], 4: [6, 10], 3: [11, 12], 2: [13, 13], 1: [14, 14] }
         this.blockDirection = { 1: 'borderTop', 2: 'borderLeft', 4: 'borderRight', 8: 'borderBottom' }
@@ -67,11 +67,52 @@ class BlockType {
             for (let j = 0; j < table[0].length; j++) {
                 let cellStyleMap = {}
                 cellStyleMap.direction = []
-                cellStyleMap['background'] = this.defaultBlockTypeColor
+                cellStyleMap['background'] = this.default
                 style[i][j] = cellStyleMap
             }
         }
         return style
+    }
+
+    /**
+* 
+* matrix 형태 ex) [[1,2],[2,4],...] 로 되어있는 오브젝트 normalize
+* @param {*} block 
+* @returns 
+*/
+    normalizeBlock(block) {
+        let minRow = Math.min(...block.map(v => v[0]))
+        let minCol = Math.min(...block.map(v => v[1]))
+
+        return block.map(v => [v[0] - minRow, v[1] - minCol]).sort()
+    }
+
+    setTableStyleValue(table, domiBlocks) {
+        let tableStyleValue = JSON.parse(JSON.stringify(table))
+        for (let i = 0; i < domiBlocks.length; i++) {
+            const domiBlock = domiBlocks[i]
+            const direction = this.checkDirection(domiBlock)
+            const color = this.getColorByBlock(this.normalizeBlock(domiBlock))
+            for (let j = 0; j < domiBlock.length; j++) {
+                let v = domiBlock[j]
+                let styleValue = 0
+                styleValue += direction[j]
+                styleValue += color
+                if (styleValue < 100) {
+                    console.log('test')
+                }
+                try {
+                    tableStyleValue[v[0]][v[1]] = styleValue
+                } catch(error) {
+                    // console.log('styleValue = ',styleValue)
+                    // console.log('tableStyleValue = ', tableStyleValue )
+                    // console.log('setting value idx= ',v[0],', ',v[1])
+                    // console.log('error= ',error)
+                    
+                }
+            }
+        }
+        return tableStyleValue
     }
 
     getTableStyle(table) {
@@ -91,7 +132,8 @@ class BlockType {
                     })
                     cellStyleMap['background'] = this.blockTypeColor[this.getOnlyColorIdx(table[i][j])]
                 }
-                style[i][j] = cellStyleMap
+                style[i][j] = {style: cellStyleMap, className: 'block'}
+                // style[i][j] = cellStyleMap
             }
         }
         return style
@@ -176,109 +218,6 @@ class BlockType {
             }
         })
         return result
-    }
-
-    /**
-     * map형태 ex) [{x: 24, y: 25}, ...] 로 되어있는 유니온 초기 오브젝트를 normalize
-     * --------
-     * 초기 오브젝트 x,y :
-     * 좌측으로 1칸씩 이동하면 x가 1씩 감소
-     * 우측으로 1칸씩 이동하면 x가 1씩 증가
-     * 아래로 1칸씩 이동하면 y가 1씩 감소
-     * 위로 1칸씩 이동하면 y가 1씩 증가
-     * -> 좌표평면 규칙이므로 matrix 형태로 변환시켜야함.
-     * --------
-     * @param {*} block 
-     * @returns 
-     */
-    normalizeOriginBlock(block) {
-        let minY = Math.min(...block.map(v => v.y))
-        let minX = Math.min(...block.map(v => v.x))
-
-        return block.map(v => [v.y - minY, v.x - minX]).sort()
-    }
-
-    /**
-     * 
-     * matrix 형태 ex) [[1,2],[2,4],...] 로 되어있는 오브젝트 normalize
-     * @param {*} block 
-     * @returns 
-     */
-    normalizeBlock(block) {
-        let minRow = Math.min(...block.map(v => v[0]))
-        let minCol = Math.min(...block.map(v => v[1]))
-
-        return block.map(v => [v[0] - minRow, v[1] - minCol]).sort()
-    }
-
-    /**
-     * 현재 블록에 대해 회전 시 블록 종류 반환.
-     * @param {*} block 
-     * @returns 
-     */
-    rotate(block) {
-        // 회전 및 뒤집기를 통해 8번 rotation을 하여 모든 타입의 블록 json으로 반환.
-        let max = Math.max(...block.map(v => Math.max(v[0], v[1])))
-        let allBlockType = new Set()
-        let rotateBlock = JSON.parse(JSON.stringify(block))
-        for (let i = 0; i < 4; i++) {
-            if (i > 0) {
-                rotateBlock = rotateBlock.map(v => [max - v[1], v[0]]) // 90도 회전
-            }
-            let normalRotate = this.normalizeBlock(rotateBlock)
-            allBlockType.add(JSON.stringify(normalRotate))
-        }
-        // 뒤집어서 다시 4번 회전.
-        let transBlock = block.map(v => [v[1], v[0]])
-        for (let i = 0; i < 4; i++) {
-            if (i > 0) {
-                transBlock = transBlock.map(v => [max - v[1], v[0]]) // 90도 회전
-            }
-            let transNormalRotate = this.normalizeBlock(transBlock)
-            allBlockType.add(JSON.stringify(transNormalRotate))
-        }
-        let result = []
-        allBlockType.forEach((v) => {
-            result.push(JSON.parse(v))
-        })
-        return Array.from(result)
-    }
-
-    /**
-     * 블록이 존재하는 곳은 this.binaryBlockOn, 나머지는 this.binaryBlockOff
-     * @param {*} block 
-     */
-    transToBinary(block) {
-        let binary = []
-        for (let i = 0; i < this.limitBlockLength; i++) {
-            for (let j = 0; j < this.limitBlockLength; j++) {
-                let match = false
-                for (let k = 0; k < block.length; k++) {
-                    const x = block[k][0]
-                    const y = block[k][1]
-                    if (i === x && j === y) {
-                        match = true
-                    }
-                    if (match) {
-                        break
-                    }
-                }
-                if (match) {
-                    binary.push(this.binaryBlockOn)
-                } else {
-                    binary.push(this.binaryBlockOff)
-                }
-            }
-        }
-        return binary
-    }
-
-    checkTableBlank(value) {
-        if (value === this.blankTableValue) {
-            return true
-        } else {
-            return false
-        }
     }
 
     /**

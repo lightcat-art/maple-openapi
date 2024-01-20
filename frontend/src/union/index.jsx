@@ -7,6 +7,8 @@ import Util from '../util/util'
 import { BasicTable } from './Table';
 import WebWorker from '../util/worker'
 import worker from './UnionWorker'
+import { CheckBox, SwitchCheckBox } from '../common/checkBox'
+
 
 // let unionWorker = new WebWorker(worker)
 // const unionWorkerContext = React.createContext(new WebWorker(worker))
@@ -16,70 +18,9 @@ export const UnionRaider = () => {
   // const [charOverall, setCharOverall] = React.useState('-')
   const param = { nickname: '마하포드' }
   const blockType = new BlockType();
-  const defaultTable =
-    // [
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    //   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    // ]
-  [
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
-    [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  ]
 
-  // [
-  //   [1, 1, 1, 1, 1, 1],
-  //   [1, 1, 1, 1, 1, 1],
-  //   [1, 1, 1, 1, 1, 1],
-  //   [1, 1, 1, 1, 1, 1],
-  //   [1, 1, 1, 1, 1, 1],
-  //   [1, 1, 1, 1, 1, 1],]
-
-  // [
-  //   [1,1,1,1,1],
-  //   [1,1,1,1,1],
-  //   [1,1,1,1,1],
-  //   [1,1,1,1,1],
-  //   [1,1,1,1,1]]
-
-
-  const [table, setTable] = React.useState(defaultTable)
-  const defaultTableStyle = blockType.getDefaultTableStyle(table)
+  const [table, setTable] = React.useState(Array.from(Array(20), () => Array(22).fill(0)))
+  const defaultTableStyle = Array.from(Array(table.length), () => Array(table[0].length).fill({}))
   const [tableStyle, setTableStyle] = React.useState(defaultTableStyle)
   const [result, setResult] = React.useState(null)
   const [submitButtonDisabled, setSubmitButtonDisabled] = React.useState(false)
@@ -87,11 +28,13 @@ export const UnionRaider = () => {
   const [continueButtonHidden, setContinueButtonHidden] = React.useState(true)
   const [resetButtonHidden, setResetButtonHidden] = React.useState(true)
   const [responseUnionBlock, setResponseUnionBlock] = React.useState([])
+  const [regionMode, setRegionMode] = React.useState(false) // 지역선택모드인지, 단일셀 선택모드인지 세팅
+  const [realTimeRender, setRealTimeRender] = React.useState(false) // 실시간 보기 세팅
 
-  
+
   const handleFormSubmit = (e) => {
     unionWorker = new WebWorker().getUnionWorker(worker)
-    unionWorker.postMessage({unionBlock: responseUnionBlock, table: table, cnt: 1})
+    unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, cnt: 1 })
     setSubmitButtonDisabled(true)
     setPauseButtonHidden(true)
     setContinueButtonHidden(true)
@@ -142,24 +85,30 @@ export const UnionRaider = () => {
       .catch(error => console.log(error))
 
 
-    
+
     unionWorker.addEventListener('message', (event) => {
       const result = event.data;
       // console.log('listener executing')
       // console.log('result = ', result)
       // setTable(table)
       if (result) {
-        setTableStyle(result.table);
+        const styleValue = blockType.setTableStyleValue(result.table, result.domiBlocks)
+        setTableStyle(blockType.getTableStyle(styleValue));
       }
-
     });
 
   }, [unionWorker]);
 
+  React.useEffect(() => {
+    console.log('regionMode changed')
+  }, [regionMode]);
+
 
   return (
     <div>
-      <BasicTable setTable={setTable} style={tableStyle} ></BasicTable>
+      <BasicTable setTable={setTable} style={tableStyle} submit={submitButtonDisabled}></BasicTable>
+      <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
+      <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox>
       {/* <button onClick={handleClick(testInput, unionWorker, setResult)}>Calculate in Web Worker</button> */}
       <div><Button action={handleFormSubmit} disabled={submitButtonDisabled} title="submit"></Button></div>
       <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>

@@ -13,32 +13,13 @@ export default () => {
     console.log('Received table : ', e.data.table)
     console.log('Received cnt : ', e.data.cnt)
 
-
     let o = execute(e.data.table, e.data.unionBlock)
-    // console.log('result = ', o)
 
-    const setting = new UnionRaiderSetting(e.data.unionBlock, JSON.parse(JSON.stringify(e.data.table)))
-    // setting.parseRaider()
-    console.log('parse blocks= ', setting.blocks)
-    setting.classify()
-    console.log('result count = ', setting.resultBlocks)
-    console.log('result table= ', setting.resultTable)
-    console.log('result domiBlocks=', setting.resultDomiBlocks)
-    if (setting.resultDomiBlocks) {
-      setting.setTableStyleValue()
-      const tableStyle = setting.getTableStyle()
-      postMessage({ table: tableStyle })
-    } else {
-      postMessage(null)
-    }
-
-
-    // console.log('worker end')
   })
 
   async function execute(table, unionBlock) {
     let threads = []
-    let yxSym = [], origSym = [],  yxOrigSym = []
+    let yxSym = [], origSym = [], yxOrigSym = []
     for (let i = 0; i < table[0].length; i++) {
       yxSym[i] = [];
       for (let j = 0; j < table.length; j++)
@@ -71,15 +52,52 @@ export default () => {
       console.log('stop request')
       thread.stopRequest()
     }
-    
+
+    console.log('origin success : ', threads[0].complete, ', 1 : ', threads[1].complete, ', 2: ', threads[2].complete, ', 3: ', threads[3].complete)
     if (threads[0].complete) {
       console.log('origin success')
+      console.log('blocks:', threads[0].resultBlocks)
+      postMessage({ table: table, domiBlocks: threads[0].resultDomiBlocks })
+
     } else if (threads[1].complete) {
       console.log('yxSym success')
+      console.log('blocks:', threads[1].resultBlocks)
+      // postMessage({ table: table, domiBlocks: threads[1].resultDomiBlocks })
+      let resultDomiBlocks = []
+      for (let domiBlock of threads[1].resultDomiBlocks) {
+        let resultDomiBlock = []
+        for (let coord of domiBlock) {
+          resultDomiBlock.push([coord[1], coord[0]])
+        }
+        resultDomiBlocks.push(resultDomiBlock)
+      }
+      postMessage({ table: table, domiBlocks: resultDomiBlocks })
+
     } else if (threads[2].complete) {
       console.log('origSym success')
+      console.log('blocks:', threads[2].resultBlocks)
+      let resultDomiBlocks = []
+      for (let domiBlock of threads[2].resultDomiBlocks) {
+        let resultDomiBlock = []
+        for (let coord of domiBlock) {
+          resultDomiBlock.push([table.length - 1 - coord[0], table[0].length - 1 - coord[1]])
+        }
+        resultDomiBlocks.push(resultDomiBlock)
+      }
+      postMessage({ table: table, domiBlocks: resultDomiBlocks })
+
     } else if (threads[3].complete) {
       console.log('yxOrigSym success')
+      console.log('blocks:', threads[3].resultBlocks)
+      let resultDomiBlocks = []
+      for (let domiBlock of threads[3].resultDomiBlocks) {
+        let resultDomiBlock = []
+        for (let coord of domiBlock) {
+          resultDomiBlock.push([table.length - 1 - coord[1], table[0].length - 1 - coord[0]])
+        }
+        resultDomiBlocks.push(resultDomiBlock)
+      }
+      postMessage({ table: table, domiBlocks: resultDomiBlocks })
     }
   }
 
@@ -154,7 +172,7 @@ export default () => {
       this.dominatedBlocks = []
       this.filledCount = 0
       this.processCount = 0
-      this.blockType = new BlockType();
+      // this.blockType = new BlockType();
       // 블록 좌표형
       this.blocks = []
 
@@ -163,15 +181,15 @@ export default () => {
       this.resultTable = null;
       this.resultDomiBlocks = null;
       this.resultTableStyle = null;
-      
-      
+
+
       this.binaryBlockOn = 1 // 블록바이너리표현 :  블록이 있는 부분
       this.binaryBlockOff = 0 // 블록바이너리표현 : 블록이 없는 부분
       this.closeTableValue = 0 // 유니온 지도에서 채울수 없는 부분
       this.blankTableValue = 1 // 유니온 지도에서 채워질 부분 (비어있는 부분)
       this.limitBlockSize = 5; // 한 블록의 최대 큐브 개수
       this.limitBlockLength = 5; // 좌표평면상 블록의 최대 길이
-      
+
       this.complete = false;
       this.stop = false
       this.originCheck = false // 원테이블 정보인지 지역더미테이블 정보인지 체크.
@@ -216,6 +234,7 @@ export default () => {
           this.blocks.push(block)
         }
       })
+      console.log('parse blocks= ', this.blocks)
     }
 
     /**
@@ -314,26 +333,6 @@ export default () => {
       return binary
     }
 
-    setTableStyleValue() {
-      this.resultTableStyle = JSON.parse(JSON.stringify(this.table))
-      for (let i = 0; i < this.resultDomiBlocks.length; i++) {
-        const domiBlock = this.resultDomiBlocks[i]
-        const direction = this.blockType.checkDirection(domiBlock)
-        const color = this.blockType.getColorByBlock(this.normalizeBlock(domiBlock))
-        for (let j = 0; j < domiBlock.length; j++) {
-          let v = domiBlock[j]
-          let styleValue = 0
-          styleValue += direction[j]
-          styleValue += color
-          this.resultTableStyle[v[0]][v[1]] = styleValue
-        }
-      }
-    }
-
-    getTableStyle() {
-      return this.blockType.getTableStyle(this.resultTableStyle)
-    }
-
     stopRequest() {
       this.stop = true
     }
@@ -354,8 +353,13 @@ export default () => {
     }
 
     async scanImprove(table, blocks, domiBlocks, shuffleIdx) {
-      
+
       if (this.stop) {
+        if (this.realtimeRender) {
+          console.log('origin stop')
+        } else {
+          console.log('other stop')
+        }
         return null
       }
 
@@ -370,15 +374,13 @@ export default () => {
 
 
       // 남아있는 블럭 개수 체크
-      let remainBlocksTF = false
-      if (curBlocks[0].count !== 0) {
-        remainBlocksTF = true
+      let remainBlocksTF = true
+      if (curBlocks[0].count === 0) {
+        remainBlocksTF = false
       }
       if (!remainBlocksTF) {
-        // matchTF = true
         if (!this.complete) {
           this.resultBlocks = blocks
-          this.resultTable = table
           this.resultDomiBlocks = domiBlocks
           this.complete = true
         }
@@ -402,7 +404,7 @@ export default () => {
       } else if (blockDummyList.length > 1 && !this.originCheck) {
         this.originCheck = true
         origin = true
-      } 
+      }
       // 작은 더미부터 돌린다.
       /**
        * for (블록더미 리스트) {
@@ -415,7 +417,7 @@ export default () => {
        */
       // const idxByDummySize = this.sortingByBlockDummySize(blockDummyList)
       blockDummyList.sort(function (a, b) { return a.length - b.length })
-      
+
       let matchTF = false
       for (let m = 0; m < blockDummyList.length; m++) {
         matchTF = false // 매치여부 블록더미별로 초기화
@@ -456,11 +458,12 @@ export default () => {
                       // 실시간 렌더링 하기위함.
                       this.addProcessCount()
                       if (this.realtimeRender) {
-                        this.resultBlocks = curBlocks
-                        this.resultDomiBlocks = curDomiBlocks
-                        this.setTableStyleValue()
-                        if (this.processCount % 20 === 0) {
-                          postMessage({ table: this.getTableStyle() })
+                        if (this.processCount % 25 === 0) {
+                          this.resultBlocks = curBlocks
+                          this.resultDomiBlocks = curDomiBlocks
+                          // this.setTableStyleValue()
+                          // postMessage({ table: this.getTableStyle() })
+                          postMessage({ table: this.table, domiBlocks: curDomiBlocks })
                         }
                       }
 
@@ -496,7 +499,10 @@ export default () => {
         } else { // 어느 하나의 블록더미라도 조합가능성이 전혀 존재하지 않는 경우 매칭실패로 판단
           matchTF = false
         }
-
+        // 남은 블록 개수 체크
+        if (curBlocks[0].count === 0) {
+          break
+        }
         // 특정 더미 블록에서 딱 맞는 배치가 없다고 판단되는 경우 다음 블록더미를 스캔하지 않고 상위 재귀함수로 복귀
         if (!matchTF) {
           break
@@ -518,7 +524,12 @@ export default () => {
         //   this.resultRecordTF = true
         // }
         if (origin) {
+          if (this.realtimeRender) {
+            console.log('test')
+          }
           this.complete = true
+          this.resultBlocks = savePointBlocks
+          this.resultDomiBlocks = savePointDomiBlocks
         }
         return { blocks: savePointBlocks, domiBlocks: savePointDomiBlocks }
       }
@@ -823,285 +834,6 @@ export default () => {
       // 다 돌았는데도 반환되는게 없으면 null 반환
       return null
     }
-  }
-
-  class BlockType {
-    // React component에서 선언하는 경우 다시 새로고침하면 인스턴스 날아감.
-    // 현재 가지고 있는 블록 정보를 기반으로 화면에 표시할수 있도록 도와주는 클래스
-    static instance;
-    constructor() {
-      if (BlockType.instance) return BlockType.instance;
-      this.baseBlockType = [
-        [[0, 0], [0, 1], [1, 1], [1, 2], [1, 3]], // z-asym
-        [[0, 0], [0, 1], [1, 1], [2, 1], [2, 2]], // z-sym
-        [[0, 1], [1, 0], [1, 1], [1, 2], [2, 1]], // +
-        [[0, 0], [1, 0], [1, 1], [1, 2], [2, 0]], // T
-        [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]], // I
-        [[0, 0], [0, 1], [0, 2], [1, 1], [1, 2]], // thumb
-        [[0, 0], [0, 1], [1, 1], [1, 2]], // z
-        [[0, 0], [1, 0], [1, 1], [2, 0]], // T
-        [[0, 0], [0, 1], [0, 2], [1, 2]], // L
-        [[0, 0], [0, 1], [0, 2], [0, 3]], // I
-        [[0, 0], [0, 1], [1, 0], [1, 1]], // square
-        [[0, 0], [0, 1], [0, 2]], // I
-        [[0, 0], [0, 1], [1, 0]], // L
-        [[0, 0], [0, 1]], // I
-        [[0, 0]], // dot
-      ]
-      this.closeTableColor = [
-        // '#00ff0000'
-        '#ffffff'
-      ]
-      this.blankTableColor = [
-        '#757474ff'
-        // '#ffffff'
-      ]
-      this.blockTypeColor = [
-        '#330707', // z-asym
-        '#5f3535', // z-sym
-        '#805858', // +
-        '#6b1111', // T
-        '#8f2ca8', // I
-        '#af4545', // thumb
-        '#eee000', // z
-        '#7e1c3bf1', // T
-        '#babcd4', // L
-        '#004c8a', // I
-        '#f7c7c7', // square
-        '#fca7a7', // I
-        '#2ec948', // L
-        '#3dccb9', // I
-        '#29a9c9' // dot
-      ]
-      this.baseBlockSizeIdx = { 5: [0, 5], 4: [6, 10], 3: [11, 12], 2: [13, 13], 1: [14, 14] }
-      this.blockDirection = { 1: 'borderTop', 2: 'borderLeft', 4: 'borderRight', 8: 'borderBottom' }
-      // [i][j] => i: 블록타입 종류,  j: 블록의 회전에 따른 종류
-      this.allBlockType = new Array(this.baseBlockType.length)
-      this.getAllBlockType();
-      this.binaryBlockOn = 1 // 블록바이너리표현 :  블록이 있는 부분
-      this.binaryBlockOff = 0 // 블록바이너리표현 : 블록이 없는 부분
-      this.closeTableValue = 0 // 유니온 지도에서 채울수 없는 부분
-      this.blankTableValue = 1 // 유니온 지도에서 채워질 부분 (비어있는 부분)
-      this.limitBlockSize = 5; // 한 블록의 최대 큐브 개수
-      this.limitBlockLength = 5; // 좌표평면상 블록의 최대 길이
-      BlockType.instance = this;
-    }
-
-    getDefaultTableStyle(table) {
-      let style = Array.from(Array(table.length), () => Array(table[0].length).fill({}))
-
-      for (let i = 0; i < table.length; i++) {
-        for (let j = 0; j < table[0].length; j++) {
-          let cellStyleMap = {}
-          cellStyleMap.direction = []
-          cellStyleMap['background'] = this.closeTableColor
-          style[i][j] = cellStyleMap
-        }
-      }
-      return style
-    }
-
-    /**
-* 
-* matrix 형태 ex) [[1,2],[2,4],...] 로 되어있는 오브젝트 normalize
-* @param {*} block 
-* @returns 
-*/
-    normalizeBlock(block) {
-      let minRow = Math.min(...block.map(v => v[0]))
-      let minCol = Math.min(...block.map(v => v[1]))
-
-      return block.map(v => [v[0] - minRow, v[1] - minCol]).sort()
-    }
-
-    getTableStyle(table) {
-      let style = Array.from(Array(table.length), () => Array(table[0].length).fill({}))
-
-      for (let i = 0; i < table.length; i++) {
-        for (let j = 0; j < table[0].length; j++) {
-          let cellStyleMap = {}
-          if (table[i][j] === this.closeTableValue) {
-            cellStyleMap.background = this.closeTableColor
-          } else if (table[i][j] === this.blankTableValue) {
-            cellStyleMap.background = this.blankTableColor
-          } else {
-            let directionList = this.getConnectedDirection(table[i][j])
-            directionList.forEach((v) => {
-              cellStyleMap[v] = 'none'
-            })
-            cellStyleMap['background'] = this.blockTypeColor[this.getOnlyColorIdx(table[i][j])]
-          }
-          style[i][j] = cellStyleMap
-        }
-      }
-      return style
-    }
-    /**
-     * 상하좌우에 혼자 남겨진 사방이 막힌 블록이 존재하는지 체크.
-     * @param {*} position  : 현재 좌표
-     * @param {*} table : 유니온 배치판
-     * @param {*} k : 막힌 블록의 값
-     * @returns 
-     */
-    checkBlankAlone(position, table) {
-      // 상 좌 우 하
-      let dxy = [[-1, 0], [0, -1], [0, 1], [1, 0]]
-      const lenX = table.length;
-      const lenY = table[0].length;
-
-      for (let i = 0; i < dxy.length; i++) { // 현재블록에서 상하좌우 블록 이동
-        let nx = position[0] + dxy[i][0]
-        let ny = position[1] + dxy[i][1]
-
-        let closeAllState = 2 ** 4 - 1
-        let closeCurState = 0
-        const direction = Object.keys(this.blockDirection).map((v) => Number(v))
-        // 옮겨간 블록이 유효하고 비어있는 블록일때만 체크.
-        if (0 <= nx && 0 <= ny && nx < lenX && ny < lenY && table[nx][ny] === this.blankTableValue) {
-          for (let j = 0; j < dxy.length; j++) {
-            let nnx = nx + dxy[j][0]
-            let nny = ny + dxy[j][1]
-            // 옮겨간 블록의 사방이 막혀있는지 체크
-            if (0 > nnx || 0 > nny || nnx >= lenX || nny >= lenY || (table[nnx][nny] !== this.blankTableValue)) {
-              closeCurState += direction[j]
-            }
-          }
-        }
-
-        if (closeAllState === closeCurState) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    /**
-     * 블록이 연결되있는 지점을 이진수로 반환
-     * @param {*} block : 한 block 좌표 리스트 반환
-     */
-    checkDirection(block) {
-
-      // 상 좌 우 하
-      const dx = [-1, 0, 0, 1]
-      const dy = [0, -1, 1, 0]
-      const direction = Object.keys(this.blockDirection).map((v) => Number(v))
-      // console.log('direction', direction)
-      const result = new Array(block.length).fill(0)
-      for (let i = 0; i < block.length; i++) {
-        for (let j = 0; j < dx.length; j++) {
-          let nx = block[i][0] + dx[j];
-          let ny = block[i][1] + dy[j];
-          block.forEach(v => {
-            if (JSON.stringify([nx, ny]) === JSON.stringify(v)) {
-              result[i] += direction[j]
-            }
-          })
-        }
-      }
-      return result
-    }
-
-    /**
-     * 백단위의 색상값은 무시하고 방향값에 대해 어떤 방향의 테두리를 연결해야하는지 속성값 반환
-     * @param {*} value 테이블에 들어가있는 색상 및 방향값
-     */
-    getConnectedDirection(value) {
-      let result = []
-      let directionBit = value % 100
-      Object.keys(this.blockDirection).forEach((v) => {
-        v = Number(v)
-        // console.log('type a = ',typeof(a), ",  b = ",typeof(b))
-        if ((directionBit & v) === v) {
-          result.push(this.blockDirection[v])
-        }
-      })
-      return result
-    }
-
-
-
-
-
-
-
-
-    checkTableBlank(value) {
-      if (value === this.blankTableValue) {
-        return true
-      } else {
-        return false
-      }
-    }
-
-    /**
-     * 유니온에 존재하는 모든 블록 종류에 대한 정보 init
-     */
-    getAllBlockType() {
-      for (let k = 0; k < this.baseBlockType.length; k++) {
-        this.allBlockType[k] = new Set()
-        const baseBlockElement = this.baseBlockType[k]
-        // 회전 및 뒤집기를 통해 8번 rotation을 하여 모든 타입의 블록 json으로 반환.
-        let max = Math.max(...baseBlockElement.map(v => Math.max(v[0], v[1])))
-        let rotateBlock = JSON.parse(JSON.stringify(baseBlockElement));
-        for (let i = 0; i < 4; i++) {
-          if (i > 0) {
-            rotateBlock = rotateBlock.map(v => [max - v[1], v[0]]) // 90도 회전
-          }
-          let normalRotate = this.normalizeBlock(rotateBlock)
-
-          this.allBlockType[k].add(normalRotate)
-        }
-        // 뒤집어서 다시 4번 회전.
-        let transBlock = baseBlockElement.map(v => [v[1], v[0]])
-        for (let i = 0; i < 4; i++) {
-          if (i > 0) {
-            transBlock = transBlock.map(v => [max - v[1], v[0]]) // 90도 회전
-          }
-          let transNormalRotate = this.normalizeBlock(transBlock)
-          this.allBlockType[k].add(transNormalRotate)
-        }
-      }
-    }
-
-    /**
-     * 색상은 baseBlockType 인덱스 기준으로 100~1600 까지 백단위로 지정.
-
-     * @param {*} block 
-     * @returns table에 들어갈 색상 값
-     */
-    getColorByBlock(block) {
-      let len = block.length;
-
-      let startArrIdx = this.baseBlockSizeIdx[len][0]
-      let endArrIdx = this.baseBlockSizeIdx[len][1]
-      for (let i = startArrIdx; i < endArrIdx + 1; i++) {
-        let blockType = Array.from(this.allBlockType[i])
-        for (let j = 0; j < blockType.length; j++) {
-          let blockRotateType = blockType[j]
-          if (JSON.stringify(blockRotateType) === JSON.stringify(block)) {
-            return (i + 1) * 100
-          }
-        }
-      }
-    }
-
-    /**
-     * 색상과 방향값 중 색상인덱스만 추출
-     * @param {*} value 
-     */
-    getOnlyColorIdx(value) {
-      return Math.floor(value / 100) - 1
-    }
-
-    /**
-     * 
-     * @param {*} value : table에 들어가있는 색상 및 방향값
-     */
-    getBaseBlockByColor(value) {
-      let blockIdx = Math.floor(value / 100) - 1
-      return this.baseBlockType[blockIdx]
-    }
-
   }
 
   // Array의 prototype을 지정해주고, shuffle이라는 이름을 가진 함수를 생성

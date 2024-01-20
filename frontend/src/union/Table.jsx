@@ -3,9 +3,7 @@ import * as React from 'react';
 
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
-export function BasicTable({ style, setTable }) {
-
-    // This array defines [iniRow, iniCol, endRow, endCol]
+export function BasicTable({ style, setTable, submit }) {
     const [select, setSelect] = React.useState([])
     // This variable will control if the user is dragging or not
     const [drag, setDrag] = React.useState(false)
@@ -24,9 +22,15 @@ export function BasicTable({ style, setTable }) {
         setTable(table)
     }, [select]);
 
+
+
     const handleMouseDown = (e, row, col) => {
-        setDrag(true);
-        // setSelect([row, col, row, col]);
+        if (submit) {
+            setDrag(false)
+            return
+        } else {
+            setDrag(true)
+        }
         let exist = false
         let idx = null
         for (let i = 0; i < select.length; i++) {
@@ -71,7 +75,7 @@ export function BasicTable({ style, setTable }) {
         }
     }
 
-    const preventMaintainDrag = (e) => {
+    const preventOutsideDrag = (e) => {
         setDrag(false)
     }
 
@@ -85,31 +89,57 @@ export function BasicTable({ style, setTable }) {
         return ''
     }
 
+    // 드래그하는 도중 전체 테이블셀을 계속 스캔
+    const drawUnionRegion = (row, col) => {
+        if (row === 0 && col === 0) {
+            console.log('region-cell-top')
+            return 'region-cell-top'
+        } else if (row === 0 && col === 4) {
+            console.log('region-cell-bottom')
+            return 'region-cell-bottom'
+        }
+        return ''
+    }
+
+    function getRegionClass(row, col) {
+        if ((row === 0 || row === 1 || row === 2) && col === 0) {
+            // console.log('region-cell-top')
+            return 'region-cell-top'
+        } else if (row === 0 && (col === 4 || col === 5)) {
+            // console.log('region-cell-bottom')
+            return 'region-cell-bottom'
+        }
+        return ''
+    }
 
 
     return (
         <div
             // style={{ backgroundColor: '#b8b8b8', padding: 4 }}
-            onMouseMove={(e) => preventMaintainDrag(e)}>
+            onMouseMove={(e) => preventOutsideDrag(e)}>
             <table className='union-table' onMouseMove={(e) => e.stopPropagation()}
             // style={{ borderSpacing: '0px' }}
             >
-                <tbody>
+                <tbody className='union-table-body'>
                     {style.map((row, i) => (
                         <tr key={i}>
                             {row.map((v, j) => (
+                                // <div className={`${getRegionClass(i, j)}`}>
                                 <td
                                     onMouseDown={(e) => handleMouseDown(e, i, j)}
                                     onMouseUp={(e) => handleMouseUp(e, i, j)}
                                     onMouseMove={(e) => handleMultipleSel(e, i, j)}
-                                    className={`union-table-cell ${getClassName(i, j)}`}
-                                    key={`${j}`} style={v} uniqkey={`${i}-${j}`}>
+                                    className={`union-table-cell ${getClassName(i, j)} ${getRegionClass(i, j)} ${v.className ? v.className : ''}`}
+                                    key={`${j}`} style={v.style} uniqkey={`${i}-${j}`}>
                                 </td>
+                                // </div>
                             ))}
                         </tr>
                     ))}
                 </tbody>
             </table>
+
+
         </div>
 
     );
