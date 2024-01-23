@@ -127,8 +127,11 @@ class BlockType {
                     cellStyleMap.background = this.blankTableColor
                 } else {
                     let directionList = this.getConnectedDirection(table[i][j])
-                    directionList.forEach((v) => {
+                    directionList.none.forEach((v) => {
                         cellStyleMap[v] = 'none'
+                    })
+                    directionList.exist.forEach((v) => {
+                        cellStyleMap[v] = '1px solid #000000'
                     })
                     cellStyleMap['background'] = this.blockTypeColor[this.getOnlyColorIdx(table[i][j])]
                 }
@@ -136,6 +139,7 @@ class BlockType {
                 // style[i][j] = cellStyleMap
             }
         }
+        console.log('test')
         return style
     }
     /**
@@ -208,13 +212,15 @@ class BlockType {
      * @param {*} value 테이블에 들어가있는 색상 및 방향값
      */
     getConnectedDirection(value) {
-        let result = []
+        let result = {none: [], exist: []}
         let directionBit = value % 100
         Object.keys(this.blockDirection).forEach((v) => {
             v = Number(v)
             // console.log('type a = ',typeof(a), ",  b = ",typeof(b))
             if ((directionBit & v) === v) {
-                result.push(this.blockDirection[v])
+                result.none.push(this.blockDirection[v])
+            } else {
+                result.exist.push(this.blockDirection[v])
             }
         })
         return result

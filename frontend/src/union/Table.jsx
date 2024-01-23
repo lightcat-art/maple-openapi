@@ -89,19 +89,8 @@ export function BasicTable({ style, setTable, submit }) {
         return ''
     }
 
-    // 드래그하는 도중 전체 테이블셀을 계속 스캔
-    const drawUnionRegion = (row, col) => {
-        if (row === 0 && col === 0) {
-            console.log('region-cell-top')
-            return 'region-cell-top'
-        } else if (row === 0 && col === 4) {
-            console.log('region-cell-bottom')
-            return 'region-cell-bottom'
-        }
-        return ''
-    }
 
-    function getRegionClass(row, col) {
+    function getRegionClassName(row, col) {
         if ((row === 0 || row === 1 || row === 2) && col === 0) {
             // console.log('region-cell-top')
             return 'region-cell-top'
@@ -117,7 +106,7 @@ export function BasicTable({ style, setTable, submit }) {
         <div
             // style={{ backgroundColor: '#b8b8b8', padding: 4 }}
             onMouseMove={(e) => preventOutsideDrag(e)}>
-            <table className='union-table' onMouseMove={(e) => e.stopPropagation()}
+            <table id='union-table' className='union-table' onMouseMove={(e) => e.stopPropagation()}
             // style={{ borderSpacing: '0px' }}
             >
                 <tbody className='union-table-body'>
@@ -129,7 +118,7 @@ export function BasicTable({ style, setTable, submit }) {
                                     onMouseDown={(e) => handleMouseDown(e, i, j)}
                                     onMouseUp={(e) => handleMouseUp(e, i, j)}
                                     onMouseMove={(e) => handleMultipleSel(e, i, j)}
-                                    className={`union-table-cell ${getClassName(i, j)} ${getRegionClass(i, j)} ${v.className ? v.className : ''}`}
+                                    className={`union-table-cell ${getClassName(i, j)} ${v.className ? v.className : ''}`}
                                     key={`${j}`} style={v.style} uniqkey={`${i}-${j}`}>
                                 </td>
                                 // </div>

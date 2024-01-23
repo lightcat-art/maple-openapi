@@ -93,7 +93,9 @@ export const UnionRaider = () => {
       // setTable(table)
       if (result) {
         const styleValue = blockType.setTableStyleValue(result.table, result.domiBlocks)
-        setTableStyle(blockType.getTableStyle(styleValue));
+        const tableStyle = blockType.getTableStyle(styleValue)
+        console.log(tableStyle)
+        setTableStyle(tableStyle);
       }
     });
 
@@ -103,18 +105,62 @@ export const UnionRaider = () => {
     console.log('regionMode changed')
   }, [regionMode]);
 
+  function z(e, t) {
+    return document.getElementById("union-table").getElementsByTagName("tr")[e].getElementsByTagName("td")[t]
+  }
+
+  React.useEffect(() => {
+    const rowLen = table.length
+    const colLen = table[0].length
+    for (let e = 0; e < colLen / 2; e++) {
+      if (e !== colLen / 2 - 1){
+        z(e, e).style.borderTopWidth = "3px"
+        z(e, e).style.borderRightWidth = "3px"
+        z(rowLen - e - 1, e).style.borderBottomWidth = "3px"
+        z(rowLen - e - 1, e).style.borderRightWidth = "3px"
+      }
+      if (e !== colLen / 2 - 1){
+        z(e, colLen - e - 1).style.borderTopWidth = "3px"
+        z(e, colLen - e - 1).style.borderLeftWidth = "3px"
+        z(rowLen - e - 1, colLen - e - 1).style.borderBottomWidth = "3px"
+        z(rowLen - e - 1, colLen - e - 1).style.borderLeftWidth = "3px"
+      }
+    }
+    for (let e = 0; e < rowLen; e++) {
+      // z(e, 0).style.borderLeftWidth = "3px"
+      z(e, colLen / 2).style.borderLeftWidth = "3px"
+      // z(e, colLen - 1).style.borderRightWidth = "3px"
+    }
+    for (let e = 0; e < colLen; e++) {
+      // z(0, e).style.borderTopWidth = "3px"
+      z(rowLen / 2, e).style.borderTopWidth = "3px"
+      // z(rowLen - 1, e).style.borderBottomWidth = "3px"
+    }
+    for (let e = rowLen / 4; e < 3 * rowLen / 4; e++) {
+      z(e, Math.floor(colLen / 4)).style.borderLeftWidth = "3px"
+      z(e, Math.floor(3 * colLen / 4)).style.borderRightWidth = "3px"
+    }
+    for (let e = Math.ceil(colLen / 4); e < Math.floor(3 * colLen / 4); e++) {
+      z(rowLen / 4, e).style.borderTopWidth = "3px"
+      z(3 * rowLen / 4, e).style.borderTopWidth = "3px"
+    }
+
+  }, [resetButtonHidden]);
+
 
   return (
     <div>
       <BasicTable setTable={setTable} style={tableStyle} submit={submitButtonDisabled}></BasicTable>
-      <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
-      <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox>
-      {/* <button onClick={handleClick(testInput, unionWorker, setResult)}>Calculate in Web Worker</button> */}
-      <div><Button action={handleFormSubmit} disabled={submitButtonDisabled} title="submit"></Button></div>
-      <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
-      <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div>
-      <div><Button action={handleFormReset} disabled={resetButtonHidden} title="reset"></Button></div>
-      <div>{result}</div>
+      <div className="union-option">
+        <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
+        <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox>
+        {/* <button onClick={handleClick(testInput, unionWorker, setResult)}>Calculate in Web Worker</button> */}
+        <div><Button action={handleFormSubmit} disabled={submitButtonDisabled} title="submit"></Button></div>
+        <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
+        <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div>
+        <div><Button action={handleFormReset} disabled={resetButtonHidden} title="reset"></Button></div>
+        <div>{result}</div>
+      </div>
 
     </div>
   )
