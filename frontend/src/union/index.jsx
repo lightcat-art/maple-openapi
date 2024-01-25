@@ -13,6 +13,17 @@ import { CheckBox, SwitchCheckBox } from '../common/checkBox'
 // let unionWorker = new WebWorker(worker)
 // const unionWorkerContext = React.createContext(new WebWorker(worker))
 let unionWorker = new WebWorker().getUnionWorker(worker)
+function testIndexOf() {
+  const position = [1, 2]
+  const list = [[3, 4], [1, 2], [2, 3]]
+  console.log('testPosition = ', list.indexOf([3,4]))
+
+  for (let i = 0; i < list.length; i++) {
+    if (position[0] === list[i][0] && position[1] === list[i][1]) {
+      console.log('testPosition true')
+    }
+  }
+}
 
 export const UnionRaider = () => {
   // const [charOverall, setCharOverall] = React.useState('-')

@@ -36,6 +36,7 @@ function regionDef() {
             regionInfo[15].push([rowLen - 1 - j, rowLen + 1 - i]) // 남동 위
         }
     }
+    console.log('regionInfo = ',regionInfo)
 }
 
 function checkRegion(row, col) {
@@ -80,6 +81,7 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
 
 
     const handleMouseDown = (e, row, col) => {
+
         if (submit) {
             setDrag(false)
             return
@@ -99,30 +101,25 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
         if (regionMode) {
             if (!cellExist) {
                 setSelectMode(true)
-                let newSelect = [...select]
                 for (const regionCell of regionCells) {
-                    for (let i = 0; i < newSelect.length; i++) {
-                        if (regionCell[0] === newSelect[i][0] && regionCell[1] === newSelect[i][1]) {
-                            newSelect.push(regionCell)
-                        }
+                    const regionCellIdx = select.indexOf(regionCell)
+                    console.log('mousedown select true regionCellIdx = ',regionCellIdx)
+                    if (regionCellIdx < 0) {
+                        select.push(regionCell)
                     }
                 }
-                setSelect(newSelect)
+                setSelect([...select])
             } else {
                 setSelectMode(false)
-                let newSelect = [...select]
                 for (const regionCell of regionCells) {
-                    let regionCellIdx = -1
-                    for (let i = 0; i < newSelect.length; i++) {
-                        if (regionCell[0] === newSelect[i][0] && regionCell[1] === newSelect[i][1]) {
-                            regionCellIdx = i
-                        }
-                    }
-                    if (regionCellIdx > -1) {
-                        newSelect.splice(regionCellIdx, 1)
+                    const regionCellIdx = select.indexOf(regionCell)
+                    console.log('mousedown select false regionCellIdx = ',regionCellIdx)
+                    if (regionCellIdx >= 0 ) {
+                        select.splice(regionCellIdx, 1)
+                        
                     }
                 }
-                setSelect(newSelect)
+                setSelect([...select])
             }
         } else {
             if (!cellExist) {
@@ -134,6 +131,7 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
                 setSelect([...select])
             }
         }
+        console.log('mousedown select=',select)
     }
 
     const handleMouseUp = (e, row, col) => {
@@ -154,46 +152,40 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
                     cellIdx = i
                 }
             }
-
+    
             if (regionMode) {
                 if (!cellExist && selectMode) {
                     // setSelectMode(true)
-                    let newSelect = [...select]
                     for (const regionCell of regionCells) {
-                        for (let i = 0; i < newSelect.length; i++) {
-                            if (regionCell[0] === newSelect[i][0] && regionCell[1] === newSelect[i][1]) {
-                                newSelect.push(regionCell)
-                            }
+                        const regionCellIdx = select.indexOf(regionCell)
+                        if (regionCellIdx < 0) {
+                            select.push(regionCell)
                         }
                     }
-                    setSelect(newSelect)
-                } else if (cellExist && !selectMode) {
+                    setSelect([...select])
+                } else if (cellExist && !selectMode){
                     // setSelectMode(false)
-                    let newSelect = [...select]
                     for (const regionCell of regionCells) {
-                        let regionCellIdx = -1
-                        for (let i = 0; i < newSelect.length; i++) {
-                            if (regionCell[0] === newSelect[i][0] && regionCell[1] === newSelect[i][1]) {
-                                regionCellIdx = i
-                            }
-                        }
-                        if (regionCellIdx > -1) {
-                            newSelect.splice(regionCellIdx, 1)
+                        const regionCellIdx = select.indexOf(regionCell)
+                        if (regionCellIdx >= 0 ) {
+                            select.splice(regionCellIdx, 1)
+
                         }
                     }
-                    setSelect(newSelect)
+                    setSelect([...select])
                 }
             } else {
                 if (!cellExist && selectMode) {
                     // setSelectMode(true)
                     setSelect([...select, [row, col]])
-                } else if (cellExist && !selectMode) {
+                } else if (cellExist && !selectMode){
                     // setSelectMode(false)
                     select.splice(cellIdx, 1)
                     setSelect([...select])
                 }
             }
         }
+        console.log('handleMultipleSel select=',select)
     }
 
     const handleMouseEnter = (e, row, col) => {
