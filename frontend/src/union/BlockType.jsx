@@ -130,6 +130,7 @@ class BlockType {
                     directionList.none.forEach((v) => {
                         cellStyleMap[v] = 'none'
                     })
+                    // todo : 바라보는 방향에 다른 블럭이 존재하면 1px 존재하지 않으면 3px로 설정하도록 수정해야함
                     directionList.exist.forEach((v) => {
                         cellStyleMap[v] = '1px solid #000000'
                     })
@@ -139,7 +140,6 @@ class BlockType {
                 // style[i][j] = cellStyleMap
             }
         }
-        console.log('test')
         return style
     }
     /**

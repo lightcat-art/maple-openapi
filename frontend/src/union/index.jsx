@@ -150,7 +150,7 @@ export const UnionRaider = () => {
 
   return (
     <div>
-      <BasicTable setTable={setTable} style={tableStyle} submit={submitButtonDisabled}></BasicTable>
+      <BasicTable setTable={setTable} style={tableStyle} submit={submitButtonDisabled} regionMode={regionMode}></BasicTable>
       <div className="union-option">
         <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
         <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox>
