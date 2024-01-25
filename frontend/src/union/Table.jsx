@@ -92,7 +92,7 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
         let cellIdx = -1
         const regionCells = getRegionCells(checkRegion(row, col))
         for (let i = 0; i < select.length; i++) {
-            if (row === select[i][0] && col === select[i][1]) {
+            if (JSON.stringify([row, col]) === select[i]) {
                 cellExist = true
                 cellIdx = i
             }
@@ -102,17 +102,17 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
             if (!cellExist) {
                 setSelectMode(true)
                 for (const regionCell of regionCells) {
-                    const regionCellIdx = select.indexOf(regionCell)
+                    const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
                     console.log('mousedown select true regionCellIdx = ',regionCellIdx)
                     if (regionCellIdx < 0) {
-                        select.push(regionCell)
+                        select.push(JSON.stringify(regionCell))
                     }
                 }
                 setSelect([...select])
             } else {
                 setSelectMode(false)
                 for (const regionCell of regionCells) {
-                    const regionCellIdx = select.indexOf(regionCell)
+                    const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
                     console.log('mousedown select false regionCellIdx = ',regionCellIdx)
                     if (regionCellIdx >= 0 ) {
                         select.splice(regionCellIdx, 1)
@@ -124,7 +124,7 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
         } else {
             if (!cellExist) {
                 setSelectMode(true)
-                setSelect([...select, [row, col]])
+                setSelect([...select, JSON.stringify([row, col])])
             } else {
                 setSelectMode(false)
                 select.splice(cellIdx, 1)
@@ -147,7 +147,7 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
             let cellIdx = -1
             const regionCells = getRegionCells(checkRegion(row, col))
             for (let i = 0; i < select.length; i++) {
-                if (row === select[i][0] && col === select[i][1]) {
+                if (JSON.stringify([row, col]) === select[i]) {
                     cellExist = true
                     cellIdx = i
                 }
@@ -157,19 +157,19 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
                 if (!cellExist && selectMode) {
                     // setSelectMode(true)
                     for (const regionCell of regionCells) {
-                        const regionCellIdx = select.indexOf(regionCell)
+                        const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
                         if (regionCellIdx < 0) {
-                            select.push(regionCell)
+                            select.push(JSON.stringify(regionCell))
                         }
                     }
                     setSelect([...select])
                 } else if (cellExist && !selectMode){
                     // setSelectMode(false)
                     for (const regionCell of regionCells) {
-                        const regionCellIdx = select.indexOf(regionCell)
+                        const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
                         if (regionCellIdx >= 0 ) {
                             select.splice(regionCellIdx, 1)
-
+                            
                         }
                     }
                     setSelect([...select])
@@ -177,7 +177,7 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
             } else {
                 if (!cellExist && selectMode) {
                     // setSelectMode(true)
-                    setSelect([...select, [row, col]])
+                    setSelect([...select, JSON.stringify([row, col])])
                 } else if (cellExist && !selectMode){
                     // setSelectMode(false)
                     select.splice(cellIdx, 1)
@@ -203,7 +203,7 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
     // 드래그하는 도중 전체 테이블셀을 계속 스캔
     const getClassName = (row, col) => {
         for (let i = 0; i < select.length; i++) {
-            if (row === select[i][0] && col === select[i][1]) {
+            if (JSON.stringify([row, col]) === select[i]) {
                 return 'selected'
             }
         }
