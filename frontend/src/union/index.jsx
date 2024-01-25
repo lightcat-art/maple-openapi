@@ -113,13 +113,13 @@ export const UnionRaider = () => {
     const rowLen = table.length
     const colLen = table[0].length
     for (let e = 0; e < colLen / 2; e++) {
-      if (e !== colLen / 2 - 1){
+      if (e !== colLen / 2 - 1) {
         z(e, e).style.borderTopWidth = "3px"
         z(e, e).style.borderRightWidth = "3px"
         z(rowLen - e - 1, e).style.borderBottomWidth = "3px"
         z(rowLen - e - 1, e).style.borderRightWidth = "3px"
       }
-      if (e !== colLen / 2 - 1){
+      if (e !== colLen / 2 - 1) {
         z(e, colLen - e - 1).style.borderTopWidth = "3px"
         z(e, colLen - e - 1).style.borderLeftWidth = "3px"
         z(rowLen - e - 1, colLen - e - 1).style.borderBottomWidth = "3px"

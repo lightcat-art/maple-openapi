@@ -98,9 +98,6 @@ class BlockType {
                 let styleValue = 0
                 styleValue += direction[j]
                 styleValue += color
-                if (styleValue < 100) {
-                    console.log('test')
-                }
                 try {
                     tableStyleValue[v[0]][v[1]] = styleValue
                 } catch(error) {

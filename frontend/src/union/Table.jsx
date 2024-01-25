@@ -59,7 +59,7 @@ regionDef()
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
 export function BasicTable({ style, setTable, submit, regionMode }) {
     const [select, setSelect] = React.useState([])
-    const [regionSelect, setRegionSelect] = React.useState([])
+    // const [regionSelect, setRegionSelect] = React.useState([])
     // This variable will control if the user is dragging or not
     const [drag, setDrag] = React.useState(false)
     const [selectMode, setSelectMode] = React.useState(true) // 선택모드 인지, 해제모드 인지 세팅
@@ -75,7 +75,7 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
             table[row][col] = 1
         }
         setTable(table)
-    }, [select, regionSelect]);
+    }, [select]);
 
 
 
@@ -87,16 +87,8 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
             setDrag(true)
         }
         let cellExist = false
-        let cellIdx = null
-        let regionExist = false
-        let regionIdx = null
-        const region = checkRegion(row, col)
-        for (let i = 0; i < regionSelect.length; i++) {
-            if (region === regionSelect[i]) {
-                regionExist = true
-                regionIdx = i
-            }
-        }
+        let cellIdx = -1
+        const regionCells = getRegionCells(checkRegion(row, col))
         for (let i = 0; i < select.length; i++) {
             if (row === select[i][0] && col === select[i][1]) {
                 cellExist = true
@@ -105,20 +97,32 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
         }
 
         if (regionMode) {
-            if (!regionExist) {
+            if (!cellExist) {
                 setSelectMode(true)
-                setRegionSelect([...regionSelect, region])
-            } else {
-                setSelectMode(false)
-                regionSelect.splice(regionIdx, 1)
-                setRegionSelect([...regionSelect])
-                for (let cell of getRegionCells(region)) {
-                    const cellIdx = select.indexOf(cell)
-                    if (cellIdx > -1) {
-                        select.splice(cellIdx, 1)
-                        setSelect([...select])
+                let newSelect = [...select]
+                for (const regionCell of regionCells) {
+                    for (let i = 0; i < newSelect.length; i++) {
+                        if (regionCell[0] === newSelect[i][0] && regionCell[1] === newSelect[i][1]) {
+                            newSelect.push(regionCell)
+                        }
                     }
                 }
+                setSelect(newSelect)
+            } else {
+                setSelectMode(false)
+                let newSelect = [...select]
+                for (const regionCell of regionCells) {
+                    let regionCellIdx = -1
+                    for (let i = 0; i < newSelect.length; i++) {
+                        if (regionCell[0] === newSelect[i][0] && regionCell[1] === newSelect[i][1]) {
+                            regionCellIdx = i
+                        }
+                    }
+                    if (regionCellIdx > -1) {
+                        newSelect.splice(regionCellIdx, 1)
+                    }
+                }
+                setSelect(newSelect)
             }
         } else {
             if (!cellExist) {
@@ -128,10 +132,6 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
                 setSelectMode(false)
                 select.splice(cellIdx, 1)
                 setSelect([...select])
-                if (regionExist) {
-                    regionSelect.splice(regionIdx, 1)
-                    setRegionSelect([...regionSelect])
-                }
             }
         }
     }
@@ -144,47 +144,53 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
         e.preventDefault();
 
         if (drag) {
+
             let cellExist = false
-            let cellIdx = null
-            let regionExist = false
-            let regionIdx = null
-            const region = checkRegion(row, col)
-            for (let i = 0; i < regionSelect.length; i++) {
-                if (region === regionSelect[i]) {
-                    regionExist = true
-                    regionIdx = i
-                }
-            }
+            let cellIdx = -1
+            const regionCells = getRegionCells(checkRegion(row, col))
             for (let i = 0; i < select.length; i++) {
                 if (row === select[i][0] && col === select[i][1]) {
                     cellExist = true
                     cellIdx = i
                 }
             }
+
             if (regionMode) {
-                if (!regionExist && selectMode) {
-                    setRegionSelect([...regionSelect, region])
-                } else if (regionExist && !selectMode) {
-                    regionSelect.splice(regionIdx, 1)
-                    setRegionSelect([...regionSelect])
-                    for (let cell of getRegionCells(region)) {
-                        const cellIdx = select.indexOf(cell)
-                        if (cellIdx > -1) {
-                            select.splice(cellIdx, 1)
-                            setSelect([...select])
+                if (!cellExist && selectMode) {
+                    // setSelectMode(true)
+                    let newSelect = [...select]
+                    for (const regionCell of regionCells) {
+                        for (let i = 0; i < newSelect.length; i++) {
+                            if (regionCell[0] === newSelect[i][0] && regionCell[1] === newSelect[i][1]) {
+                                newSelect.push(regionCell)
+                            }
                         }
                     }
+                    setSelect(newSelect)
+                } else if (cellExist && !selectMode) {
+                    // setSelectMode(false)
+                    let newSelect = [...select]
+                    for (const regionCell of regionCells) {
+                        let regionCellIdx = -1
+                        for (let i = 0; i < newSelect.length; i++) {
+                            if (regionCell[0] === newSelect[i][0] && regionCell[1] === newSelect[i][1]) {
+                                regionCellIdx = i
+                            }
+                        }
+                        if (regionCellIdx > -1) {
+                            newSelect.splice(regionCellIdx, 1)
+                        }
+                    }
+                    setSelect(newSelect)
                 }
             } else {
                 if (!cellExist && selectMode) {
+                    // setSelectMode(true)
                     setSelect([...select, [row, col]])
-                } else if ( cellExist && !selectMode) {
+                } else if (cellExist && !selectMode) {
+                    // setSelectMode(false)
                     select.splice(cellIdx, 1)
                     setSelect([...select])
-                    if (regionExist) {
-                        regionSelect.splice(regionIdx, 1)
-                        setRegionSelect([...regionSelect])
-                    }
                 }
             }
         }
@@ -204,12 +210,6 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
 
     // 드래그하는 도중 전체 테이블셀을 계속 스캔
     const getClassName = (row, col) => {
-        const region = checkRegion(row, col)
-        for (let compared of regionSelect) {
-            if (compared === region) {
-                return 'selected'
-            }
-        }
         for (let i = 0; i < select.length; i++) {
             if (row === select[i][0] && col === select[i][1]) {
                 return 'selected'
