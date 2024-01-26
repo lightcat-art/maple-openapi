@@ -2,7 +2,7 @@ class BlockType {
     // React component에서 선언하는 경우 다시 새로고침하면 인스턴스 날아감.
     // 현재 가지고 있는 블록 정보를 기반으로 화면에 표시할수 있도록 도와주는 클래스
     static instance;
-    constructor() {
+    constructor(blockColor, selectedTableColor) {
         if (BlockType.instance) return BlockType.instance;
         this.baseBlockType = [
             [[0, 0], [0, 1], [1, 1], [1, 2], [1, 3]], // z-asym
@@ -21,31 +21,10 @@ class BlockType {
             [[0, 0], [0, 1]], // I
             [[0, 0]], // dot
         ]
-        this.closeTableColor = [
-            // '#00ff0000'
-            '#ffffff'
-        ]
-        this.blankTableColor = [
-            '#757474ff'
-            // '#ffffff'
-        ]
-        this.blockTypeColor = [
-            '#330707', // z-asym
-            '#5f3535', // z-sym
-            '#805858', // +
-            '#6b1111', // T
-            '#8f2ca8', // I
-            '#af4545', // thumb
-            '#eee000', // z
-            '#7e1c3bf1', // T
-            '#babcd4', // L
-            '#004c8a', // I
-            '#f7c7c7', // square
-            '#fca7a7', // I
-            '#2ec948', // L
-            '#3dccb9', // I
-            '#29a9c9' // dot
-        ]
+        this.closeTableColor = '#ffffff'
+        this.selectedTableColor = selectedTableColor
+        
+        this.blockTypeColor = blockColor
         this.baseBlockSizeIdx = { 5: [0, 5], 4: [6, 10], 3: [11, 12], 2: [13, 13], 1: [14, 14] }
         this.blockDirection = { 1: 'borderTop', 2: 'borderLeft', 4: 'borderRight', 8: 'borderBottom' }
         // [i][j] => i: 블록타입 종류,  j: 블록의 회전에 따른 종류
@@ -100,12 +79,12 @@ class BlockType {
                 styleValue += color
                 try {
                     tableStyleValue[v[0]][v[1]] = styleValue
-                } catch(error) {
+                } catch (error) {
                     // console.log('styleValue = ',styleValue)
                     // console.log('tableStyleValue = ', tableStyleValue )
                     // console.log('setting value idx= ',v[0],', ',v[1])
                     // console.log('error= ',error)
-                    
+
                 }
             }
         }
@@ -119,9 +98,9 @@ class BlockType {
             for (let j = 0; j < table[0].length; j++) {
                 let cellStyleMap = {}
                 if (table[i][j] === this.closeTableValue) {
-                    cellStyleMap.background = this.closeTableColor
+                    cellStyleMap.background = ''
                 } else if (table[i][j] === this.blankTableValue) {
-                    cellStyleMap.background = this.blankTableColor
+                    cellStyleMap.background = this.selectedTableColor
                 } else {
                     let directionList = this.getConnectedDirection(table[i][j])
                     directionList.none.forEach((v) => {
@@ -133,7 +112,7 @@ class BlockType {
                     })
                     cellStyleMap['background'] = this.blockTypeColor[this.getOnlyColorIdx(table[i][j])]
                 }
-                style[i][j] = {style: cellStyleMap, className: 'block'}
+                style[i][j] = { style: cellStyleMap, className: 'block' }
                 // style[i][j] = cellStyleMap
             }
         }
@@ -209,7 +188,7 @@ class BlockType {
      * @param {*} value 테이블에 들어가있는 색상 및 방향값
      */
     getConnectedDirection(value) {
-        let result = {none: [], exist: []}
+        let result = { none: [], exist: [] }
         let directionBit = value % 100
         Object.keys(this.blockDirection).forEach((v) => {
             v = Number(v)

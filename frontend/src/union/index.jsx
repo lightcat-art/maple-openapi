@@ -8,27 +8,24 @@ import { BasicTable } from './Table';
 import WebWorker from '../util/worker'
 import worker from './UnionWorker'
 import { CheckBox, SwitchCheckBox } from '../common/checkBox'
+import './index.css'
+import { getCSSProp } from '../util/util'
 
 
-// let unionWorker = new WebWorker(worker)
-// const unionWorkerContext = React.createContext(new WebWorker(worker))
 let unionWorker = new WebWorker().getUnionWorker(worker)
-function testIndexOf() {
-  const position = [1, 2]
-  const list = [[3, 4], [1, 2], [2, 3]]
-  console.log('testPosition = ', list.indexOf([3,4]))
 
-  for (let i = 0; i < list.length; i++) {
-    if (position[0] === list[i][0] && position[1] === list[i][1]) {
-      console.log('testPosition true')
-    }
-  }
+let blockColor = []
+for (let i = 100; i <= 1500; i += 100) {
+  const varName = '--block-color-' + i
+  blockColor.push(getCSSProp(document.documentElement, varName))
 }
+const regionBorderWidth = getCSSProp(document.documentElement, '--region-border-width')
+const cellSelectedColor = getCSSProp(document.documentElement, '--cell-selected-color')
 
 export const UnionRaider = () => {
   // const [charOverall, setCharOverall] = React.useState('-')
   const param = { nickname: '마하포드' }
-  const blockType = new BlockType();
+  const blockType = new BlockType(blockColor, cellSelectedColor);
 
   const [table, setTable] = React.useState(Array.from(Array(20), () => Array(22).fill(0)))
   const defaultTableStyle = Array.from(Array(table.length), () => Array(table[0].length).fill({}))
@@ -116,46 +113,9 @@ export const UnionRaider = () => {
     console.log('regionMode changed')
   }, [regionMode]);
 
-  function z(e, t) {
-    return document.getElementById("union-table").getElementsByTagName("tr")[e].getElementsByTagName("td")[t]
-  }
 
   React.useEffect(() => {
-    const rowLen = table.length
-    const colLen = table[0].length
-    for (let e = 0; e < colLen / 2; e++) {
-      if (e !== colLen / 2 - 1) {
-        z(e, e).style.borderTopWidth = "3px"
-        z(e, e).style.borderRightWidth = "3px"
-        z(rowLen - e - 1, e).style.borderBottomWidth = "3px"
-        z(rowLen - e - 1, e).style.borderRightWidth = "3px"
-      }
-      if (e !== colLen / 2 - 1) {
-        z(e, colLen - e - 1).style.borderTopWidth = "3px"
-        z(e, colLen - e - 1).style.borderLeftWidth = "3px"
-        z(rowLen - e - 1, colLen - e - 1).style.borderBottomWidth = "3px"
-        z(rowLen - e - 1, colLen - e - 1).style.borderLeftWidth = "3px"
-      }
-    }
-    for (let e = 0; e < rowLen; e++) {
-      // z(e, 0).style.borderLeftWidth = "3px"
-      z(e, colLen / 2).style.borderLeftWidth = "3px"
-      // z(e, colLen - 1).style.borderRightWidth = "3px"
-    }
-    for (let e = 0; e < colLen; e++) {
-      // z(0, e).style.borderTopWidth = "3px"
-      z(rowLen / 2, e).style.borderTopWidth = "3px"
-      // z(rowLen - 1, e).style.borderBottomWidth = "3px"
-    }
-    for (let e = rowLen / 4; e < 3 * rowLen / 4; e++) {
-      z(e, Math.floor(colLen / 4)).style.borderLeftWidth = "3px"
-      z(e, Math.floor(3 * colLen / 4)).style.borderRightWidth = "3px"
-    }
-    for (let e = Math.ceil(colLen / 4); e < Math.floor(3 * colLen / 4); e++) {
-      z(rowLen / 4, e).style.borderTopWidth = "3px"
-      z(3 * rowLen / 4, e).style.borderTopWidth = "3px"
-    }
-
+    drawRegion(table)
   }, [resetButtonHidden]);
 
 
@@ -191,4 +151,43 @@ const Button = (props) => {
   )
 }
 
+export function getCellDOM(row, col) {
+  return document.getElementById("union-table").getElementsByTagName("tr")[row].getElementsByTagName("td")[col]
+}
 
+function drawRegion(table) {
+  const rowLen = table.length
+  const colLen = table[0].length
+  for (let e = 0; e < colLen / 2; e++) {
+    if (e !== colLen / 2 - 1) {
+      getCellDOM(e, e).style.borderTopWidth = regionBorderWidth
+      getCellDOM(e, e).style.borderRightWidth = regionBorderWidth
+      getCellDOM(rowLen - e - 1, e).style.borderBottomWidth = regionBorderWidth
+      getCellDOM(rowLen - e - 1, e).style.borderRightWidth = regionBorderWidth
+    }
+    if (e !== colLen / 2 - 1) {
+      getCellDOM(e, colLen - e - 1).style.borderTopWidth = regionBorderWidth
+      getCellDOM(e, colLen - e - 1).style.borderLeftWidth = regionBorderWidth
+      getCellDOM(rowLen - e - 1, colLen - e - 1).style.borderBottomWidth = regionBorderWidth
+      getCellDOM(rowLen - e - 1, colLen - e - 1).style.borderLeftWidth = regionBorderWidth
+    }
+  }
+  for (let e = 0; e < rowLen; e++) {
+    // getCellDOM(e, 0).style.borderLeftWidth = regionBorderWidth
+    getCellDOM(e, colLen / 2).style.borderLeftWidth = regionBorderWidth
+    // getCellDOM(e, colLen - 1).style.borderRightWidth = regionBorderWidth
+  }
+  for (let e = 0; e < colLen; e++) {
+    // getCellDOM(0, e).style.borderTopWidth = regionBorderWidth
+    getCellDOM(rowLen / 2, e).style.borderTopWidth = regionBorderWidth
+    // getCellDOM(rowLen - 1, e).style.borderBottomWidth = regionBorderWidth
+  }
+  for (let e = rowLen / 4; e < 3 * rowLen / 4; e++) {
+    getCellDOM(e, Math.floor(colLen / 4)).style.borderLeftWidth = regionBorderWidth
+    getCellDOM(e, Math.floor(3 * colLen / 4)).style.borderRightWidth = regionBorderWidth
+  }
+  for (let e = Math.ceil(colLen / 4); e < Math.floor(3 * colLen / 4); e++) {
+    getCellDOM(rowLen / 4, e).style.borderTopWidth = regionBorderWidth
+    getCellDOM(3 * rowLen / 4, e).style.borderTopWidth = regionBorderWidth
+  }
+}

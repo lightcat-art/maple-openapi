@@ -1,5 +1,28 @@
+:root {
+    --block-color-100:#330707;  /* 5:z-asym */
+    --block-color-200: #5f3535; /* 5:z-sym */
+    --block-color-300: #805858; /* 5:+ */
+    --block-color-400: #6b1111; /* 5:T */
+    --block-color-500: #8f2ca8; /* 5:I */
+    --block-color-600: #af4545; /* 5:thumb */
+    --block-color-700: #eee000; /* 4: z */
+    --block-color-800: #7e1c3bf1; /* 4:T */
+    --block-color-900: #babcd4; /* 4:L */
+    --block-color-1000: #004c8a; /* 4:I */
+    --block-color-1100: #f7c7c7; /* 4:square */
+    --block-color-1200: #fca7a7; /* 3:I */
+    --block-color-1300: #2ec948; /* 3:L */
+    --block-color-1400: #3dccb9; /* 2:I */
+    --block-color-1500: #29a9c9; /* 1:dot */
+    --region-border-width: 3px;
+    --cell-selected-hover-color: #969696;
+    --cell-not-selected-hover-color: #cfcfcf;
+    --cell-selected-color: rgb(179, 179, 179);
+    --cell-not-selected-color: rgb(255, 255, 255);
+}
+
 /** 기본적으로 table cell 테두리는 설정해놓고 필요에 따라 테두리가 없어져야 되는 블록들은 내부에서 borderBottom: 'none' 등으로 적용*/
-.union-table-cell{
+.union-table-cell {
     /* position: relative; */
     width: 26px;
     height: 26px;
@@ -11,28 +34,18 @@
     border: 4px solid black;
     /* fixed table size anywhere*/
     /* display:table; */
-    table-layout: fixed; 
+    table-layout: fixed;
     position: relative;
     margin-left: auto;
     margin-right: auto;
     margin-top: 20vh;
 }
 
-.selected{
-    background: rgb(129, 129, 129);
-    user-select: none;
+.selected {
+    background: var(--cell-selected-color);
+    user-select: none; 
 }
 
-.union-table-cell:hover {
+/* .union-table-cell:hover {
     background-color: rgb(173, 173, 173);
-}
-
-.region-cell-top {
-    /* border-top: 2px solid black; */
-    /* border-left: 2px solid black; */
-    border-bottom: 2px solid black;
-}
-.region-cell-bottom {
-    border-left: 2px solid black;
-    border-bottom: 2px solid black;
-}
+} */
