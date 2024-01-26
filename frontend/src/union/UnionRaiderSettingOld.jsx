@@ -149,9 +149,6 @@ export default class UnionRaiderSetting {
                 let failed = false
 
                 if (parse.length === domiBlock.length) {
-                    // if (parse.length === 4) {
-                    //     console.log('test')
-                    // }
                     for (let j = 0; j < domiRotateBlocks.length; j++) {
                         const domi = domiRotateBlocks[j]
                         if (JSON.stringify(domi) === JSON.stringify(parse)) {
@@ -164,9 +161,6 @@ export default class UnionRaiderSetting {
                             }
                             if (failed) { // 그 다음 소유 블록을 체크하기 위해 넘어간다.
                                 break
-                            }
-                            if (cx === 3 && cy === 2){
-                                console.log('test')
                             }
                             // 사방으로 둘러봤을때 외딴섬블록이 존재하는지 체크.
                             // 여러개의 블록이 남아있더라도 현재 남은 블록중 맞는 블록이 없으면 의미없기때문에 이런 로직도 추가해주어야함.
