@@ -19,6 +19,7 @@ for (let i = 100; i <= 1500; i += 100) {
   blockColor.push(getCSSProp(document.documentElement, varName))
 }
 const regionBorderWidth = getCSSProp(document.documentElement, '--region-border-width')
+const blockBorderWidth = getCSSProp(document.documentElement, '--block-border-width')
 const cellSelectedColor = getCSSProp(document.documentElement, '--cell-selected-color')
 
 export const UnionRaider = () => {
@@ -175,16 +176,17 @@ export function getCellDOM(row, col) {
 function drawRegion(table) {
   const rowLen = table.length
   const colLen = table[0].length
-  if (!getCellDOM(0, 0).className.includes('block')) {
-    for (let e = 0; e < colLen / 2; e++) {
 
+  // tabe style이 들어오는거 인식하네..? tablestyle과 lastResult state는 같은 단계에서 설정되므로 
+  // 그다음 lastResult state 변경을 감지할땐 tablestyle도 같이 렌더링된 이후이다. 따라서 인식이 되는것.
+  // 이걸로 블록 테두리 관리하자.
+  if (!checkBlockExist(rowLen, colLen)) {
+    for (let e = 0; e < colLen / 2; e++) {
       if (e !== colLen / 2 - 1) {
         getCellDOM(e, e).style.borderTopWidth = regionBorderWidth
         getCellDOM(e, e).style.borderRightWidth = regionBorderWidth
         getCellDOM(rowLen - e - 1, e).style.borderBottomWidth = regionBorderWidth
         getCellDOM(rowLen - e - 1, e).style.borderRightWidth = regionBorderWidth
-      }
-      if (e !== colLen / 2 - 1) {
         getCellDOM(e, colLen - e - 1).style.borderTopWidth = regionBorderWidth
         getCellDOM(e, colLen - e - 1).style.borderLeftWidth = regionBorderWidth
         getCellDOM(rowLen - e - 1, colLen - e - 1).style.borderBottomWidth = regionBorderWidth
@@ -209,13 +211,106 @@ function drawRegion(table) {
       getCellDOM(rowLen / 4, e).style.borderTopWidth = regionBorderWidth
       getCellDOM(3 * rowLen / 4, e).style.borderTopWidth = regionBorderWidth
     }
-  } else {
-    // block style이 들어오는거 인식하네..? 이걸로 블록 테두리 관리하자.
-    /**
-     * top의 테두리를 변경하는 경우 위쪽에 block이 있으면 1px
-     * bottom의 테두리를 변경하는 경우 아래쪽에 block이 있으면 1px
-     * ... 
-     */
-    console.log('ddddd')
+  } 
+  else {
+    for (let e = 0; e < colLen / 2; e++) {
+      if (e !== colLen / 2 - 1) {
+        drawRegionByBlock(rowLen, colLen, e, e, 'top')
+        drawRegionByBlock(rowLen, colLen, e, e, 'right')
+        drawRegionByBlock(rowLen, colLen, rowLen - e - 1, e, 'bottom')
+        drawRegionByBlock(rowLen, colLen, rowLen - e - 1, e, 'right')
+        drawRegionByBlock(rowLen, colLen, e, colLen - e - 1, 'top')
+        drawRegionByBlock(rowLen, colLen, e, colLen - e - 1, 'left')
+        drawRegionByBlock(rowLen, colLen, rowLen - e - 1, colLen - e - 1, 'bottom')
+        drawRegionByBlock(rowLen, colLen, rowLen - e - 1, colLen - e - 1, 'left')
+      }
+    }
+    for (let e = 0; e < rowLen; e++) {
+      drawRegionByBlock(rowLen, colLen, e, colLen / 2, 'left')
+    }
+    for (let e = 0; e < colLen; e++) {
+      drawRegionByBlock(rowLen, colLen, rowLen / 2, e, 'top')
+    }
+    for (let e = rowLen / 4; e < 3 * rowLen / 4; e++) {
+      drawRegionByBlock(rowLen, colLen, e, Math.floor(colLen / 4), 'left')
+      drawRegionByBlock(rowLen, colLen, e, Math.floor(3 * colLen / 4), 'right')
+    }
+    for (let e = Math.ceil(colLen / 4); e < Math.floor(3 * colLen / 4); e++) {
+      drawRegionByBlock(rowLen, colLen, rowLen / 4, e, 'top')
+      drawRegionByBlock(rowLen, colLen, 3 * rowLen / 4, e, 'top')
+    }
   }
+
+}
+
+/**
+   * 1. 자기도 블록이고 주변에 블록이 있으면 1px
+   *    - top/bottom/left/right 의 테두리를 변경하는 경우 위/아래/왼/오른쪽에 block이 있으면 1px
+   * 
+   * 2. 자기는 블록이 아니지만 주변에 블록이 있거나, 자기는 블록이지만 주변에 블록이 아닐경우 : 3px 로 할지 1px로 할지 두개 다 테스트 해보기.
+   * 3. 자기도 블록이 아니고 주변에 블록이 없다면 3px
+ * @param {*} table
+ * @param {*} row 
+ * @param {*} col 
+ * @param {*} direction
+ */
+function drawRegionByBlock(rowLen, colLen, row, col, direction) {
+  let cellDOM = getCellDOM(row, col)
+  let nearCellDOM = null
+  const top = 'top'
+  const left = 'left'
+  const right = 'right'
+  const bottom = 'bottom'
+  if (direction === top && (row - 1) >= 0) {
+    nearCellDOM = getCellDOM(row - 1, col)
+    const borderWidth = checkBorderWidth(cellDOM, nearCellDOM)
+    changeBorderWidth(cellDOM, top, borderWidth)
+  } else if (direction === left && (col - 1) >= 0) {
+    nearCellDOM = getCellDOM(row, col - 1)
+    const borderWidth = checkBorderWidth(cellDOM, nearCellDOM)
+    changeBorderWidth(cellDOM, left, borderWidth)
+  } else if (direction === right && (col + 1) < colLen) {
+    nearCellDOM = getCellDOM(row, col + 1)
+    const borderWidth = checkBorderWidth(cellDOM, nearCellDOM)
+    changeBorderWidth(cellDOM, right, borderWidth)
+  } else if (direction === bottom && (row + 1) < rowLen) {
+    nearCellDOM = getCellDOM(row + 1, col)
+    const borderWidth = checkBorderWidth(cellDOM, nearCellDOM)
+    changeBorderWidth(cellDOM, bottom, borderWidth)
+  }
+}
+
+function checkBorderWidth(cellDOM, nearCellDOM) {
+  if (cellDOM.className.includes('block') && nearCellDOM.className.includes('block')) {
+    return blockBorderWidth
+  } else if (!cellDOM.className.includes('block') && !nearCellDOM.className.includes('block')) {
+    return regionBorderWidth
+  } else {
+    return regionBorderWidth
+  }
+}
+
+function changeBorderWidth(cellDOM, direction, borderWidth) {
+  if (borderWidth) {
+    if (direction === 'top') {
+      cellDOM.style.borderTopWidth = borderWidth
+    } else if (direction === 'bottom') {
+      cellDOM.style.borderBottomWidth = borderWidth
+    } else if (direction === 'left') {
+      cellDOM.style.borderLeftWidth = borderWidth
+    } else if (direction === 'right') {
+      cellDOM.style.borderRightWidth = borderWidth
+    }
+  }
+}
+
+function checkBlockExist(rowLen, colLen) {
+  for (let i = 0; i < rowLen; i++) {
+    for (let j = 0; j < colLen; j++) {
+      if (getCellDOM(i, j).className.includes('block')) {
+        return true
+      }
+    }
+  }
+  return false
 }

@@ -106,23 +106,28 @@ class BlockType {
 
         for (let i = 0; i < table.length; i++) {
             for (let j = 0; j < table[0].length; j++) {
-                let cellStyleMap = {}
+                let cellMap = {}
+                let cellStyleInfo = {}
                 if (table[i][j] === this.closeTableValue) {
-                    cellStyleMap.background = ''
+                    cellStyleInfo.background = ''
+                    cellMap.style = cellStyleInfo
                 } else if (table[i][j] === this.blankTableValue) {
-                    cellStyleMap.background = this.selectedTableColor
+                    cellStyleInfo.background = this.selectedTableColor
+                    cellMap.style = cellStyleInfo
                 } else {
                     let directionList = this.getConnectedDirection(table[i][j])
                     directionList.none.forEach((v) => {
-                        cellStyleMap[v] = 'none'
+                        cellStyleInfo[v] = 'none'
                     })
                     // todo : 바라보는 방향에 다른 블럭이 존재하면 1px 존재하지 않으면 3px로 설정하도록 수정해야함
                     directionList.exist.forEach((v) => {
-                        // cellStyleMap[v] = '1px solid #000000'
+                        // cellStyleMap[v] = '1px solid'
                     })
-                    cellStyleMap['background'] = this.blockTypeColor[this.getOnlyColorIdx(table[i][j])]
+                    cellStyleInfo['background'] = this.blockTypeColor[this.getOnlyColorIdx(table[i][j])]
+                    cellMap.style = cellStyleInfo
+                    cellMap.className = 'block'
                 }
-                style[i][j] = { style: cellStyleMap, className: 'block' }
+                style[i][j] = cellMap
                 // style[i][j] = cellStyleMap
             }
         }

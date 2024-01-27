@@ -15,6 +15,7 @@
     --block-color-1400: #3dccb9; /* 2:I */
     --block-color-1500: #29a9c9; /* 1:dot */
     --region-border-width: 3px;
+    --block-border-width: 1px;
     --cell-selected-hover-color: #969696;
     --cell-not-selected-hover-color: #cfcfcf;
     --cell-selected-color: rgb(179, 179, 179);

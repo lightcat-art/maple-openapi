@@ -457,7 +457,7 @@ export default () => {
                       // 실시간 렌더링 하기위함.
                       this.addProcessCount()
                       if (this.realtimeRender) {
-                        if (this.processCount % 25 === 0) {
+                        if (this.processCount % 40 === 0) {
                           this.resultBlocks = curBlocks
                           this.resultDomiBlocks = curDomiBlocks
                           // this.setTableStyleValue()
