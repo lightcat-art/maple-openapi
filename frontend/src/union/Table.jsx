@@ -2,7 +2,7 @@ import { all } from 'axios';
 import * as React from 'react';
 import { getCellDOM } from './index'
 import './index.css'
-import { getCSSProp } from '../util/util'
+import { getCSSProp } from '../util/util.jsx'
 
 const regionInfo = []
 

@@ -9,7 +9,7 @@ import WebWorker from '../util/worker'
 import worker from './UnionWorker'
 import { CheckBox, SwitchCheckBox } from '../common/checkBox'
 import './index.css'
-import { getCSSProp } from '../util/util'
+import { getCSSProp } from '../util/util.jsx'
 
 
 let unionWorker = new WebWorker().getUnionWorker(worker)
