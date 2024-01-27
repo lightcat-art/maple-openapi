@@ -23,19 +23,15 @@ class BlockType {
         ]
         this.closeTableColor = '#ffffff'
         this.selectedTableColor = selectedTableColor
-        
+
         this.blockTypeColor = blockColor
         this.baseBlockSizeIdx = { 5: [0, 5], 4: [6, 10], 3: [11, 12], 2: [13, 13], 1: [14, 14] }
         this.blockDirection = { 1: 'borderTop', 2: 'borderLeft', 4: 'borderRight', 8: 'borderBottom' }
         // [i][j] => i: 블록타입 종류,  j: 블록의 회전에 따른 종류
         this.allBlockType = new Array(this.baseBlockType.length)
         this.getAllBlockType();
-        this.binaryBlockOn = 1 // 블록바이너리표현 :  블록이 있는 부분
-        this.binaryBlockOff = 0 // 블록바이너리표현 : 블록이 없는 부분
         this.closeTableValue = 0 // 유니온 지도에서 채울수 없는 부분
         this.blankTableValue = 1 // 유니온 지도에서 채워질 부분 (비어있는 부분)
-        this.limitBlockSize = 5; // 한 블록의 최대 큐브 개수
-        this.limitBlockLength = 5; // 좌표평면상 블록의 최대 길이
         BlockType.instance = this;
     }
 
@@ -65,6 +61,20 @@ class BlockType {
 
         return block.map(v => [v[0] - minRow, v[1] - minCol]).sort()
     }
+
+    /**
+ * 유니온 좌표정보를 matrix 좌표 구조로 반환
+ */
+    transformPosition(block, table) {
+        let rowOffSet = 10 
+        let colOffSet = 11
+        let resultPosition = []
+        for (let position of block) {
+            resultPosition.push([position.y + rowOffSet, position.x + colOffSet])
+        }
+        return resultPosition
+    }
+
 
     setTableStyleValue(table, domiBlocks) {
         let tableStyleValue = JSON.parse(JSON.stringify(table))

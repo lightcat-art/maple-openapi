@@ -43,7 +43,7 @@ export const Menu = () => {
                     {/* <a href="" className="btn btn-primary rounded-pill py-2 px-4">Register</a> */}
                     {/* </div> */}
                 </nav>
-                <div className="container-fixed bg-primary py-5 mb-5 hero-header">
+                <div className="container-fixed bg-primary py-5 mb-5 background-header">
                 </div>
             </div>
 

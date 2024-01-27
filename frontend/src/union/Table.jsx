@@ -289,8 +289,10 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
     return (
         <div
             // style={{ backgroundColor: '#b8b8b8', padding: 4 }}
-            onMouseMove={(e) => preventOutsideDrag(e)}>
-            <table id='union-table' className='union-table' onMouseMove={(e) => e.stopPropagation()}
+            // onMouseMove={(e) => preventOutsideDrag(e)}
+            >
+            <table id='union-table' className='union-table' 
+            // onMouseMove={(e) => e.stopPropagation()}
             // style={{ borderSpacing: '0px' }}
             >
                 <tbody className='union-table-body'>

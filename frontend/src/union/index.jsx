@@ -104,14 +104,21 @@ export const UnionRaider = () => {
         if (result.last) {
           setLastResult(true)
         }
-        const styleValue = blockType.setTableStyleValue(result.table, result.domiBlocks)
-        const tableStyle = blockType.getTableStyle(styleValue)
-        console.log(tableStyle)
-        setTableStyle(tableStyle);
+        if (result.domiBlocks) {
+          const styleValue = blockType.setTableStyleValue(result.table, result.domiBlocks)
+          const tableStyle = blockType.getTableStyle(styleValue)
+          console.log(tableStyle)
+          setTableStyle(tableStyle);
+        }
+
       }
     });
 
   }, [unionWorker]);
+
+  React.useEffect(() => {
+
+  }, [])
 
   React.useEffect(() => {
     console.log('regionMode changed')
@@ -124,18 +131,24 @@ export const UnionRaider = () => {
 
 
   return (
-    <div>
+    <div className="container-fluid">
+
       <BasicTable setTable={setTable} style={tableStyle} submit={submitButtonDisabled} regionMode={regionMode}></BasicTable>
-      <div className="union-option">
-        <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
-        <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox>
-        {/* <button onClick={handleClick(testInput, unionWorker, setResult)}>Calculate in Web Worker</button> */}
-        <div><Button action={handleFormSubmit} disabled={submitButtonDisabled} title="submit"></Button></div>
-        <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
-        <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div>
-        <div><Button action={handleFormReset} disabled={resetButtonHidden} title="reset"></Button></div>
-        <div>{result}</div>
+      <div className="row justify-content-md-center" style={{ marginTop: '20px' }}>
+        <div className="col-2"></div>
+        <div className="col-md-auto">
+          <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
+          {/* <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox> */}
+          {/* <button onClick={handleClick(testInput, unionWorker, setResult)}>Calculate in Web Worker</button> */}
+          <div className="text-center"><Button action={handleFormSubmit} disabled={submitButtonDisabled} title="시작" style={{ marginTop: '10px', width: '70px' }}></Button></div>
+          {/* <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
+          <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div> */}
+          <div className="text-center"><Button action={handleFormReset} disabled={resetButtonHidden} title="리셋" style={{ marginTop: '10px', width: '70px' }}></Button></div>
+          <div>{result}</div>
+        </div>
+        <div className="col-2"></div>
       </div>
+
 
     </div>
   )
@@ -162,36 +175,47 @@ export function getCellDOM(row, col) {
 function drawRegion(table) {
   const rowLen = table.length
   const colLen = table[0].length
-  for (let e = 0; e < colLen / 2; e++) {
-    if (e !== colLen / 2 - 1) {
-      getCellDOM(e, e).style.borderTopWidth = regionBorderWidth
-      getCellDOM(e, e).style.borderRightWidth = regionBorderWidth
-      getCellDOM(rowLen - e - 1, e).style.borderBottomWidth = regionBorderWidth
-      getCellDOM(rowLen - e - 1, e).style.borderRightWidth = regionBorderWidth
+  if (!getCellDOM(0, 0).className.includes('block')) {
+    for (let e = 0; e < colLen / 2; e++) {
+
+      if (e !== colLen / 2 - 1) {
+        getCellDOM(e, e).style.borderTopWidth = regionBorderWidth
+        getCellDOM(e, e).style.borderRightWidth = regionBorderWidth
+        getCellDOM(rowLen - e - 1, e).style.borderBottomWidth = regionBorderWidth
+        getCellDOM(rowLen - e - 1, e).style.borderRightWidth = regionBorderWidth
+      }
+      if (e !== colLen / 2 - 1) {
+        getCellDOM(e, colLen - e - 1).style.borderTopWidth = regionBorderWidth
+        getCellDOM(e, colLen - e - 1).style.borderLeftWidth = regionBorderWidth
+        getCellDOM(rowLen - e - 1, colLen - e - 1).style.borderBottomWidth = regionBorderWidth
+        getCellDOM(rowLen - e - 1, colLen - e - 1).style.borderLeftWidth = regionBorderWidth
+      }
     }
-    if (e !== colLen / 2 - 1) {
-      getCellDOM(e, colLen - e - 1).style.borderTopWidth = regionBorderWidth
-      getCellDOM(e, colLen - e - 1).style.borderLeftWidth = regionBorderWidth
-      getCellDOM(rowLen - e - 1, colLen - e - 1).style.borderBottomWidth = regionBorderWidth
-      getCellDOM(rowLen - e - 1, colLen - e - 1).style.borderLeftWidth = regionBorderWidth
+    for (let e = 0; e < rowLen; e++) {
+      // getCellDOM(e, 0).style.borderLeftWidth = regionBorderWidth
+      getCellDOM(e, colLen / 2).style.borderLeftWidth = regionBorderWidth
+      // getCellDOM(e, colLen - 1).style.borderRightWidth = regionBorderWidth
     }
-  }
-  for (let e = 0; e < rowLen; e++) {
-    // getCellDOM(e, 0).style.borderLeftWidth = regionBorderWidth
-    getCellDOM(e, colLen / 2).style.borderLeftWidth = regionBorderWidth
-    // getCellDOM(e, colLen - 1).style.borderRightWidth = regionBorderWidth
-  }
-  for (let e = 0; e < colLen; e++) {
-    // getCellDOM(0, e).style.borderTopWidth = regionBorderWidth
-    getCellDOM(rowLen / 2, e).style.borderTopWidth = regionBorderWidth
-    // getCellDOM(rowLen - 1, e).style.borderBottomWidth = regionBorderWidth
-  }
-  for (let e = rowLen / 4; e < 3 * rowLen / 4; e++) {
-    getCellDOM(e, Math.floor(colLen / 4)).style.borderLeftWidth = regionBorderWidth
-    getCellDOM(e, Math.floor(3 * colLen / 4)).style.borderRightWidth = regionBorderWidth
-  }
-  for (let e = Math.ceil(colLen / 4); e < Math.floor(3 * colLen / 4); e++) {
-    getCellDOM(rowLen / 4, e).style.borderTopWidth = regionBorderWidth
-    getCellDOM(3 * rowLen / 4, e).style.borderTopWidth = regionBorderWidth
+    for (let e = 0; e < colLen; e++) {
+      // getCellDOM(0, e).style.borderTopWidth = regionBorderWidth
+      getCellDOM(rowLen / 2, e).style.borderTopWidth = regionBorderWidth
+      // getCellDOM(rowLen - 1, e).style.borderBottomWidth = regionBorderWidth
+    }
+    for (let e = rowLen / 4; e < 3 * rowLen / 4; e++) {
+      getCellDOM(e, Math.floor(colLen / 4)).style.borderLeftWidth = regionBorderWidth
+      getCellDOM(e, Math.floor(3 * colLen / 4)).style.borderRightWidth = regionBorderWidth
+    }
+    for (let e = Math.ceil(colLen / 4); e < Math.floor(3 * colLen / 4); e++) {
+      getCellDOM(rowLen / 4, e).style.borderTopWidth = regionBorderWidth
+      getCellDOM(3 * rowLen / 4, e).style.borderTopWidth = regionBorderWidth
+    }
+  } else {
+    // block style이 들어오는거 인식하네..? 이걸로 블록 테두리 관리하자.
+    /**
+     * top의 테두리를 변경하는 경우 위쪽에 block이 있으면 1px
+     * bottom의 테두리를 변경하는 경우 아래쪽에 block이 있으면 1px
+     * ... 
+     */
+    console.log('ddddd')
   }
 }

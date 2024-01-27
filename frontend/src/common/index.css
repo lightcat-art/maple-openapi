@@ -67,9 +67,7 @@
 }
 
 
-
-/*** Hero Header ***/
-.hero-header {
+.background-header {
     background: linear-gradient(rgba(20, 20, 31, 0.877), rgba(20, 20, 31, 0.877)), url(../static/img/wallpaper/arcana/arcanadesktop_1920x1200.jpg);
     background-position: center center;
     background-repeat: no-repeat;

@@ -270,7 +270,6 @@ export default () => {
       return block.map(v => [v[0] - minRow, v[1] - minCol]).sort()
     }
 
-
     /**
     * 현재 블록에 대해 회전 시 블록 종류 반환.
     * @param {*} block 
