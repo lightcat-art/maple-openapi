@@ -3,7 +3,6 @@ import * as React from 'react';
 import axios from 'axios';
 import UnionRaiderSetting from './UnionRaiderSetting';
 import BlockType from './BlockType';
-import Util from '../util/util'
 import { BasicTable } from './Table';
 import WebWorker from '../util/worker'
 import worker from './UnionWorker'
@@ -38,11 +37,13 @@ export const UnionRaider = () => {
   const [responseUnionBlock, setResponseUnionBlock] = React.useState([])
   const [regionMode, setRegionMode] = React.useState(false) // 지역선택모드인지, 단일셀 선택모드인지 세팅
   const [realTimeRender, setRealTimeRender] = React.useState(false) // 실시간 보기 세팅
+  const [lastResult, setLastResult] = React.useState(false)
 
 
   const handleFormSubmit = (e) => {
     unionWorker = new WebWorker().getUnionWorker(worker)
     unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, cnt: 1 })
+    setLastResult(false)
     setSubmitButtonDisabled(true)
     setPauseButtonHidden(true)
     setContinueButtonHidden(true)
@@ -100,6 +101,9 @@ export const UnionRaider = () => {
       // console.log('result = ', result)
       // setTable(table)
       if (result) {
+        if (result.last) {
+          setLastResult(true)
+        }
         const styleValue = blockType.setTableStyleValue(result.table, result.domiBlocks)
         const tableStyle = blockType.getTableStyle(styleValue)
         console.log(tableStyle)
@@ -116,7 +120,7 @@ export const UnionRaider = () => {
 
   React.useEffect(() => {
     drawRegion(table)
-  }, [resetButtonHidden]);
+  }, [resetButtonHidden, lastResult]);
 
 
   return (
