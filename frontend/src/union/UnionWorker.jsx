@@ -55,10 +55,12 @@ export default () => {
 
     console.log('origin success : ', threads[0].complete, ', 1 : ', threads[1].complete, ', 2: ', threads[2].complete, ', 3: ', threads[3].complete)
     let domiBlocks = null
+    let processCount = null
     if (threads[0].complete) {
       console.log('origin success')
       console.log('blocks:', threads[0].resultBlocks)
       domiBlocks = threads[0].resultDomiBlocks
+      processCount = threads[0].addProcessCount()
     } else if (threads[1].complete) {
       console.log('yxSym success')
       console.log('blocks:', threads[1].resultBlocks)
@@ -72,6 +74,7 @@ export default () => {
         resultDomiBlocks.push(resultDomiBlock)
       }
       domiBlocks = resultDomiBlocks
+      processCount = threads[1].addProcessCount()
     } else if (threads[2].complete) {
       console.log('origSym success')
       console.log('blocks:', threads[2].resultBlocks)
@@ -84,7 +87,7 @@ export default () => {
         resultDomiBlocks.push(resultDomiBlock)
       }
       domiBlocks = resultDomiBlocks
-
+      processCount = threads[2].addProcessCount()
     } else if (threads[3].complete) {
       console.log('yxOrigSym success')
       console.log('blocks:', threads[3].resultBlocks)
@@ -97,8 +100,10 @@ export default () => {
         resultDomiBlocks.push(resultDomiBlock)
       }
       domiBlocks = resultDomiBlocks
+      processCount = threads[3].addProcessCount()
     }
-    postMessage({ table: table, domiBlocks: domiBlocks, last: true })
+
+    postMessage({ table: table, domiBlocks: domiBlocks, count: processCount })
   }
 
   class PromiseTest {
@@ -198,7 +203,11 @@ export default () => {
       this.filledCount = this.filledCount + 1
     }
     addProcessCount() {
-      this.processCount = this.processCount + 1
+      this.processCount++
+      return this.processCount
+    }
+    getProcessCount() {
+      return this.processCount
     }
 
 
@@ -455,14 +464,14 @@ export default () => {
                       curBlocks[k].count--
 
                       // 실시간 렌더링 하기위함.
-                      this.addProcessCount()
+                      const processCount = this.addProcessCount()
                       if (this.realtimeRender) {
                         if (this.processCount % 40 === 0) {
                           this.resultBlocks = curBlocks
                           this.resultDomiBlocks = curDomiBlocks
                           // this.setTableStyleValue()
                           // postMessage({ table: this.getTableStyle() })
-                          postMessage({ table: this.table, domiBlocks: curDomiBlocks })
+                          postMessage({ table: this.table, domiBlocks: curDomiBlocks, count: processCount })
                         }
                       }
 

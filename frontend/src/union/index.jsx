@@ -38,13 +38,13 @@ export const UnionRaider = () => {
   const [responseUnionBlock, setResponseUnionBlock] = React.useState([])
   const [regionMode, setRegionMode] = React.useState(false) // 지역선택모드인지, 단일셀 선택모드인지 세팅
   const [realTimeRender, setRealTimeRender] = React.useState(false) // 실시간 보기 세팅
-  const [lastResult, setLastResult] = React.useState(false)
+  const [processCount, setProcessCount] = React.useState(0)
 
 
   const handleFormSubmit = (e) => {
     unionWorker = new WebWorker().getUnionWorker(worker)
     unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, cnt: 1 })
-    setLastResult(false)
+    // setProcessCount(0)
     setSubmitButtonDisabled(true)
     setPauseButtonHidden(true)
     setContinueButtonHidden(true)
@@ -102,8 +102,8 @@ export const UnionRaider = () => {
       // console.log('result = ', result)
       // setTable(table)
       if (result) {
-        if (result.last) {
-          setLastResult(true)
+        if (result.count) {
+          setProcessCount(result.count)
         }
         if (result.domiBlocks) {
           const styleValue = blockType.setTableStyleValue(result.table, result.domiBlocks)
@@ -128,7 +128,7 @@ export const UnionRaider = () => {
 
   React.useEffect(() => {
     drawRegion(table)
-  }, [resetButtonHidden, lastResult]);
+  }, [resetButtonHidden, processCount]);
 
 
   return (
@@ -140,7 +140,6 @@ export const UnionRaider = () => {
         <div className="col-md-auto">
           <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
           {/* <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox> */}
-          {/* <button onClick={handleClick(testInput, unionWorker, setResult)}>Calculate in Web Worker</button> */}
           <div className="text-center"><Button action={handleFormSubmit} disabled={submitButtonDisabled} title="시작" style={{ marginTop: '10px', width: '70px' }}></Button></div>
           {/* <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
           <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div> */}
