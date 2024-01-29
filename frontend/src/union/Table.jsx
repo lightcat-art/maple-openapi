@@ -66,7 +66,7 @@ function getRegionCells(region) {
 regionDef()
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
-export function BasicTable({ style, setTable, submit, regionMode }) {
+export function BasicTable({ style, tableStyle, setTable, submit, regionMode }) {
     const [select, setSelect] = React.useState([])
     // const [regionSelect, setRegionSelect] = React.useState([])
     // This variable will control if the user is dragging or not
@@ -81,7 +81,7 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
         const notSelectedElement = Array.from(
             document.getElementsByClassName('not-selected')
         );
-        let table = Array.from(new Array(style.length), () => new Array(style[0].length).fill(0))
+        let table = Array.from(new Array(tableStyle.length), () => new Array(tableStyle[0].length).fill(0))
         for (var value of selectedElement.values()) {
             let position = value.getAttribute('uniqkey').split('-');
             const row = Number(position[0])
@@ -287,8 +287,8 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
     }
 
     return (
-        <div
-            // style={{ backgroundColor: '#b8b8b8', padding: 4 }}
+        <div style={style}
+            // style={{ position: relative }}
             // onMouseMove={(e) => preventOutsideDrag(e)}
             >
             <table id='union-table' className='union-table' 
@@ -296,7 +296,7 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
             // style={{ borderSpacing: '0px' }}
             >
                 <tbody className='union-table-body'>
-                    {style.map((row, i) => (
+                    {tableStyle.map((row, i) => (
                         <tr key={i}>
                             {row.map((v, j) => (
                                 // <div className={`${getRegionClass(i, j)}`}>

@@ -1,3 +1,7 @@
+:root {
+    --primary: #000000;
+}
+
 .main-bg {
     background: linear-gradient(rgba(29, 29, 46, 0.877), rgba(20, 20, 31, 0.877)), url(../static/img/wallpaper/arcana/arcanadesktop_1.jpg);
     background-position: center center;
@@ -29,10 +33,72 @@
     /* transition: .5s; */
 }
 
-.search-form {
+.main {
     position: absolute;
     top: 50%;
     left: 50%;
     width: 50%;
     transform: translate(-50%, -50%);
+}
+
+
+.navbar-group .navbar-nav .nav-link {
+    position: relative;
+    margin-right: 25px;
+    padding: 10px 0;
+    color: #000000 !important;
+    font-family: 'maple-light';
+    font-size: 15px;
+    font-weight: 400;
+    outline: none;
+    transition: .5s; 
+}
+
+/* .sticky-top.navbar-light .navbar-nav .nav-link {
+    padding: 20px 0;
+    color: var(--dark) !important;
+} */
+
+/* hover active action */
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: var(--primary) !important;
+}
+
+.navbar-nav .nav-link::before {
+    position: absolute;
+    content: "";
+    width: 0;
+    height: 2px;
+    bottom: -8px;
+    left: 50%;
+    background: var(--primary);
+    transition: .5s;
+}
+
+
+.navbar-nav .nav-link.active::before,
+.navbar-nav .nav-link:hover::before {
+    width: calc(100% - 2px);
+    left: 1px;
+}
+
+/* what? */
+/* .navbar-light .navbar-nav .nav-link.nav-contact::before {
+    display: none;
+} */
+
+.navbar-nav {
+    margin-left: calc(100%-30vh);
+}
+
+.navbar-group {
+    /* absolute property can bottom image to background */
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    /* menu bottom line */
+    /* border-bottom: 1px solid rgba(256, 256, 256, .1); */
+    z-index: 999;
 }

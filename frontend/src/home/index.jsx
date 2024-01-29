@@ -1,6 +1,5 @@
-
-import { Layout } from '../common'
 import './index.css'
+import searchLogo from '../static/icons/search_FILL0_wght600_GRAD0_opsz24.svg';
 
 export function Home() {
     return (
@@ -13,54 +12,39 @@ export function Home() {
 function HomeContent() {
     return (
         <>
-            dfef
         </>
     );
 }
 
 function HomeLayout() {
     return (
-        <div className="layout-home">
-            <div className="container-fluid bg-primary main-bg d-none d-sm-block">
-            </div>
-            {/* <div className="container-fluid bg-primary main-bg-tab d-none d-md-block d-xl-none">
-            </div> */}
-            <div className="container-fluid bg-primary main-bg-mob d-sm-none">
-            </div>
+        <div className="container-fluid">
+            <div className="layout-home">
+                {/* <div className="container-fluid main-bg-monotone"></div> */}
 
-            <nav className="navbar navbar-expand-lg navbar-light">
-                {/* <div class="collapse navbar-collapse" id="navbarCollapse"> */}
-                <div className="navbar-nav ms-auto">
-
-                    <a href="/" className="nav-item nav-link active">홈</a>
-                    <a href="/union" className="nav-item nav-link">유니온</a>
-
-                    {/* <div className="nav-item dropdown">
-                            <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                            <div className="dropdown-menu m-0">
-                                <a href="destination.html" className="dropdown-item">Destination</a>
-                                <a href="booking.html" className="dropdown-item">Booking</a>
-                                <a href="team.html" className="dropdown-item">Travel Guides</a>
-                                <a href="testimonial.html" className="dropdown-item">Testimonial</a>
-                                <a href="404.html" className="dropdown-item">404 Page</a>
+                <nav className="navbar navbar-expand-sm navbar-group" style={{ backgroundColor: '#e0e0e0' }}>
+                    {/* <div class="collapse navbar-collapse" id="navbarCollapse"> */}
+                    <div className="row">
+                        <div className="col-2"></div>
+                        <div className="col-md-auto">
+                            <div className="navbar-nav">
+                                <a href="/" className="nav-item nav-link active">홈</a>
+                                <a href="/union" className="nav-item nav-link">유니온</a>
                             </div>
                         </div>
-                        <a href="contact.html" className="nav-item nav-link">Contact</a> */}
-                </div>
-                {/* <a href="" className="btn btn-primary rounded-pill py-2 px-4">Register</a> */}
-                {/* </div> */}
-            </nav>
-
-            <div className="search-form">
-                <h1 className="display-3 text-white mb-3 text-center animate__animated animate__slideInDown">MP.GG</h1>
-                {/* <input className="form-control border-0 rounded-pill" type="text" placeholder="캐릭터명"></input>
-                <button type="button" className="btn btn-primary rounded-pill">Search</button> */}
-                <div className="input-group md-form form-sm form-1 pl-0">
-                    <div className="input-group-prepend">
-                        <span className="input-group-text cyan lighten-2" id="basic-text1"><i className="fas fa-search text-white"
-                            aria-hidden="true"></i></span>
+                        <div className="col-2"></div>
                     </div>
-                    <input className="form-control my-0 py-1" type="text" placeholder="Search" aria-label="Search" />
+                </nav>
+
+                <div className="main">
+                    <h1 className="display-3 mb-3 text-center animate__animated animate__slideInDown" style={{ color: '#000000' }}>MP.GG</h1>
+                    <div className="position-relative mx-auto">
+                        <input className="form-control border-0 rounded-pill py-3 ps-4 pe-5" type="text" placeholder="닉네임 입력"
+                            style={{ backgroundColor: '#f3f3f3' }}></input>
+                        <button type="button" className="btn rounded-pill py-2 px-4 position-absolute top-0 end-0 me-2" style={{ marginTop: '7px' }}>
+                            <img src={searchLogo} alt=""></img>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

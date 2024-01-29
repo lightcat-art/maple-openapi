@@ -133,23 +133,24 @@ export const UnionRaider = () => {
 
   return (
     <div className="container-fluid">
-
-      <BasicTable setTable={setTable} style={tableStyle} submit={submitButtonDisabled} regionMode={regionMode}></BasicTable>
+      <BasicTable setTable={setTable} style={{marginTop: '30px'}} tableStyle={tableStyle} submit={submitButtonDisabled} regionMode={regionMode}></BasicTable>
       <div className="row justify-content-md-center" style={{ marginTop: '20px' }}>
         <div className="col-2"></div>
         <div className="col-md-auto">
           <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
           {/* <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox> */}
-          <div className="text-center"><Button action={handleFormSubmit} disabled={submitButtonDisabled} title="시작" style={{ marginTop: '10px', width: '70px' }}></Button></div>
+          <div className="text-center">
+            <Button action={handleFormSubmit} disabled={submitButtonDisabled} title="시작" style={{ marginTop: '10px', width: '70px' }}></Button>
+          </div>
           {/* <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
           <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div> */}
-          <div className="text-center"><Button action={handleFormReset} disabled={resetButtonHidden} title="리셋" style={{ marginTop: '10px', width: '70px' }}></Button></div>
+          <div className="text-center">
+            <Button action={handleFormReset} disabled={resetButtonHidden} title="리셋" style={{ marginTop: '10px', width: '70px' }}></Button>
+          </div>
           <div>{result}</div>
         </div>
         <div className="col-2"></div>
       </div>
-
-
     </div>
   )
 }
@@ -210,8 +211,10 @@ function drawRegion(table) {
       getCellDOM(rowLen / 4, e).style.borderTopWidth = regionBorderWidth
       getCellDOM(3 * rowLen / 4, e).style.borderTopWidth = regionBorderWidth
     }
-  } 
+  }
   else {
+    // 블록이 존재한다면 처음 렌더링은 아니란 뜻이므로 아예 산정되지 않은 블록은 굳이 스타일 바꿀 필요는 없긴한데..
+    // 어차피 빈블록인지 아닌지까지 조건식으로 다 따져야 하므로 전체적으로 프로세스시간은 비슷할듯.
     for (let e = 0; e < colLen / 2; e++) {
       if (e !== colLen / 2 - 1) {
         drawRegionByBlock(rowLen, colLen, e, e, 'top')
