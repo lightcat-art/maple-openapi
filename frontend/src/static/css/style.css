@@ -13,6 +13,11 @@
     src: url("../fonts/MaplestoryFont_TTF/Maplestory_Light.ttf");
 }
 
+@font-face {
+    font-family: "noto-sans-kr";
+    src: url("../fonts/Noto_Sans_KR/NotoSansKR-VariableFont_wght.ttf");
+}
+
 
 ::-moz-selection {
     /*mozilla*/
@@ -26,15 +31,19 @@
 
 /********** Template CSS **********/
 :root {
-    --primary: #ffffffdc;
+    --primary: #000000dc;
     --secondary: #FE8800;
     --light: #F5F5F5;
     --dark: #000000;
 
 }
 
-.layout, .layout-home {
-    font-family: 'maple-light';
+/* .layout, .layout-home {
+    font-family: 'noto-sans-kr';
+} */
+
+.main-logo {
+    font-family: 'maple-light'
 }
 
 .navbar-bg {

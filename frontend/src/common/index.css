@@ -1,24 +1,15 @@
-/*** Navbar ***/
-
-.navbar-top {
-    font-family: 'maple-bold';
-    height: 45px;
-}
-
-.navbar-light .navbar-nav .nav-link {
-
+.navbar-group .navbar-nav .nav-link {
     position: relative;
     margin-right: 25px;
     padding: 10px 0;
-    color: #FFFFFF !important;
-    /* color: #eb5151 !important; */
-    font-family: 'maple-light';
+    color: #424242 !important;
+    /* font-family: 'maple-light'; */
     font-size: 15px;
     font-weight: 400;
     outline: none;
-    /** animation delay **/
-    transition: .5s; 
-    /* left: 100px; */
+    transition: .3s; 
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 /* .sticky-top.navbar-light .navbar-nav .nav-link {
@@ -27,52 +18,50 @@
 } */
 
 /* hover active action */
-.navbar-light .navbar-nav .nav-link:hover,
-.navbar-light .navbar-nav .nav-link.active {
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
     color: var(--primary) !important;
+    font-weight: bold;
+    background-color: rgb(223, 223, 223) !important;
+    border-radius: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
-.navbar-light .navbar-nav .nav-link::before {
+/* .navbar-nav .nav-link::before {
     position: absolute;
     content: "";
     width: 0;
     height: 2px;
-    bottom: -1px;
+    bottom: -8px;
     left: 50%;
     background: var(--primary);
     transition: .5s;
-}
+} */
 
 
-.navbar-light .navbar-nav .nav-link.active::before,
-.navbar-light .navbar-nav .nav-link:hover::before {
+.navbar-nav .nav-link.active::before,
+.navbar-nav .nav-link:hover::before {
     width: calc(100% - 2px);
     left: 1px;
 }
 
 /* what? */
-/* .navbar-light .navbar-nav .nav-link.nav-contact::before {
+/* .navbar-group .navbar-nav .nav-link.nav-contact::before {
     display: none;
 } */
 
-.navbar-light {
+.navbar-nav {
+    margin-left: calc(100%-30vh);
+}
+
+.navbar-group {
     /* absolute property can bottom image to background */
     position: absolute;
     width: 100%;
     top: 0;
     left: 0;
     /* menu bottom line */
-    /* border-bottom: 1px solid rgba(256, 256, 256, .1); */
+    border-bottom: 1px solid rgb(243, 243, 243);
     z-index: 999;
 }
-
-
-.background-header {
-    background: linear-gradient(rgba(20, 20, 31, 0.877), rgba(20, 20, 31, 0.877)), url(../static/img/wallpaper/arcana/arcanadesktop_1920x1200.jpg);
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    width: 100vw;
-    height: 100vh;
-}
-

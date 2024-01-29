@@ -4,13 +4,22 @@ import { useMediaQuery } from 'react-responsive';
 import * as React from 'react';
 import { UnionRaider } from './union';
 import { Home } from './home';
+import { Layout } from './common'
+import { NotFound } from './common'
+import { CharacterLayout } from './character'
+import {Menu} from './common'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route exact path='/' element={<Home />} />
-        <Route exact path='/union' element={<UnionRaider />} />
+        {/* <Route exact path='/union' element={<UnionRaider />} /> */}
+        <Route element={<CharacterLayout />}>
+          <Route path='/c/:cname' element={<UnionRaider />}/>
+          {/* <Route exact path=':cname/union' element={<UnionRaider />} /> */}
+        </Route>
+        {/* <Route component={NotFound} /> */}
       </Routes>
     </BrowserRouter>
   )

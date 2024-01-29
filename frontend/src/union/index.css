@@ -39,12 +39,16 @@
     position: relative;
     margin-left: auto;
     margin-right: auto;
-    /* margin-top: 20vh; */
+    margin-top: 4vh;
 }
 
 .selected {
     background: var(--cell-selected-color);
     user-select: none; 
+}
+
+.start, .reset {
+    font-weight: bold;
 }
 
 /* .union-button {

@@ -9,6 +9,8 @@ import worker from './UnionWorker'
 import { CheckBox, SwitchCheckBox } from '../common/checkBox'
 import './index.css'
 import { getCSSProp } from '../util/util.jsx'
+import { useParams } from 'react-router-dom'
+import { Menu } from '../common'
 
 
 let unionWorker = new WebWorker().getUnionWorker(worker)
@@ -23,8 +25,10 @@ const blockBorderWidth = getCSSProp(document.documentElement, '--block-border-wi
 const cellSelectedColor = getCSSProp(document.documentElement, '--cell-selected-color')
 
 export const UnionRaider = () => {
+
+  const { cname } = useParams();
   // const [charOverall, setCharOverall] = React.useState('-')
-  const param = { nickname: '마하포드' }
+  const param = { nickname: cname }
   const blockType = new BlockType(blockColor, cellSelectedColor);
 
   const [table, setTable] = React.useState(Array.from(Array(20), () => Array(22).fill(0)))
@@ -83,7 +87,6 @@ export const UnionRaider = () => {
   }
 
 
-  const requestParam = {}
   // let users = [1,3,4,2,2,4,5]
   React.useEffect(() => {
     axios.get('/api/char/overall', { params: param })
@@ -133,6 +136,7 @@ export const UnionRaider = () => {
 
   return (
     <div className="container-fluid">
+      {/* <Menu item='not-home'/> */}
       <BasicTable setTable={setTable} style={{marginTop: '30px'}} tableStyle={tableStyle} submit={submitButtonDisabled} regionMode={regionMode}></BasicTable>
       <div className="row justify-content-md-center" style={{ marginTop: '20px' }}>
         <div className="col-2"></div>
@@ -140,12 +144,12 @@ export const UnionRaider = () => {
           <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
           {/* <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox> */}
           <div className="text-center">
-            <Button action={handleFormSubmit} disabled={submitButtonDisabled} title="시작" style={{ marginTop: '10px', width: '70px' }}></Button>
+            <Button className='start' action={handleFormSubmit} disabled={submitButtonDisabled} title="시작" style={{ marginTop: '10px', width: '70px' }}></Button>
           </div>
           {/* <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
           <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div> */}
           <div className="text-center">
-            <Button action={handleFormReset} disabled={resetButtonHidden} title="리셋" style={{ marginTop: '10px', width: '70px' }}></Button>
+            <Button className='reset' action={handleFormReset} disabled={resetButtonHidden} title="리셋" style={{ marginTop: '10px', width: '70px' }}></Button>
           </div>
           <div>{result}</div>
         </div>
@@ -160,7 +164,8 @@ const Button = (props) => {
     <button
       disabled={props.disabled}
       display={props.hidden === true ? "none" : ""}
-      className={props.type === "primary" ? "btn btn-primary rounded-pill" : "btn btn-secondary rounded-pill"}
+      // className={props.type === "primary" ? "btn btn-primary rounded-pill" : "btn btn-secondary rounded-pill"}
+      className={`btn btn-secondary rounded-pill ${props.className}`}
       onClick={props.action}
       style={props.style}
     >
