@@ -131,7 +131,11 @@ export function BasicTable({ style, tableStyle, setTable, table, submit, regionM
         } else {
             setDrag(true)
         }
-
+        let cellSelected = false
+        let cellIdx = select.indexOf(JSON.stringify([row, col]))
+        if (cellIdx > -1 ){
+            cellSelected = true
+        }
         
         if (regionMode) {
             const regionCells = getRegionCells(checkRegion(row, col))
@@ -141,7 +145,7 @@ export function BasicTable({ style, tableStyle, setTable, table, submit, regionM
                     regionSelected = false
                 }
             }
-            if (!regionSelected) {
+            if (!regionSelected && !cellSelected) {
                 setSelectMode(true)
                 for (const regionCell of regionCells) {
                     const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
@@ -162,12 +166,7 @@ export function BasicTable({ style, tableStyle, setTable, table, submit, regionM
                 setSelect([...select])
             }
         } else {
-            let cellExist = false
-            let cellIdx = select.indexOf(JSON.stringify([row, col]))
-            if (cellIdx > -1 ){
-                cellExist = true
-            }
-            if (!cellExist) {
+            if (!cellSelected) {
                 setSelectMode(true)
                 setSelect([...select, JSON.stringify([row, col])])
             } else {
@@ -186,6 +185,11 @@ export function BasicTable({ style, tableStyle, setTable, table, submit, regionM
         e.preventDefault();
 
         if (drag) {
+            let cellSelected = false
+            let cellIdx = select.indexOf(JSON.stringify([row, col]))
+            if (cellIdx > -1 ){
+                cellSelected = true
+            }
 
             if (regionMode) {
                 const regionCells = getRegionCells(checkRegion(row, col))
@@ -195,7 +199,7 @@ export function BasicTable({ style, tableStyle, setTable, table, submit, regionM
                         regionSelected = false
                     }
                 }
-                if (!regionSelected && selectMode) {
+                if (selectMode) {
                     setSelectMode(true)
                     for (const regionCell of regionCells) {
                         const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
@@ -204,7 +208,7 @@ export function BasicTable({ style, tableStyle, setTable, table, submit, regionM
                         }
                     }
                     setSelect([...select])
-                } else if (regionSelected && !selectMode) {
+                } else {
                     setSelectMode(false)
                     for (const regionCell of regionCells) {
                         const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
@@ -216,15 +220,11 @@ export function BasicTable({ style, tableStyle, setTable, table, submit, regionM
                     setSelect([...select])
                 }
             } else {
-                let cellExist = false
-                let cellIdx = select.indexOf(JSON.stringify([row, col]))
-                if (cellIdx > -1 ){
-                    cellExist = true
-                }
-                if (!cellExist && selectMode) {
+
+                if (!cellSelected && selectMode) {
                     // setSelectMode(true)
                     setSelect([...select, JSON.stringify([row, col])])
-                } else if (cellExist && !selectMode) {
+                } else if (cellSelected && !selectMode) {
                     // setSelectMode(false)
                     select.splice(cellIdx, 1)
                     setSelect([...select])
