@@ -135,27 +135,29 @@ export const UnionRaider = () => {
 
 
   return (
-    <div className="container-fluid">
-      {/* <Menu item='not-home'/> */}
-      <BasicTable table={table} setTable={setTable} style={{marginTop: '30px'}} tableStyle={tableStyle} submit={submitButtonDisabled} regionMode={regionMode}></BasicTable>
-      <div className="row justify-content-md-center" style={{ marginTop: '20px' }}>
-        <div className="col-2"></div>
-        <div className="col-md-auto">
-          <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
-          {/* <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox> */}
-          <div className="text-center">
-            <Button className='start' action={handleFormSubmit} disabled={submitButtonDisabled} title="시작" style={{ marginTop: '10px', width: '70px' }}></Button>
-          </div>
-          {/* <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
+    <>
+      <div className="container-fluid" >
+      <BasicTable table={table} setTable={setTable} style={{ paddingTop:'30px', paddingBottom: '30px' }} tableStyle={tableStyle} submit={submitButtonDisabled} regionMode={regionMode}></BasicTable>
+        {/* <Menu item='not-home'/> */}
+        <div className="row justify-content-md-center" style={{ marginTop: '20px' }}>
+          <div className="col-2"></div>
+          <div className="col-md-auto">
+            <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
+            {/* <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox> */}
+            <div className="text-center">
+              <Button className='start' action={handleFormSubmit} disabled={submitButtonDisabled} title="시작" style={{ marginTop: '10px', width: '70px' }}></Button>
+            </div>
+            {/* <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
           <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div> */}
-          <div className="text-center">
-            <Button className='reset' action={handleFormReset} disabled={resetButtonHidden} title="리셋" style={{ marginTop: '10px', width: '70px' }}></Button>
+            <div className="text-center">
+              <Button className='reset' action={handleFormReset} disabled={resetButtonHidden} title="리셋" style={{ marginTop: '10px', width: '70px' }}></Button>
+            </div>
+            <div>{result}</div>
           </div>
-          <div>{result}</div>
+          <div className="col-2"></div>
         </div>
-        <div className="col-2"></div>
       </div>
-    </div>
+    </>
   )
 }
 

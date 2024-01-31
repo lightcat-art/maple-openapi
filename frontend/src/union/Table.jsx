@@ -133,10 +133,10 @@ export function BasicTable({ style, tableStyle, setTable, table, submit, regionM
         }
         let cellSelected = false
         let cellIdx = select.indexOf(JSON.stringify([row, col]))
-        if (cellIdx > -1 ){
+        if (cellIdx > -1) {
             cellSelected = true
         }
-        
+
         if (regionMode) {
             const regionCells = getRegionCells(checkRegion(row, col))
             let regionSelected = true
@@ -177,9 +177,10 @@ export function BasicTable({ style, tableStyle, setTable, table, submit, regionM
         }
     }
 
-    const handleMouseUp = (e, row, col) => {
+    const handleMouseUp = () => {
         setDrag(false)
     }
+
 
     const handleMultipleSel = (e, row, col) => {
         e.preventDefault();
@@ -187,7 +188,7 @@ export function BasicTable({ style, tableStyle, setTable, table, submit, regionM
         if (drag) {
             let cellSelected = false
             let cellIdx = select.indexOf(JSON.stringify([row, col]))
-            if (cellIdx > -1 ){
+            if (cellIdx > -1) {
                 cellSelected = true
             }
 
@@ -214,7 +215,7 @@ export function BasicTable({ style, tableStyle, setTable, table, submit, regionM
                         const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
                         if (regionCellIdx >= 0) {
                             select.splice(regionCellIdx, 1)
-    
+
                         }
                     }
                     setSelect([...select])
@@ -242,7 +243,7 @@ export function BasicTable({ style, tableStyle, setTable, table, submit, regionM
                 const regionCells = getRegionCells(checkRegion(row, col))
                 for (let regionCell of regionCells) {
                     const cellDom = getCellDOM(regionCell[0], regionCell[1])
-                    
+
                     if (cellDom.className.includes('selected')) {
                         cellDom.style.backgroundColor = cellSelectedHoverColor
                     } else {
@@ -293,37 +294,42 @@ export function BasicTable({ style, tableStyle, setTable, table, submit, regionM
     }
 
     return (
-        <div style={style}
+        <div onMouseUp={(e) => handleMouseUp()}>
+            {/* <div className="row">
+                <div className="col-2"></div>
+            </div> */}
+            <div style={style}
             // style={{ position: relative }}
             // onMouseMove={(e) => preventOutsideDrag(e)}
             >
-            <table id='union-table' className='union-table' 
-            // onMouseMove={(e) => e.stopPropagation()}
-            // style={{ borderSpacing: '0px' }}
-            >
-                <tbody className='union-table-body'>
-                    {tableStyle.map((row, i) => (
-                        <tr key={i}>
-                            {row.map((v, j) => (
-                                // <div className={`${getRegionClass(i, j)}`}>
-                                <td
-                                    onMouseDown={(e) => handleMouseDown(e, i, j)}
-                                    onMouseUp={(e) => handleMouseUp(e, i, j)}
-                                    onMouseMove={(e) => handleMultipleSel(e, i, j)}
-                                    onMouseEnter={(e) => handleMouseEnter(e, i, j)}
-                                    onMouseLeave={(e) => handleMouseLeave(e, i, j)}
-                                    className={`union-table-cell ${getClassName(i, j)} ${v.className ? v.className : ''}`}
-                                    key={`${j}`} style={v.style} uniqkey={`${i}-${j}`}>
-                                </td>
-                                // </div>
-                            ))}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-
-
+                <table id='union-table' className='union-table'
+                // onMouseMove={(e) => e.stopPropagation()}
+                // style={{ borderSpacing: '0px' }}
+                >
+                    <tbody className='union-table-body'>
+                        {tableStyle.map((row, i) => (
+                            <tr key={i}>
+                                {row.map((v, j) => (
+                                    // <div className={`${getRegionClass(i, j)}`}>
+                                    <td
+                                        onMouseDown={(e) => handleMouseDown(e, i, j)}
+                                        // onMouseUp={(e) => handleMouseUp()}
+                                        onMouseMove={(e) => handleMultipleSel(e, i, j)}
+                                        onMouseEnter={(e) => handleMouseEnter(e, i, j)}
+                                        onMouseLeave={(e) => handleMouseLeave(e, i, j)}
+                                        className={`union-table-cell ${getClassName(i, j)} ${v.className ? v.className : ''}`}
+                                        key={`${j}`} style={v.style} uniqkey={`${i}-${j}`}>
+                                    </td>
+                                    // </div>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            {/* <div className="row">
+                <div className="col-2"></div>
+            </div> */}
         </div>
-
     );
 }
