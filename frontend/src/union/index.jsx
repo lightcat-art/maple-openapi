@@ -137,7 +137,7 @@ export const UnionRaider = () => {
   return (
     <div className="container-fluid">
       {/* <Menu item='not-home'/> */}
-      <BasicTable setTable={setTable} style={{marginTop: '30px'}} tableStyle={tableStyle} submit={submitButtonDisabled} regionMode={regionMode}></BasicTable>
+      <BasicTable table={table} setTable={setTable} style={{marginTop: '30px'}} tableStyle={tableStyle} submit={submitButtonDisabled} regionMode={regionMode}></BasicTable>
       <div className="row justify-content-md-center" style={{ marginTop: '20px' }}>
         <div className="col-2"></div>
         <div className="col-md-auto">

@@ -66,7 +66,7 @@ function getRegionCells(region) {
 regionDef()
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
-export function BasicTable({ style, tableStyle, setTable, submit, regionMode }) {
+export function BasicTable({ style, tableStyle, setTable, table, submit, regionMode }) {
     const [select, setSelect] = React.useState([])
     // const [regionSelect, setRegionSelect] = React.useState([])
     // This variable will control if the user is dragging or not
@@ -131,18 +131,17 @@ export function BasicTable({ style, tableStyle, setTable, submit, regionMode }) 
         } else {
             setDrag(true)
         }
-        let cellExist = false
-        let cellIdx = -1
-        const regionCells = getRegionCells(checkRegion(row, col))
-        for (let i = 0; i < select.length; i++) {
-            if (JSON.stringify([row, col]) === select[i]) {
-                cellExist = true
-                cellIdx = i
-            }
-        }
 
+        
         if (regionMode) {
-            if (!cellExist) {
+            const regionCells = getRegionCells(checkRegion(row, col))
+            let regionSelected = true
+            for (const regionCell of regionCells) {
+                if (table[regionCell[0]][regionCell[1]] < 1) {
+                    regionSelected = false
+                }
+            }
+            if (!regionSelected) {
                 setSelectMode(true)
                 for (const regionCell of regionCells) {
                     const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
@@ -163,6 +162,11 @@ export function BasicTable({ style, tableStyle, setTable, submit, regionMode }) 
                 setSelect([...select])
             }
         } else {
+            let cellExist = false
+            let cellIdx = select.indexOf(JSON.stringify([row, col]))
+            if (cellIdx > -1 ){
+                cellExist = true
+            }
             if (!cellExist) {
                 setSelectMode(true)
                 setSelect([...select, JSON.stringify([row, col])])
@@ -183,19 +187,16 @@ export function BasicTable({ style, tableStyle, setTable, submit, regionMode }) 
 
         if (drag) {
 
-            let cellExist = false
-            let cellIdx = -1
-            const regionCells = getRegionCells(checkRegion(row, col))
-            for (let i = 0; i < select.length; i++) {
-                if (JSON.stringify([row, col]) === select[i]) {
-                    cellExist = true
-                    cellIdx = i
-                }
-            }
-
             if (regionMode) {
-                if (!cellExist && selectMode) {
-                    // setSelectMode(true)
+                const regionCells = getRegionCells(checkRegion(row, col))
+                let regionSelected = true
+                for (const regionCell of regionCells) {
+                    if (table[regionCell[0]][regionCell[1]] < 1) {
+                        regionSelected = false
+                    }
+                }
+                if (!regionSelected && selectMode) {
+                    setSelectMode(true)
                     for (const regionCell of regionCells) {
                         const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
                         if (regionCellIdx < 0) {
@@ -203,18 +204,23 @@ export function BasicTable({ style, tableStyle, setTable, submit, regionMode }) 
                         }
                     }
                     setSelect([...select])
-                } else if (cellExist && !selectMode) {
-                    // setSelectMode(false)
+                } else if (regionSelected && !selectMode) {
+                    setSelectMode(false)
                     for (const regionCell of regionCells) {
                         const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
                         if (regionCellIdx >= 0) {
                             select.splice(regionCellIdx, 1)
-
+    
                         }
                     }
                     setSelect([...select])
                 }
             } else {
+                let cellExist = false
+                let cellIdx = select.indexOf(JSON.stringify([row, col]))
+                if (cellIdx > -1 ){
+                    cellExist = true
+                }
                 if (!cellExist && selectMode) {
                     // setSelectMode(true)
                     setSelect([...select, JSON.stringify([row, col])])

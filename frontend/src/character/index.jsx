@@ -22,7 +22,7 @@ export const CharacterBasic = () => {
                 <div className="row justify-content-md-center">
                     <div className="col-2"></div>
                     <div className="col-md-auto">
-                        {/* <div class="card" style={{ width: '18rem' }}>
+                        <div class="card" style={{ width: '18rem' }}>
                             <img class="card-img-top" src={searchLogo} alt="Card image cap" />
                             <div class="card-body">
                                 <h5 class="card-title">Card title</h5>
@@ -44,54 +44,8 @@ export const CharacterBasic = () => {
                             <div class="card-footer w-100 text-muted">
                                 FOOTER
                             </div>
-                        </div> */}
-
-                        <div className="card text">
-                            <div className="card-header">
-                                <div className="row">
-                                    <div className="col-3">
-                                        <div className="text-primary"> Name </div>
-                                    </div>
-                                    <div className="col-6">
-                                    </div>
-                                    <div className="col-3">
-                                        <div className="float-right text-secondary"> Aug 21 2019 </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="card-body">
-                                <h5 className="card-title">Average Rating (4.5) </h5>
-                                <p className="card-text">Contrary to popular belief, Lorem Ipsum is not </p>
-                            </div>
-                            <div className="collapse" id="review">
-                                <div className="card-body">
-                                    <h5 className="card-title">More </h5>
-                                    <p className="card-text">Contrary to popular belief, Lorem Ipsum is not </p>
-                                </div>
-                                <div className="card-body">
-                                    <h5 className="card-title">More </h5>
-                                    <p className="card-text">Contrary to popular belief, Lorem Ipsum is not </p>
-                                </div>
-                                <div className="card-body">
-                                    <h5 className="card-title">More </h5>
-                                    <p className="card-text">Contrary to popular belief, Lorem Ipsum is not </p>
-                                </div>
-                                <div className="card-body">
-                                    <h5 className="card-title">More </h5>
-                                    <p className="card-text">Contrary to popular belief, Lorem Ipsum is not </p>
-                                </div>
-                            </div>
-                            <div className="card-footer text-muted text-center">
-                                <a href="#" className="btn" data-bs-toggle="collapse" data-bs-target="#review"
-                                    role="button">
-                                    <div className="row">
-                                        <div> Click to see full review </div>
-                                    </div>
-                                    <span className="oi oi-caret-bottom"></span>
-                                </a>
-                                <button className="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#review" aria-expanded="false" aria-controls="review">Toggle</button>
-                            </div>
                         </div>
+
 
                     </div>
                     <div className="col-2"></div>
