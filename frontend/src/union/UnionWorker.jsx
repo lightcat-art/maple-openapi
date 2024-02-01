@@ -54,11 +54,13 @@ export default () => {
     }
 
     console.log('origin success : ', threads[0].complete, ', 1 : ', threads[1].complete, ', 2: ', threads[2].complete, ', 3: ', threads[3].complete)
+    let domiBlocks = null
+    let processCount = null
     if (threads[0].complete) {
       console.log('origin success')
       console.log('blocks:', threads[0].resultBlocks)
-      postMessage({ table: table, domiBlocks: threads[0].resultDomiBlocks })
-
+      domiBlocks = threads[0].resultDomiBlocks
+      processCount = threads[0].addProcessCount()
     } else if (threads[1].complete) {
       console.log('yxSym success')
       console.log('blocks:', threads[1].resultBlocks)
@@ -71,8 +73,8 @@ export default () => {
         }
         resultDomiBlocks.push(resultDomiBlock)
       }
-      postMessage({ table: table, domiBlocks: resultDomiBlocks })
-
+      domiBlocks = resultDomiBlocks
+      processCount = threads[1].addProcessCount()
     } else if (threads[2].complete) {
       console.log('origSym success')
       console.log('blocks:', threads[2].resultBlocks)
@@ -84,8 +86,8 @@ export default () => {
         }
         resultDomiBlocks.push(resultDomiBlock)
       }
-      postMessage({ table: table, domiBlocks: resultDomiBlocks })
-
+      domiBlocks = resultDomiBlocks
+      processCount = threads[2].addProcessCount()
     } else if (threads[3].complete) {
       console.log('yxOrigSym success')
       console.log('blocks:', threads[3].resultBlocks)
@@ -97,8 +99,11 @@ export default () => {
         }
         resultDomiBlocks.push(resultDomiBlock)
       }
-      postMessage({ table: table, domiBlocks: resultDomiBlocks })
+      domiBlocks = resultDomiBlocks
+      processCount = threads[3].addProcessCount()
     }
+
+    postMessage({ table: table, domiBlocks: domiBlocks, count: processCount })
   }
 
   class PromiseTest {
@@ -198,7 +203,11 @@ export default () => {
       this.filledCount = this.filledCount + 1
     }
     addProcessCount() {
-      this.processCount = this.processCount + 1
+      this.processCount++
+      return this.processCount
+    }
+    getProcessCount() {
+      return this.processCount
     }
 
 
@@ -269,7 +278,6 @@ export default () => {
 
       return block.map(v => [v[0] - minRow, v[1] - minCol]).sort()
     }
-
 
     /**
     * 현재 블록에 대해 회전 시 블록 종류 반환.
@@ -456,14 +464,14 @@ export default () => {
                       curBlocks[k].count--
 
                       // 실시간 렌더링 하기위함.
-                      this.addProcessCount()
+                      const processCount = this.addProcessCount()
                       if (this.realtimeRender) {
-                        if (this.processCount % 25 === 0) {
+                        if (this.processCount % 40 === 0) {
                           this.resultBlocks = curBlocks
                           this.resultDomiBlocks = curDomiBlocks
                           // this.setTableStyleValue()
                           // postMessage({ table: this.getTableStyle() })
-                          postMessage({ table: this.table, domiBlocks: curDomiBlocks })
+                          postMessage({ table: this.table, domiBlocks: curDomiBlocks, count: processCount })
                         }
                       }
 

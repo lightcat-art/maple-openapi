@@ -23,7 +23,6 @@ Array.prototype.shuffle = function () {
     // 배열을 리턴해준다.
     return this;
 };
-
 export const getCSSProp = (element, propName) => getComputedStyle(element).getPropertyValue(propName)
 
 export class ArrayUtil {

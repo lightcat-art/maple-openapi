@@ -2,7 +2,7 @@ import { all } from 'axios';
 import * as React from 'react';
 import { getCellDOM } from './index'
 import './index.css'
-import { getCSSProp } from '../util/util'
+import { getCSSProp } from '../util/util.jsx'
 
 const regionInfo = []
 
@@ -66,7 +66,7 @@ function getRegionCells(region) {
 regionDef()
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
-export function BasicTable({ style, setTable, submit, regionMode }) {
+export function BasicTable({ style, tableStyle, setTable, table, submit, regionMode }) {
     const [select, setSelect] = React.useState([])
     // const [regionSelect, setRegionSelect] = React.useState([])
     // This variable will control if the user is dragging or not
@@ -81,7 +81,7 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
         const notSelectedElement = Array.from(
             document.getElementsByClassName('not-selected')
         );
-        let table = Array.from(new Array(style.length), () => new Array(style[0].length).fill(0))
+        let table = Array.from(new Array(tableStyle.length), () => new Array(tableStyle[0].length).fill(0))
         for (var value of selectedElement.values()) {
             let position = value.getAttribute('uniqkey').split('-');
             const row = Number(position[0])
@@ -131,18 +131,21 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
         } else {
             setDrag(true)
         }
-        let cellExist = false
-        let cellIdx = -1
-        const regionCells = getRegionCells(checkRegion(row, col))
-        for (let i = 0; i < select.length; i++) {
-            if (JSON.stringify([row, col]) === select[i]) {
-                cellExist = true
-                cellIdx = i
-            }
+        let cellSelected = false
+        let cellIdx = select.indexOf(JSON.stringify([row, col]))
+        if (cellIdx > -1) {
+            cellSelected = true
         }
 
         if (regionMode) {
-            if (!cellExist) {
+            const regionCells = getRegionCells(checkRegion(row, col))
+            let regionSelected = true
+            for (const regionCell of regionCells) {
+                if (table[regionCell[0]][regionCell[1]] < 1) {
+                    regionSelected = false
+                }
+            }
+            if (!regionSelected && !cellSelected) {
                 setSelectMode(true)
                 for (const regionCell of regionCells) {
                     const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
@@ -163,7 +166,7 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
                 setSelect([...select])
             }
         } else {
-            if (!cellExist) {
+            if (!cellSelected) {
                 setSelectMode(true)
                 setSelect([...select, JSON.stringify([row, col])])
             } else {
@@ -174,28 +177,31 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
         }
     }
 
-    const handleMouseUp = (e, row, col) => {
+    const handleMouseUp = () => {
         setDrag(false)
     }
+
 
     const handleMultipleSel = (e, row, col) => {
         e.preventDefault();
 
         if (drag) {
-
-            let cellExist = false
-            let cellIdx = -1
-            const regionCells = getRegionCells(checkRegion(row, col))
-            for (let i = 0; i < select.length; i++) {
-                if (JSON.stringify([row, col]) === select[i]) {
-                    cellExist = true
-                    cellIdx = i
-                }
+            let cellSelected = false
+            let cellIdx = select.indexOf(JSON.stringify([row, col]))
+            if (cellIdx > -1) {
+                cellSelected = true
             }
 
             if (regionMode) {
-                if (!cellExist && selectMode) {
-                    // setSelectMode(true)
+                const regionCells = getRegionCells(checkRegion(row, col))
+                let regionSelected = true
+                for (const regionCell of regionCells) {
+                    if (table[regionCell[0]][regionCell[1]] < 1) {
+                        regionSelected = false
+                    }
+                }
+                if (selectMode) {
+                    setSelectMode(true)
                     for (const regionCell of regionCells) {
                         const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
                         if (regionCellIdx < 0) {
@@ -203,8 +209,8 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
                         }
                     }
                     setSelect([...select])
-                } else if (cellExist && !selectMode) {
-                    // setSelectMode(false)
+                } else {
+                    setSelectMode(false)
                     for (const regionCell of regionCells) {
                         const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
                         if (regionCellIdx >= 0) {
@@ -215,10 +221,11 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
                     setSelect([...select])
                 }
             } else {
-                if (!cellExist && selectMode) {
+
+                if (!cellSelected && selectMode) {
                     // setSelectMode(true)
                     setSelect([...select, JSON.stringify([row, col])])
-                } else if (cellExist && !selectMode) {
+                } else if (cellSelected && !selectMode) {
                     // setSelectMode(false)
                     select.splice(cellIdx, 1)
                     setSelect([...select])
@@ -236,7 +243,7 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
                 const regionCells = getRegionCells(checkRegion(row, col))
                 for (let regionCell of regionCells) {
                     const cellDom = getCellDOM(regionCell[0], regionCell[1])
-                    
+
                     if (cellDom.className.includes('selected')) {
                         cellDom.style.backgroundColor = cellSelectedHoverColor
                     } else {
@@ -287,35 +294,42 @@ export function BasicTable({ style, setTable, submit, regionMode }) {
     }
 
     return (
-        <div
-            // style={{ backgroundColor: '#b8b8b8', padding: 4 }}
-            onMouseMove={(e) => preventOutsideDrag(e)}>
-            <table id='union-table' className='union-table' onMouseMove={(e) => e.stopPropagation()}
-            // style={{ borderSpacing: '0px' }}
+        <div onMouseUp={(e) => handleMouseUp()}>
+            {/* <div className="row">
+                <div className="col-2"></div>
+            </div> */}
+            <div style={style}
+            // style={{ position: relative }}
+            // onMouseMove={(e) => preventOutsideDrag(e)}
             >
-                <tbody className='union-table-body'>
-                    {style.map((row, i) => (
-                        <tr key={i}>
-                            {row.map((v, j) => (
-                                // <div className={`${getRegionClass(i, j)}`}>
-                                <td
-                                    onMouseDown={(e) => handleMouseDown(e, i, j)}
-                                    onMouseUp={(e) => handleMouseUp(e, i, j)}
-                                    onMouseMove={(e) => handleMultipleSel(e, i, j)}
-                                    onMouseEnter={(e) => handleMouseEnter(e, i, j)}
-                                    onMouseLeave={(e) => handleMouseLeave(e, i, j)}
-                                    className={`union-table-cell ${getClassName(i, j)} ${v.className ? v.className : ''}`}
-                                    key={`${j}`} style={v.style} uniqkey={`${i}-${j}`}>
-                                </td>
-                                // </div>
-                            ))}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-
-
+                <table id='union-table' className='union-table'
+                // onMouseMove={(e) => e.stopPropagation()}
+                // style={{ borderSpacing: '0px' }}
+                >
+                    <tbody className='union-table-body'>
+                        {tableStyle.map((row, i) => (
+                            <tr key={i}>
+                                {row.map((v, j) => (
+                                    // <div className={`${getRegionClass(i, j)}`}>
+                                    <td
+                                        onMouseDown={(e) => handleMouseDown(e, i, j)}
+                                        // onMouseUp={(e) => handleMouseUp()}
+                                        onMouseMove={(e) => handleMultipleSel(e, i, j)}
+                                        onMouseEnter={(e) => handleMouseEnter(e, i, j)}
+                                        onMouseLeave={(e) => handleMouseLeave(e, i, j)}
+                                        className={`union-table-cell ${getClassName(i, j)} ${v.className ? v.className : ''}`}
+                                        key={`${j}`} style={v.style} uniqkey={`${i}-${j}`}>
+                                    </td>
+                                    // </div>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            {/* <div className="row">
+                <div className="col-2"></div>
+            </div> */}
         </div>
-
     );
 }
