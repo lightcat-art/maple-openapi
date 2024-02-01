@@ -139,9 +139,9 @@ export const UnionRaider = () => {
     <>
       <div className="container-fluid" >
         <BasicTable table={table} setTable={setTable} style={{ paddingTop: '30px', paddingBottom: '30px' }} tableStyle={tableStyle} submit={submitButtonDisabled} regionMode={regionMode}></BasicTable>
-        <div className="row justify-content-md-center" style={{ marginTop: '20px' }}>
+        <div className="row justify-content-center" style={{ marginTop: '20px' }}>
           <div className="col-2"></div>
-          <div className="col-md-auto">
+          <div className="col-auto">
             <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
             {/* <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox> */}
             <div className="text-center">

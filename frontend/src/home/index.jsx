@@ -31,7 +31,7 @@ function HomeLayout() {
     const handleSubmit = () => {
         console.log('submit value=', input)
 
-        navigate(`/c/${input}`); // Redirect to new page
+        navigate(`/c/${input}/union`); // Redirect to new page
     }
 
     return (

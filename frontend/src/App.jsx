@@ -16,7 +16,7 @@ function App() {
         <Route exact path='/' element={<Home />} />
         {/* <Route exact path='/union' element={<UnionRaider />} /> */}
         <Route element={<CharacterLayout />}>
-          <Route path='/c/:cname' element={<UnionRaider />}/>
+          <Route path='/c/:cname/union' element={<UnionRaider />}/>
           {/* <Route exact path=':cname/union' element={<UnionRaider />} /> */}
         </Route>
         {/* <Route component={NotFound} /> */}
