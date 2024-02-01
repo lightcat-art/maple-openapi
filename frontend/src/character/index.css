@@ -2,3 +2,15 @@
     /* position: fixed; */
     margin-top: 10vh;
 }
+
+.char-fold-btn-wrapper {
+    margin-top : 10px;
+}
+
+.char-fold-btn {
+    padding-top:8px;
+}
+
+.char-fold-btn-img {
+    padding-bottom: 3px;
+}

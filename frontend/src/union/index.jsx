@@ -11,6 +11,7 @@ import './index.css'
 import { getCSSProp } from '../util/util.jsx'
 import { useParams } from 'react-router-dom'
 import { Menu } from '../common'
+import { Button } from '../common/button'
 
 
 let unionWorker = new WebWorker().getUnionWorker(worker)
@@ -137,8 +138,7 @@ export const UnionRaider = () => {
   return (
     <>
       <div className="container-fluid" >
-      <BasicTable table={table} setTable={setTable} style={{ paddingTop:'30px', paddingBottom: '30px' }} tableStyle={tableStyle} submit={submitButtonDisabled} regionMode={regionMode}></BasicTable>
-        {/* <Menu item='not-home'/> */}
+        <BasicTable table={table} setTable={setTable} style={{ paddingTop: '30px', paddingBottom: '30px' }} tableStyle={tableStyle} submit={submitButtonDisabled} regionMode={regionMode}></BasicTable>
         <div className="row justify-content-md-center" style={{ marginTop: '20px' }}>
           <div className="col-2"></div>
           <div className="col-md-auto">
@@ -158,21 +158,6 @@ export const UnionRaider = () => {
         </div>
       </div>
     </>
-  )
-}
-
-const Button = (props) => {
-  return (
-    <button
-      disabled={props.disabled}
-      display={props.hidden === true ? "none" : ""}
-      // className={props.type === "primary" ? "btn btn-primary rounded-pill" : "btn btn-secondary rounded-pill"}
-      className={`btn btn-secondary rounded-pill ${props.className}`}
-      onClick={props.action}
-      style={props.style}
-    >
-      {props.title}
-    </button>
   )
 }
 
