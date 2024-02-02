@@ -12,6 +12,7 @@ import { getCSSProp } from '../util/util.jsx'
 import { useParams } from 'react-router-dom'
 import { Menu } from '../common'
 import { Button } from '../common/button'
+import { CharMenu } from '../character';
 
 
 let unionWorker = new WebWorker().getUnionWorker(worker)
@@ -137,6 +138,7 @@ export const UnionRaider = () => {
 
   return (
     <>
+      <CharMenu page='union'></CharMenu>
       <div className="container-fluid" >
         <BasicTable table={table} setTable={setTable} style={{ paddingTop: '30px', paddingBottom: '30px' }} tableStyle={tableStyle} submit={submitButtonDisabled} regionMode={regionMode}></BasicTable>
         <div className="row justify-content-center" style={{ marginTop: '20px' }}>

@@ -1,6 +1,8 @@
 import './index.css';
+import { Link } from "react-router-dom";
 
-export const Menu = ({ item }) => {
+export const Menu = ({ page }) => {
+
     return (
         <>
             {/* top bar */}
@@ -22,13 +24,12 @@ export const Menu = ({ item }) => {
                         <div className="col col-2"></div>
                         <div className="col-auto">
                             <div className="navbar-nav">
-                                {item === 'home' ?
+                                {page === 'home' ?
                                     <>
-                                        <a href="/" className="nav-item nav-link active">홈</a>
-                                        {/* <a href="/union" className="nav-item nav-link">유니온</a> */}
+                                        <Link to="/" className="nav-item nav-link active">홈</Link>
                                     </> :
                                     <>
-                                        <a href="/" className="nav-item nav-link">홈</a>
+                                        <Link to="/" className="nav-item nav-link">홈</Link>
                                     </>
                                 }
                             </div>

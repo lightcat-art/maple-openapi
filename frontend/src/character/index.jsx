@@ -1,5 +1,3 @@
-
-import { Outlet } from 'react-router-dom'
 import { Menu } from '../common'
 import './index.css'
 import arcana from '../static/img/wallpaper/arcana/arcanadesktop_1.jpg';
@@ -7,14 +5,14 @@ import * as React from 'react'
 import { Button, ContentButton } from '../common/button'
 import expandMoreIcon from '../static/icons/expand_more_FILL0_wght400_GRAD0_opsz20.png'
 import expandLessIcon from '../static/icons/expand_less_FILL0_wght400_GRAD0_opsz20.png'
-import { useParams } from 'react-router-dom'
+import { useParams, Link, Outlet } from 'react-router-dom'
 
 export const CharacterLayout = () => {
     const { cname } = useParams();
     console.log('CharacterLayout cname=', cname)
     return (
         <>
-            <Menu item='not-home'></Menu>
+            <Menu page='not-home'></Menu>
             <CharacterBasic></CharacterBasic>
             <Outlet />
             <div>footer</div>
@@ -22,42 +20,40 @@ export const CharacterLayout = () => {
     )
 }
 
-export const CharMenu = ({ item }) => {
+export const CharMenu = ({ page }) => {
     const { cname } = useParams();
     console.log('CharMenu cname=', cname)
     return (
         <>
             <div className="container-fluid">
-                <nav className="navbar navbar-expand char-navbar-group">
-                    <div className="row">
-                        <div className="col col-2"></div>
-                        <div className="col-auto">
-                            <div className="char-navbar-nav">
-                                {item === 'union' ?
+                <div className="row">
+                    <div className="col col-2"></div>
+                    <div className="col-auto">
+                        <ul className="nav nav-tabs char-tab">
+                            {page === 'union' ?
+                                <>
+                                    <Link to={`/c/${cname}/union`} className="nav-item nav-link active">유니온</Link>
+                                    <Link to={`/c/${cname}/equip`} className="nav-item nav-link">장비</Link>
+                                </> :
+                                page === 'equip' ?
                                     <>
-                                        <a href={`/c/${cname}/union`} className="nav-item nav-link active">유니온</a>
-                                        <a href={`/c/${cname}/equip`} className="nav-item nav-link">장비</a>
-                                    </> :
-                                    item === 'equip' ?
-                                        <>
-                                            <a href={`/c/${cname}/union`} className="nav-item nav-link">유니온</a>
-                                            <a href={`/c/${cname}/equip`} className="nav-item nav-link active">장비</a>
-                                        </>
-                                        :
-                                        <>
-                                        </>
-                                }
-                            </div>
-                        </div>
-                        <div className="col col-2"></div>
+                                        <Link to={`/c/${cname}/union`} className="nav-item nav-link">유니온</Link>
+                                        <Link to={`/c/${cname}/equip`} className="nav-item nav-link active">장비</Link>
+                                    </>
+                                    :
+                                    <>
+                                    </>
+                            }
+                        </ul>
                     </div>
-                </nav>
+                    <div className="col col-2"></div>
+                </div>
             </div>
         </>
     );
 }
 
-export const CharacterBasic = (infotype) => {
+export const CharacterBasic = () => {
     const { cname } = useParams();
     console.log('CharacterBasic cname=', cname)
     const [isDetailView, setIsDetailView] = React.useState(false)
@@ -124,7 +120,7 @@ export const CharacterBasic = (infotype) => {
                     <div className="col-2"></div>
                 </div>
             </div>
-            <CharMenu item='union'></CharMenu>
+            {/* <CharMenu page='union'></CharMenu> */}
         </>
     )
 }

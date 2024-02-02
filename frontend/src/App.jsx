@@ -8,6 +8,7 @@ import { Layout } from './common'
 import { NotFound } from './common'
 import { CharacterLayout } from './character'
 import {Menu} from './common'
+import { CharacterEquip } from './equip';
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
         {/* <Route exact path='/union' element={<UnionRaider />} /> */}
         <Route element={<CharacterLayout />}>
           <Route path='/c/:cname/union' element={<UnionRaider />}/>
-          {/* <Route exact path=':cname/union' element={<UnionRaider />} /> */}
+          <Route path='/c/:cname/equip' element={<CharacterEquip />} />
         </Route>
         {/* <Route component={NotFound} /> */}
       </Routes>
