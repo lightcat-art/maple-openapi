@@ -11,7 +11,7 @@ import './index.css'
 import { getCSSProp } from '../util/util.jsx'
 import { useParams } from 'react-router-dom'
 import { Menu } from '../common'
-import { Button } from '../common/button'
+import { Button } from '../common/clickable'
 import { CharMenu } from '../character';
 
 

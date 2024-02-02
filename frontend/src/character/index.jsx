@@ -2,7 +2,7 @@ import { Menu } from '../common'
 import './index.css'
 import arcana from '../static/img/wallpaper/arcana/arcanadesktop_1.jpg';
 import * as React from 'react'
-import { Button, ContentButton } from '../common/button'
+import { Button, AfterImageButton, AfterImageLink } from '../common/clickable'
 import expandMoreIcon from '../static/icons/expand_more_FILL0_wght400_GRAD0_opsz20.png'
 import expandLessIcon from '../static/icons/expand_less_FILL0_wght400_GRAD0_opsz20.png'
 import { useParams, Link, Outlet } from 'react-router-dom'
@@ -29,16 +29,16 @@ export const CharMenu = ({ page }) => {
                 <div className="row">
                     <div className="col col-2"></div>
                     <div className="col-auto">
-                        <ul className="nav nav-tabs char-tab">
+                        <ul className="nav char-tab">
                             {page === 'union' ?
                                 <>
-                                    <Link to={`/c/${cname}/union`} className="nav-item nav-link active">유니온</Link>
-                                    <Link to={`/c/${cname}/equip`} className="nav-item nav-link">장비</Link>
+                                    <AfterImageLink to={`/c/${cname}/union`} className="nav-item nav-link active" title="유니온"></AfterImageLink>
+                                    <AfterImageLink to={`/c/${cname}/equip`} className="nav-item nav-link" title="장비"></AfterImageLink>
                                 </> :
                                 page === 'equip' ?
                                     <>
-                                        <Link to={`/c/${cname}/union`} className="nav-item nav-link">유니온</Link>
-                                        <Link to={`/c/${cname}/equip`} className="nav-item nav-link active">장비</Link>
+                                        <AfterImageLink to={`/c/${cname}/union`} className="nav-item nav-link" title="유니온"></AfterImageLink>
+                                        <AfterImageLink to={`/c/${cname}/equip`} className="nav-item nav-link active" title="장비"></AfterImageLink>
                                     </>
                                     :
                                     <>
@@ -109,12 +109,12 @@ export const CharacterBasic = () => {
                             </>
                         }
                         <div className="char-fold-btn-wrapper text-center">
-                            <ContentButton className="char-fold-btn ps-3" action={handleDetailView}
+                            <AfterImageButton className="char-fold-btn ps-3" action={handleDetailView}
                                 title={isDetailView ? '기본정보 접기' : '기본정보 펼치기'}
                                 imgsrc={isDetailView ?
                                     <img className="char-fold-btn-img ps-2" src={expandLessIcon} alt=""></img> :
                                     <img className="char-fold-btn-img ps-2" src={expandMoreIcon} alt=""></img>}>
-                            </ContentButton>
+                            </AfterImageButton>
                         </div>
                     </div>
                     <div className="col-2"></div>

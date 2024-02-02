@@ -1,4 +1,5 @@
-import './button.css'
+import './clickable.css'
+import { Link} from 'react-router-dom'
 
 export const Button = (props) => {
     return (
@@ -15,7 +16,7 @@ export const Button = (props) => {
 }
 
 
-export const ContentButton = (props) => {
+export const AfterImageButton = (props) => {
     return (
         <button
             disabled={props.disabled}
@@ -27,5 +28,14 @@ export const ContentButton = (props) => {
             {props.title}
             {props.imgsrc}
         </button>
+    )
+}
+
+export const AfterImageLink = (props) => {
+    return (
+        <Link to={props.to} className={`after-image-link ${props.className}`}>
+            {props.title}
+            {props.imgsrc}
+        </Link>
     )
 }
