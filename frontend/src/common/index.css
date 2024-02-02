@@ -1,5 +1,5 @@
 .navbar-group .navbar-nav .nav-link {
-    position: relative;
+    /* position: relative; */
     margin-right: 25px;
     padding: 10px 0;
     color: #424242 !important;
@@ -56,12 +56,11 @@
 
 .navbar-group {
     /* absolute property can bottom image to background */
-    position: absolute;
+    /* position: absolute; */
     width: 100%;
     top: 0;
     left: 0;
     /* menu bottom line */
-    /* border-bottom: 1px solid rgb(243, 243, 243); */
-    border-bottom: 1px solid rgb(160, 160, 160);
+    border-bottom: 1px solid rgb(243, 243, 243);
     z-index: 999;
 }

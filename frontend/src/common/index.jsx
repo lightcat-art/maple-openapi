@@ -16,7 +16,7 @@ export const Menu = ({ item }) => {
                     </div>
                 </div>
             </div> */}
-            <div className="container-fluid">
+            <div className="container-fluid p-0">
                 <nav className="navbar navbar-expand navbar-group">
                     <div className="row">
                         <div className="col col-2"></div>

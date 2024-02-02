@@ -99,7 +99,7 @@ export const CharacterBasic = (infotype) => {
                                         <p class="card-text">Description</p>
                                         <a href="#" class="btn btn-primary">BUTTON</a>
                                     </div>
-                                    <div class="w-100"></div>
+                                    {/* <div class="w-100"></div> */}
                                     <div class="card-footer w-100 text-muted">
                                         FOOTER
                                     </div>
@@ -124,7 +124,7 @@ export const CharacterBasic = (infotype) => {
                     <div className="col-2"></div>
                 </div>
             </div>
-            {/* <CharMenu item='union'></CharMenu> */}
+            <CharMenu item='union'></CharMenu>
         </>
     )
 }

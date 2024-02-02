@@ -1,6 +1,6 @@
 .char-basic {
-    /* position: fixed; */
-    margin-top: 10vh;
+    position: relative; 
+    margin-top: 20px;
 }
 
 .char-fold-btn-wrapper {
