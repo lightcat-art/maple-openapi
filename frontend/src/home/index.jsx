@@ -46,7 +46,7 @@ function HomeLayout() {
             </div> */}
             {/* <div className="main-bg"></div> */}
 
-            <Menu item='home' />
+            <Menu page='home' />
 
             <div className="container-fluid">
                 <div className="main">
