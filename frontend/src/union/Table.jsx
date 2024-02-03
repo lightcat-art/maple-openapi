@@ -119,7 +119,7 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
 
 
 
-    }, [select]);
+    }, [drag]);
 
 
 
