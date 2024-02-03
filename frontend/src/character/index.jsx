@@ -29,7 +29,7 @@ export const CharacterLayout = () => {
     React.useEffect(() => {
         axios.get('/api/char/overall', { params: param })
             .then(response => {
-                console.log('character layout=', response.data)
+                // console.log('character layout=', response.data)
                 setCharInfo(response.data)
                 setLoading(false)
             })
@@ -50,7 +50,7 @@ export const CharacterLayout = () => {
 
 export const CharMenu = ({ page }) => {
     const { cname } = useParams();
-    console.log('CharMenu cname=', cname)
+    // console.log('CharMenu cname=', cname)
     return (
         <>
             <div className="container-fluid">

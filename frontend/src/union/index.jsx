@@ -33,8 +33,8 @@ export const UnionRaider = () => {
   // const [charOverall, setCharOverall] = React.useState('-')
   const param = { nickname: cname }
   const [charInfo, loading] = useOutletContext();
-  console.log('unionraider charinfo = ', charInfo)
-  console.log('unionraider loading = ', loading)
+  // console.log('unionraider charinfo = ', charInfo)
+  // console.log('unionraider loading = ', loading)
   const blockType = new BlockType(blockColor, cellSelectedColor);
 
   const [table, setTable] = React.useState(Array.from(Array(20), () => Array(22).fill(0)))

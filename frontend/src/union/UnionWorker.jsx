@@ -15,6 +15,10 @@ export default () => {
 
     let o = execute(e.data.table, e.data.unionBlock)
 
+    // const setting = new UnionRaiderSetting(e.data.unionBlock, e.data.table, true)
+    // const result = setting.checkFittableTest({ 4: 19, 5: 21 }, 175)
+    // console.log('checkFittableTest result = ', result)
+
   })
 
   async function execute(table, unionBlock) {
@@ -361,7 +365,11 @@ export default () => {
     }
 
     async scanImprove(table, blocks, domiBlocks, shuffleIdx) {
-
+      // if (this.realtimeRender) {
+      //   console.log('origin thread test')
+      // } else {
+      //   console.log('other thread test')
+      // }
       if (this.stop) {
         if (this.realtimeRender) {
           console.log('origin stop')
@@ -709,6 +717,7 @@ export default () => {
     }
 
     checkFittable(blocks, targetSum) {
+      // console.log('fittable check start')
       let numMap = {}
       let numBlockElem = 0
       for (let i = 0; i < blocks.length; i++) {
@@ -732,12 +741,14 @@ export default () => {
         // console.log('table space is enough')
         return true
       }
-      let cache = new Map()
-      const result = this.dp(targetSum, numMap, cache)
+      let impossibleCache = new Map()
+      const result = this.dpImprove(targetSum, numMap, impossibleCache)
       // console.log('dp result = ', result);
       if (result) {
+        // console.log('fittable check true')
         return true
       } else {
+        // console.log('fittable check false')
         return false
       }
     }
@@ -749,6 +760,7 @@ export default () => {
      * @returns 
      */
     checkFittableTest(numMap, targetSum) {
+      console.log('checkFittableTest start')
       // 모든 블록 길이의 합이 더미사이즈 보다 작거나 같다면 가능한것으로 판단할것
       let sum = 0
       let keyList = Object.keys(numMap)
@@ -761,7 +773,8 @@ export default () => {
         return true
       }
       let cache = new Map()
-      const result = this.dp(targetSum, numMap, cache)
+      let impossibleCache = new Map()
+      const result = this.dpImprove(targetSum, numMap, impossibleCache)
       console.log('dp result = ', result);
       if (result) {
         return true
@@ -771,7 +784,114 @@ export default () => {
     }
 
     // cache :  6 : [1,2,3] 과 같이 map으로 활용
+    dpImprove(targetSum, numMap, imposCacheMap) {
+      // console.log('targetSum=', targetSum, ', numMap=', numMap, ', imposCacheMap=',imposCacheMap)
+      if (targetSum < 0) {
+        return null
+      } else if (targetSum === 0) {
+        return new Map()
+      }
+
+      const numKeyList = Object.keys(numMap)
+      // if (targetSum in cacheMap) {
+      //   let usable = false
+      //   let cacheList = cacheMap[targetSum]
+      //   let usableCache = null;
+      //   for (let i = 0; i < cacheList.length; i++) {
+      //     const cache = cacheList[i]
+      //     const cacheKeyList = Object.keys(cache)
+      //     for (let j = 0; j < cacheKeyList.length; j++) {
+      //       const cacheKey = parseInt(cacheKeyList[i])
+      //       if (cacheKey in numMap && numMap[cacheKey] >= cache[cacheKey]) {
+      //         usable = true
+      //         usableCache = cache
+      //       }
+      //     }
+      //   }
+      //   if (usable) { return usableCache }
+      // }
+      if (targetSum in imposCacheMap) {
+        let unusable = false
+        let cacheList = imposCacheMap[targetSum]
+        for (let i = 0; i < cacheList.length; i++) {
+          const cache = cacheList[i]
+          if (JSON.stringify(numMap) === JSON.stringify(cache)) {
+            unusable = true
+            break
+          }
+        }
+        if (unusable) {
+          // console.log('unusable check')
+          return null
+        }
+      }
+
+      for (let i = 0; i < numKeyList.length; i++) {
+        const num = parseInt(numKeyList[i])
+        if (numMap[num] === 0) {
+          continue
+        }
+        let copyNumMap = JSON.parse(JSON.stringify(numMap))
+        copyNumMap[num] = copyNumMap[num] - 1
+
+        const resultInner = this.dpImprove(targetSum - num, copyNumMap, imposCacheMap)
+        // null 넘어왔다면 경우의 수 조합이 없는것으로 간주하고 넘어가기
+        if (!resultInner) {
+          continue
+        }
+        let result = {}
+        result[num] = 1
+        // console.log('result type = ',typeof(result))
+
+        let resultInnerKeyList = Object.keys(resultInner)
+        for (let j = 0; j < resultInnerKeyList.length; j++) {
+          let key = parseInt(resultInnerKeyList[j])
+          if (key in result) {
+            result[key] += resultInner[key]
+          } else {
+            result[key] = resultInner[key]
+          }
+        }
+
+        // if (targetSum in cacheMap) {
+        //   let exist = false
+        //   cacheMap[targetSum].forEach((cache) => {
+        //     if (JSON.stringify(cache) === JSON.stringify(result)) {
+        //       exist = true
+        //     }
+        //   })
+        //   if (!exist) {
+        //     cacheMap[targetSum].push(result)
+        //   }
+        // } else {
+        //   cacheMap[targetSum] = [result]
+        // }
+        return result
+      }
+      // 다 돌았는데도 반환되는게 없으면 null 반환
+      if (targetSum in imposCacheMap) {
+        let exist = false
+        imposCacheMap[targetSum].forEach((cache) => {
+          if (JSON.stringify(cache) === JSON.stringify(numMap)) {
+            exist = true
+          }
+        })
+        if (!exist) {
+          imposCacheMap[targetSum].push(numMap)
+        }
+      } else {
+        imposCacheMap[targetSum] = [numMap]
+      }
+
+      return null
+    }
+
+    // cache :  6 : [1,2,3] 과 같이 map으로 활용
     dp(targetSum, numMap, cacheMap) {
+      console.log('targetSum=', targetSum, ', numMap=', numMap, ', cacheMap=', cacheMap)
+      // if (Object.keys(cacheMap).length > 0) {
+      //   console.log('cacheMap=',cacheMap)
+      // }
       if (targetSum < 0) {
         return null
       } else if (targetSum === 0) {
