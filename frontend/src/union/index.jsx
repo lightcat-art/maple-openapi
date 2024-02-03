@@ -93,7 +93,10 @@ export const UnionRaider = () => {
     setResult(null)
   }
 
-
+  React.useEffect(() => {
+    firstLoading = false
+  }, [])
+  
   // let users = [1,3,4,2,2,4,5]
   React.useEffect(() => {
     // axios.get('/api/char/overall', { params: param })
