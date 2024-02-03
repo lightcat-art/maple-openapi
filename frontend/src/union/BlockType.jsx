@@ -65,12 +65,10 @@ class BlockType {
     /**
  * 유니온 좌표정보를 matrix 좌표 구조로 반환
  */
-    transformPosition(block, table) {
-        let rowOffSet = 10 
-        let colOffSet = 11
+    transformPosition(block, rowOffSet, colOffSet) {
         let resultPosition = []
         for (let position of block) {
-            resultPosition.push([position.y + rowOffSet, position.x + colOffSet])
+            resultPosition.push([rowOffSet - position.y, colOffSet + position.x])
         }
         return resultPosition
     }

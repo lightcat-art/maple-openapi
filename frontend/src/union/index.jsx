@@ -50,7 +50,7 @@ export const UnionRaider = () => {
   const [realTimeRender, setRealTimeRender] = React.useState(false) // 실시간 보기 세팅
   const [processCount, setProcessCount] = React.useState(0)
 
-  
+
 
   const handleFormSubmit = (e) => {
     unionWorker = new WebWorker().getUnionWorker(worker)
@@ -96,7 +96,7 @@ export const UnionRaider = () => {
   React.useEffect(() => {
     firstLoading = false
   }, [])
-  
+
   // let users = [1,3,4,2,2,4,5]
   React.useEffect(() => {
     // axios.get('/api/char/overall', { params: param })
@@ -130,7 +130,17 @@ export const UnionRaider = () => {
 
   React.useEffect(() => {
     if (charInfo) {
+      console.log('set origin block info')
       setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock)
+
+      let domiBlocks = []
+
+      charInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
+        domiBlocks.push(blockType.transformPosition(block.blockPosition, table.length / 2, table[0].length / 2))
+      })
+      const styleValue = blockType.setTableStyleValue(table, domiBlocks)
+      setTableStyle(blockType.getTableStyle(styleValue))
+      setProcessCount(-1) // 초기 구역경계선 스타일 설정을 위해 프로세스 카운트 설정 (따로 변수를 만들수도 있는데 기존 변수를 이용)
     }
   }, [charInfo])
 
