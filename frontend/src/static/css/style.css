@@ -1,6 +1,7 @@
 @font-face {
     font-family: "trebuc";
     src: url("../fonts/trebuc.ttf");
+    unicode-range: U+0030-0039, U+0041-005A, U+0061-007A;
 }
 
 @font-face {
@@ -17,6 +18,12 @@
     font-family: "noto-sans-kr";
     src: url("../fonts/Noto_Sans_KR/NotoSansKR-VariableFont_wght.ttf");
 }
+
+@font-face {
+    font-family: "dovemayo";
+    src: url("../fonts/Dovemayo_gothic.ttf");
+}
+
 
 
 ::-moz-selection {
@@ -38,10 +45,6 @@
 
 }
 
-/* .layout, .layout-home {
-    font-family: 'noto-sans-kr';
-} */
-
 .main-logo {
     font-family: 'maple-light'
 }
@@ -53,4 +56,7 @@
 body {
     width:100vw; 
     height:100vh;
+    font-family: 
+    /* 'trebuc', */
+    'dovemayo';
 }

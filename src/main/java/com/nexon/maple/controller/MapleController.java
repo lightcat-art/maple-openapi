@@ -116,7 +116,7 @@ public class MapleController {
         }
 
 
-//        BasicResponse basicResponse = basicApi.get(idRes.getOcid(), formattedNow);
+        BasicResponse basicResponse = basicApi.get(idRes.getOcid(), formattedNow);
 //        PopularityResponse popularityResponse = popularityApi.get(idRes.getOcid(), formattedNow);
 //        StatResponse statResponse = statApi.get(idRes.getOcid(), formattedNow);
 //        HyperStatResponse hyperStatResponse = hyperStatApi.get(idRes.getOcid(), formattedNow);
@@ -174,7 +174,7 @@ public class MapleController {
         UserUnionRaiderResponse userUnionRaiderResponse = userUnionRaiderApi.get(idRes.getOcid(), formattedNow);
 
         CharacterOverallResponse out = CharacterOverallResponse.builder()
-//                .basicResponse(basicResponse)
+                .basicResponse(basicResponse)
 //                .popularityResponse(popularityResponse)
 //                .statResponse(statResponse)
 //                .hyperStatResponse(hyperStatResponse)

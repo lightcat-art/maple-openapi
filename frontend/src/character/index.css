@@ -12,5 +12,9 @@
 }
 
 .char-fold-btn-img {
-    padding-bottom: 3px;
+    padding-bottom: 2px;
+}
+
+.card-header {
+    background: white;
 }
