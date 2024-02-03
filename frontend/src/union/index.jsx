@@ -17,6 +17,7 @@ import { LoadingTable } from '../common';
 
 
 let unionWorker = new WebWorker().getUnionWorker(worker)
+let firstLoading = false
 
 let blockColor = []
 for (let i = 100; i <= 1500; i += 100) {
@@ -49,6 +50,7 @@ export const UnionRaider = () => {
   const [realTimeRender, setRealTimeRender] = React.useState(false) // 실시간 보기 세팅
   const [processCount, setProcessCount] = React.useState(0)
 
+  
 
   const handleFormSubmit = (e) => {
     unionWorker = new WebWorker().getUnionWorker(worker)
@@ -114,7 +116,7 @@ export const UnionRaider = () => {
         if (result.domiBlocks) {
           const styleValue = blockType.setTableStyleValue(result.table, result.domiBlocks)
           const tableStyle = blockType.getTableStyle(styleValue)
-          console.log(tableStyle)
+          // console.log('getTableStyle = ',tableStyle)
           setTableStyle(tableStyle);
         }
 
@@ -137,7 +139,8 @@ export const UnionRaider = () => {
 
   React.useEffect(() => {
     drawRegion(table)
-    if (!loading) {
+    if (!loading && !firstLoading) {
+      firstLoading = true
       setSubmitButtonDisabled(false)
     }
   }, [resetButtonHidden, processCount, loading]);
@@ -147,7 +150,7 @@ export const UnionRaider = () => {
     <>
       <CharMenu page='union'></CharMenu>
       <div className="container-fluid" >
-        <BasicTable table={table} setTable={setTable} style={{ paddingTop: '30px', paddingBottom: '30px' }} tableStyle={tableStyle} submit={submitButtonDisabled} regionMode={regionMode}></BasicTable>
+        <BasicTable table={table} setTable={setTable} style={{ paddingTop: '30px', paddingBottom: '30px' }} tableStyle={tableStyle} submitDisabled={submitButtonDisabled} regionMode={regionMode}></BasicTable>
         <div className="row justify-content-center" style={{ marginTop: '20px' }}>
           <div className="col-2"></div>
           <div className="col-auto">
