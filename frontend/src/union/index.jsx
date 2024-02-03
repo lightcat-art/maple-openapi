@@ -130,11 +130,8 @@ export const UnionRaider = () => {
 
   React.useEffect(() => {
     if (charInfo) {
-      console.log('set origin block info')
       setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock)
-
       let domiBlocks = []
-
       charInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
         domiBlocks.push(blockType.transformPosition(block.blockPosition, table.length / 2, table[0].length / 2))
       })
