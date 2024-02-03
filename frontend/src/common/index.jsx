@@ -60,3 +60,31 @@ export const NotFound = () => {
         </>
     )
 }
+
+export const Loading = () => {
+    return (
+        <>
+            <div>
+                로딩 중입니다.
+                fwevwevkwe
+                vwevwevwev
+                wevwevwevw
+                wevwevwevwe
+                wevwevwev
+            </div>
+        </>
+    )
+}
+
+export const LoadingTable = ({ children, loading }) => {
+    return (
+        <>
+            {loading ?
+                <div className="loading">
+                    로딩중입니다..
+                    {children}
+                </div> :
+                <>{children}</>}
+        </>
+    )
+}

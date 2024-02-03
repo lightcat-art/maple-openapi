@@ -7,15 +7,42 @@ import expandMoreIcon from '../static/icons/expand_more_FILL0_wght400_GRAD0_opsz
 import expandLessIcon from '../static/icons/expand_less_FILL0_wght400_GRAD0_opsz20.png'
 import { useParams, Link, Outlet } from 'react-router-dom'
 import axios from 'axios';
+import { Loading } from '../common';
+
+async function getCharInfo(param, setCharInfo) {
+    // alert('inside checkParentLoggerLevel ');
+    return await axios.get('/api/char/overall', { params: param })
+        .then(function (response) {
+            console.log('character layout=', response.data)
+            setCharInfo(response.data)
+        })
+        .catch(error => console.log(error));
+}
 
 export const CharacterLayout = () => {
+    const [charInfo, setCharInfo] = React.useState(null)
+    const [loading, setLoading] = React.useState(true)
     const { cname } = useParams();
     console.log('CharacterLayout cname=', cname)
+    const param = { nickname: cname }
+    // getCharInfo(param, setCharInfo)
+    React.useEffect(() => {
+        axios.get('/api/char/overall', { params: param })
+            .then(response => {
+                console.log('character layout=', response.data)
+                setCharInfo(response.data)
+                setLoading(false)
+            })
+            .catch(error => console.log(error));
+    }, [])
+
+
+    const test = 1;
     return (
         <>
             <Menu page='not-home'></Menu>
-            <CharacterBasic></CharacterBasic>
-            <Outlet />
+            <CharacterBasic charInfo={charInfo} loading={loading}></CharacterBasic>
+            <Outlet context={[charInfo, loading]} />
             <div>footer</div>
         </>
     )
@@ -54,25 +81,13 @@ export const CharMenu = ({ page }) => {
     );
 }
 
-export const CharacterBasic = () => {
-    const { cname } = useParams();
-    console.log('CharacterBasic cname=', cname)
-    const param = { nickname: cname }
-    const [isDetailView, setIsDetailView] = React.useState(false)
-    const [charInfo, setCharInfo] = React.useState(null)
+export const CharacterBasic = ({ charInfo, loading }) => {
+    console.log('CharacterBasic charInfo= ', charInfo)
+    const [isDetailView, setIsDetailView] = React.useState(true)
 
     const handleDetailView = () => {
         setIsDetailView(!isDetailView)
     }
-    React.useEffect(() => {
-        axios.get('/api/char/overall', { params: param })
-          .then(response => {
-            console.log(response.data)
-            setCharInfo(response.data)
-          })
-          .catch(error => console.log(error))
-    
-      }, []);
 
     return (
         <>
@@ -81,9 +96,12 @@ export const CharacterBasic = () => {
                     <div className="col-2"></div>
                     <div className="col-auto">
                         {/* 캐릭터 정보 표시 */}
-                        {isDetailView ?
-                            <>
-                                {/* <div class="card" style={{ width: '18rem' }}>
+                        {loading ?
+                            <><Loading></Loading></>
+                            :
+                            isDetailView ?
+                                <>
+                                    {/* <div class="card" style={{ width: '18rem' }}>
                                     <img class="card-img-top" src={arcana} alt="Card image cap" />
                                     <div class="card-body">
                                         <h5 class="card-title">Card title</h5>
@@ -92,27 +110,27 @@ export const CharacterBasic = () => {
                                     </div>
                                 </div> */}
 
-                                <div className="char-card card flex-row flex-wrap">
-                                    <div className="card-header border-0">
-                                        <img src={charInfo.basicResponse.characterImage} alt="" />
+                                    <div className="char-card card flex-row flex-wrap">
+                                        <div className="card-header border-0">
+                                            <img src={charInfo.basicResponse.characterImage} alt="" />
+                                        </div>
+                                        <div className="card-block px-5">
+                                            <h4 style={{ fontSize: '30px' }} className="card-title">{charInfo.basicResponse.characterName}</h4>
+                                            <p className="card-text">Lv.{charInfo.basicResponse.characterLevel}&nbsp;{charInfo.basicResponse.characterClass}</p>
+                                            {/* <a href="#" className="btn btn-primary">BUTTON</a> */}
+                                        </div>
+                                        {/* <div class="w-100"></div> */}
+                                        <div className="card-footer w-100 text-muted">
+                                            FOOTER
+                                        </div>
                                     </div>
-                                    <div className="card-block px-5">
-                                        <h4 style={{fontSize: '30px'}} className="card-title">{charInfo.basicResponse.characterName}</h4>
-                                        <p className="card-text">{charInfo.basicResponse.characterLevel} Lv. &nbsp;{charInfo.basicResponse.characterClass}</p>
-                                        {/* <a href="#" className="btn btn-primary">BUTTON</a> */}
+                                </>
+                                :
+                                <>
+                                    <div className="card" style={{ width: '18rem', mineight: '2px' }}>
+                                        dfdf
                                     </div>
-                                    {/* <div class="w-100"></div> */}
-                                    <div className="card-footer w-100 text-muted">
-                                        FOOTER
-                                    </div>
-                                </div>
-                            </>
-                            :
-                            <>
-                                <div className="card" style={{ width: '18rem', mineight: '2px' }}>
-                                    dfdf
-                                </div>
-                            </>
+                                </>
                         }
                         <div className="char-fold-btn-wrapper text-center">
                             <AfterImageButton className="char-fold-btn ps-3" action={handleDetailView}

@@ -9,10 +9,11 @@ import worker from './UnionWorker'
 import { CheckBox, SwitchCheckBox } from '../common/checkBox'
 import './index.css'
 import { getCSSProp } from '../util/util.jsx'
-import { useParams } from 'react-router-dom'
+import { useParams, useOutletContext } from 'react-router-dom'
 import { Menu } from '../common'
 import { Button } from '../common/clickable'
 import { CharMenu } from '../character';
+import { LoadingTable } from '../common';
 
 
 let unionWorker = new WebWorker().getUnionWorker(worker)
@@ -27,17 +28,19 @@ const blockBorderWidth = getCSSProp(document.documentElement, '--block-border-wi
 const cellSelectedColor = getCSSProp(document.documentElement, '--cell-selected-color')
 
 export const UnionRaider = () => {
-
   const { cname } = useParams();
   // const [charOverall, setCharOverall] = React.useState('-')
   const param = { nickname: cname }
+  const [charInfo, loading] = useOutletContext();
+  console.log('unionraider charinfo = ', charInfo)
+  console.log('unionraider loading = ', loading)
   const blockType = new BlockType(blockColor, cellSelectedColor);
 
   const [table, setTable] = React.useState(Array.from(Array(20), () => Array(22).fill(0)))
   const defaultTableStyle = Array.from(Array(table.length), () => Array(table[0].length).fill({}))
   const [tableStyle, setTableStyle] = React.useState(defaultTableStyle)
   const [result, setResult] = React.useState(null)
-  const [submitButtonDisabled, setSubmitButtonDisabled] = React.useState(false)
+  const [submitButtonDisabled, setSubmitButtonDisabled] = React.useState(true)
   const [pauseButtonHidden, setPauseButtonHidden] = React.useState(true)
   const [continueButtonHidden, setContinueButtonHidden] = React.useState(true)
   const [resetButtonHidden, setResetButtonHidden] = React.useState(true)
@@ -91,15 +94,13 @@ export const UnionRaider = () => {
 
   // let users = [1,3,4,2,2,4,5]
   React.useEffect(() => {
-    axios.get('/api/char/overall', { params: param })
-      .then(response => {
-        console.log(response.data)
-        setResponseUnionBlock(response.data.userUnionRaiderResponse.unionBlock)
-        // const setting = new UnionRaiderSetting2(response.data.userUnionRaiderResponse.unionBlock, JSON.parse(JSON.stringify(table)))
-      })
-      .catch(error => console.log(error))
-
-
+    // axios.get('/api/char/overall', { params: param })
+    //   .then(response => {
+    //     console.log(response.data)
+    //     setResponseUnionBlock(response.data.userUnionRaiderResponse.unionBlock)
+    //   })
+    //   .catch(error => console.log(error))
+    // setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock)
 
     unionWorker.addEventListener('message', (event) => {
       const result = event.data;
@@ -123,8 +124,11 @@ export const UnionRaider = () => {
   }, [unionWorker]);
 
   React.useEffect(() => {
+    if (charInfo) {
+      setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock)
+    }
+  }, [charInfo])
 
-  }, [])
 
   React.useEffect(() => {
     console.log('regionMode changed')
@@ -133,7 +137,10 @@ export const UnionRaider = () => {
 
   React.useEffect(() => {
     drawRegion(table)
-  }, [resetButtonHidden, processCount]);
+    if (!loading) {
+      setSubmitButtonDisabled(false)
+    }
+  }, [resetButtonHidden, processCount, loading]);
 
 
   return (
@@ -150,7 +157,7 @@ export const UnionRaider = () => {
               <Button className='start' action={handleFormSubmit} disabled={submitButtonDisabled} title="시작" style={{ marginTop: '10px', width: '70px' }}></Button>
             </div>
             {/* <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
-          <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div> */}
+              <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div> */}
             <div className="text-center">
               <Button className='reset' action={handleFormReset} disabled={resetButtonHidden} title="리셋" style={{ marginTop: '10px', width: '70px' }}></Button>
             </div>
@@ -159,6 +166,7 @@ export const UnionRaider = () => {
           <div className="col-2"></div>
         </div>
       </div>
+
     </>
   )
 }
