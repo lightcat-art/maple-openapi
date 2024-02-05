@@ -29,7 +29,7 @@ export const CharacterLayout = () => {
     React.useEffect(() => {
         axios.get('/api/char/overall', { params: param })
             .then(response => {
-                // console.log('character layout=', response.data)
+                console.log('character layout=', response.data)
                 setCharInfo(response.data)
                 setLoading(false)
             })
@@ -98,7 +98,8 @@ export const CharacterBasic = ({ charInfo, loading }) => {
                         {/* 캐릭터 정보 표시 */}
                         {loading ?
                             <><Loading></Loading></>
-                            :
+                            : !charInfo ?
+                            <>검색 결과가 없습니다.</> :
                             isDetailView ?
                                 <>
                                     {/* <div class="card" style={{ width: '18rem' }}>

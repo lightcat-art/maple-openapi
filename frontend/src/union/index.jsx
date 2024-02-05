@@ -30,7 +30,6 @@ const cellSelectedColor = getCSSProp(document.documentElement, '--cell-selected-
 
 export const UnionRaider = () => {
   const { cname } = useParams();
-  // const [charOverall, setCharOverall] = React.useState('-')
   const param = { nickname: cname }
   const [charInfo, loading] = useOutletContext();
   // console.log('unionraider charinfo = ', charInfo)
@@ -99,19 +98,9 @@ export const UnionRaider = () => {
 
   // let users = [1,3,4,2,2,4,5]
   React.useEffect(() => {
-    // axios.get('/api/char/overall', { params: param })
-    //   .then(response => {
-    //     console.log(response.data)
-    //     setResponseUnionBlock(response.data.userUnionRaiderResponse.unionBlock)
-    //   })
-    //   .catch(error => console.log(error))
-    // setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock)
 
     unionWorker.addEventListener('message', (event) => {
       const result = event.data;
-      // console.log('listener executing')
-      // console.log('result = ', result)
-      // setTable(table)
       if (result) {
         if (result.count) {
           setProcessCount(result.count)
@@ -119,7 +108,6 @@ export const UnionRaider = () => {
         if (result.domiBlocks) {
           const styleValue = blockType.setTableStyleValue(result.table, result.domiBlocks)
           const tableStyle = blockType.getTableStyle(styleValue)
-          // console.log('getTableStyle = ',tableStyle)
           setTableStyle(tableStyle);
         }
 
@@ -135,8 +123,9 @@ export const UnionRaider = () => {
       charInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
         domiBlocks.push(blockType.transformPosition(block.blockPosition, table.length / 2, table[0].length / 2))
       })
-      const styleValue = blockType.setTableStyleValue(table, domiBlocks)
-      setTableStyle(blockType.getTableStyle(styleValue))
+      // const styleValue = blockType.setTableStyleValue(table, domiBlocks)
+      // setTableStyle(blockType.getTableStyle(styleValue))
+      setTableStyle(blockType.getUserInfoStyle(table, domiBlocks));
       setProcessCount(-1) // 초기 구역경계선 스타일 설정을 위해 프로세스 카운트 설정 (따로 변수를 만들수도 있는데 기존 변수를 이용)
     }
   }, [charInfo])
@@ -148,10 +137,16 @@ export const UnionRaider = () => {
 
 
   React.useEffect(() => {
-    drawRegion(table)
+    if (processCount < 0) {
+      drawRegion(table, true)
+    } else {
+      drawRegion(table, false)
+    }
     if (!loading && !firstLoading) {
       firstLoading = true
-      setSubmitButtonDisabled(false)
+      if (charInfo) {
+        setSubmitButtonDisabled(false)
+      }
     }
   }, [resetButtonHidden, processCount, loading]);
 
@@ -188,7 +183,7 @@ export function getCellDOM(row, col) {
   return document.getElementById("union-table").getElementsByTagName("tr")[row].getElementsByTagName("td")[col]
 }
 
-function drawRegion(table) {
+function drawRegion(table, blocksBorderTF) {
   const rowLen = table.length
   const colLen = table[0].length
 
@@ -257,7 +252,51 @@ function drawRegion(table) {
       drawRegionByBlock(rowLen, colLen, 3 * rowLen / 4, e, 'top')
     }
   }
+  if (blocksBorderTF) {
+    drawBlockDummyBorder(rowLen, colLen)
+  }
+}
 
+function drawBlockDummyBorder(rowLen, colLen) {
+  for (let i = 0; i < rowLen; i++) {
+    for (let j = 0; j < colLen; j++) {
+      drawBlockBorder(i, j, rowLen, colLen)
+    }
+  }
+}
+
+function drawBlockBorder(row, col, rowLen, colLen) {
+  const top = 'top'
+  const left = 'left'
+  const right = 'right'
+  const bottom = 'bottom'
+  const direction = [[-1, 0], [1, 0], [0, 1], [0, -1]]
+  const directionDesc = [top, bottom, right, left]
+  let cellDOM = getCellDOM(row, col)
+  if (cellDOM.className.includes('block')) {
+    for (let i = 0; i < direction.length; i++) {
+      let nrow = row + direction[i][0]
+      let ncol = col + direction[i][1]
+      if (0 <= ncol && 0 <= nrow && ncol < colLen && nrow < rowLen) {
+        let nearCellDom = getCellDOM(nrow, ncol)
+        if (!nearCellDom.className.includes('block')) {
+          if (directionDesc[i] === top) {
+            // cellDOM.style.borderTopColor = '#df3838'
+            cellDOM.style.borderTopWidth = '4px'
+          } else if (directionDesc[i] === bottom) {
+            // cellDOM.style.BorderBottomColor = '#df3838'
+            cellDOM.style.borderBottomWidth = '4px'
+          }else if (directionDesc[i] === right) {
+            // cellDOM.style.borderRightColor = '#df3838'
+            cellDOM.style.borderRightWidth = '4px'
+          }else if (directionDesc[i] === left) {
+            // cellDOM.style.borderLeftColor = '#df3838'
+            cellDOM.style.borderLeftWidth = '4px'
+          }
+        }
+      }
+    }
+  }
 }
 
 /**

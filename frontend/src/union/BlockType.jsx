@@ -73,6 +73,26 @@ class BlockType {
         return resultPosition
     }
 
+    getUserInfoStyle(table, domiBlocks) {
+        const direction = Object.values(this.blockDirection)
+        let style = Array.from(Array(table.length), () => Array(table[0].length).fill({}))
+        for (let i = 0; i < domiBlocks.length; i++) {
+            const domiBlock = domiBlocks[i]
+            for (let j = 0; j < domiBlock.length; j++) {
+                let cellMap = {}
+                let cellStyleInfo = {}
+                let v = domiBlock[j]
+                cellStyleInfo['background'] = '#f5eed1'
+                direction.forEach((direction) => {
+                    // cellStyleInfo[direction] = 'none'
+                })
+                cellMap.style = cellStyleInfo
+                cellMap.className = 'block'
+                style[v[0]][v[1]] = cellMap
+            }
+        }
+        return style
+    }
 
     setTableStyleValue(table, domiBlocks) {
         let tableStyleValue = JSON.parse(JSON.stringify(table))
