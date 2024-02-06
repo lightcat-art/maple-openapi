@@ -13,9 +13,7 @@ export default class WebWorker {
                 const code = worker.toString();
                 const blob = new Blob(['('+code+')()']);
                 this.unionWorker = new Worker(URL.createObjectURL(blob));
-                console.log('new unionWorker creating = ', this.unionWorker)
             } else {
-                console.log('unionWorker already created = ', this.unionWorker)
             }
         }
         return this.unionWorker
@@ -24,6 +22,5 @@ export default class WebWorker {
     clearUnionWorker() {
         this.unionWorker.terminate()
         this.unionWorker = undefined
-        console.log('unionWorker clear = ', this.unionWorker)
     }
 }

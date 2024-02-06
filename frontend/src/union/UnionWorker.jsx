@@ -8,10 +8,10 @@ export default () => {
     // const importTest = new BlockTypeTest()
     // importTest.test()
 
-    console.log('Received message from main thread : ', e.data)
-    console.log('Received union block : ', e.data.unionBlock)
-    console.log('Received table : ', e.data.table)
-    console.log('Received cnt : ', e.data.cnt)
+    // console.log('Received message from main thread : ', e.data)
+    // console.log('Received union block : ', e.data.unionBlock)
+    // console.log('Received table : ', e.data.table)
+    // console.log('Received cnt : ', e.data.cnt)
 
     let o = execute(e.data.table, e.data.unionBlock)
 
@@ -51,7 +51,7 @@ export default () => {
     const d = threads[3].classify()
     let o = await Promise.race([a, b, c, d])
     // let o = await Promise.race([a])
-    console.log('race o = ', o)
+    // console.log('race o = ', o)
     for (let thread of threads) {
       console.log('stop request')
       thread.stopRequest()
@@ -61,13 +61,13 @@ export default () => {
     let domiBlocks = null
     let processCount = null
     if (threads[0].complete) {
-      console.log('origin success')
-      console.log('blocks:', threads[0].resultBlocks)
+      // console.log('origin success')
+      // console.log('blocks:', threads[0].resultBlocks)
       domiBlocks = threads[0].resultDomiBlocks
       processCount = threads[0].addProcessCount()
     } else if (threads[1].complete) {
-      console.log('yxSym success')
-      console.log('blocks:', threads[1].resultBlocks)
+      // console.log('yxSym success')
+      // console.log('blocks:', threads[1].resultBlocks)
       // postMessage({ table: table, domiBlocks: threads[1].resultDomiBlocks })
       let resultDomiBlocks = []
       for (let domiBlock of threads[1].resultDomiBlocks) {
@@ -80,8 +80,8 @@ export default () => {
       domiBlocks = resultDomiBlocks
       processCount = threads[1].addProcessCount()
     } else if (threads[2].complete) {
-      console.log('origSym success')
-      console.log('blocks:', threads[2].resultBlocks)
+      // console.log('origSym success')
+      // console.log('blocks:', threads[2].resultBlocks)
       let resultDomiBlocks = []
       for (let domiBlock of threads[2].resultDomiBlocks) {
         let resultDomiBlock = []
@@ -93,8 +93,8 @@ export default () => {
       domiBlocks = resultDomiBlocks
       processCount = threads[2].addProcessCount()
     } else if (threads[3].complete) {
-      console.log('yxOrigSym success')
-      console.log('blocks:', threads[3].resultBlocks)
+      // console.log('yxOrigSym success')
+      // console.log('blocks:', threads[3].resultBlocks)
       let resultDomiBlocks = []
       for (let domiBlock of threads[3].resultDomiBlocks) {
         let resultDomiBlock = []

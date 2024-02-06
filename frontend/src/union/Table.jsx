@@ -45,8 +45,6 @@ function regionDef() {
             regionInfo[15].push([rowLen - 1 - j, rowLen + 1 - i]) // 남동 위
         }
     }
-    console.log('regionInfo = ', regionInfo)
-
 }
 
 function checkRegion(row, col) {

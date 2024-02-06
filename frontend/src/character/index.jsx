@@ -9,27 +9,16 @@ import { useParams, Link, Outlet } from 'react-router-dom'
 import axios from 'axios';
 import { Loading } from '../common';
 
-async function getCharInfo(param, setCharInfo) {
-    // alert('inside checkParentLoggerLevel ');
-    return await axios.get('/api/char/overall', { params: param })
-        .then(function (response) {
-            console.log('character layout=', response.data)
-            setCharInfo(response.data)
-        })
-        .catch(error => console.log(error));
-}
 
 export const CharacterLayout = () => {
     const [charInfo, setCharInfo] = React.useState(null)
     const [loading, setLoading] = React.useState(true)
     const { cname } = useParams();
-    console.log('CharacterLayout cname=', cname)
     const param = { nickname: cname }
     // getCharInfo(param, setCharInfo)
     React.useEffect(() => {
         axios.get('/api/char/overall', { params: param })
             .then(response => {
-                console.log('character layout=', response.data)
                 setCharInfo(response.data)
                 setLoading(false)
             })
@@ -50,7 +39,6 @@ export const CharacterLayout = () => {
 
 export const CharMenu = ({ page }) => {
     const { cname } = useParams();
-    // console.log('CharMenu cname=', cname)
     return (
         <>
             <div className="container-fluid">
@@ -82,7 +70,6 @@ export const CharMenu = ({ page }) => {
 }
 
 export const CharacterBasic = ({ charInfo, loading }) => {
-    console.log('CharacterBasic charInfo= ', charInfo)
     const [isDetailView, setIsDetailView] = React.useState(true)
 
     const handleDetailView = () => {

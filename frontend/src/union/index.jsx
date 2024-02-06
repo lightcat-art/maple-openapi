@@ -22,7 +22,7 @@ let firstLoading = false
 // hover 와 select를 비활성화 하고, 
 export const INIT_PROCESS_COUNT = -1 // 초기 테이블 생성시 프로세스 타입 . 
 export const ALGO_PROCESS_COUNT = 0 // 알고리즘 사용 시 프로세스 타입.
-export const USER_PROCESS_COUNT = -2 // 알고리즘 사용 시 프로세스 타입.
+export const USER_PROCESS_COUNT = -2 // 유저 테이블 가져오기시 프로세스 타입.
 
 let blockColor = []
 for (let i = 100; i <= 1500; i += 100) {
@@ -55,15 +55,11 @@ export const UnionRaider = () => {
   const [regionMode, setRegionMode] = React.useState(false) // 지역선택모드인지, 단일셀 선택모드인지 세팅
   const [realTimeRender, setRealTimeRender] = React.useState(false) // 실시간 보기 세팅
   const [processCount, setProcessCount] = React.useState(INIT_PROCESS_COUNT)
-  const [useProcess, setUseProcess] = React.useState(false) // 유니온 배치프로세스 선택 모드
-
+  const [useProcess, setUseProcess] = React.useState(localStorage.getItem("useProcess")? JSON.parse(localStorage.getItem("useProcess")): false) // 유니온 배치프로세스 선택 모드
+  console.log('useProcess check = ',useProcess)
   const handleUseProcess = () => {
     setUseProcess(!useProcess)
   }
-  React.useEffect(() => {
-  }, [useProcess])
-
-
 
   const handleFormSubmit = (e) => {
     unionWorker = new WebWorker().getUnionWorker(worker)
@@ -131,41 +127,48 @@ export const UnionRaider = () => {
   }, [unionWorker]);
 
   React.useEffect(() => {
-    if (charInfo) {
-      setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock)
-      let domiBlocks = []
-      charInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
-        domiBlocks.push(blockType.transformPosition(block.blockPosition, table.length / 2, table[0].length / 2))
-      })
-      // const styleValue = blockType.setTableStyleValue(table, domiBlocks)
-      // setTableStyle(blockType.getTableStyle(styleValue))
-      setTableStyle(blockType.getUserInfoStyle(table, domiBlocks));
+    if (useProcess) {
+      console.log('useProcess true')
+      setTableStyle(defaultTableStyle)
+      
+    } else {
+      if (charInfo) {
+        console.log('charinfo exist')
+        setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock)
+        let domiBlocks = []
+        charInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
+          domiBlocks.push(blockType.transformPosition(block.blockPosition, table.length / 2, table[0].length / 2))
+        })
+        // const styleValue = blockType.setTableStyleValue(table, domiBlocks)
+        // setTableStyle(blockType.getTableStyle(styleValue))
+        setTableStyle(blockType.getUserInfoStyle(table, domiBlocks));
 
-      /**
-       * 초기 processCount를 지정하지 않아도 charInfo가 변하면 loading도 변하게 되어있으므로 charInfo 종속성 처리 이후 loading 종속성 처리 rerendering됨.
-       * 따라서 처음 프로세스 카운트는 지정하지 않는다.
-       */
-      // setProcessCount(USER_PROCESS_COUNT) // 초기 구역경계선 스타일 설정을 위해 프로세스 카운트 설정 (따로 변수를 만들수도 있는데 기존 변수를 이용)
+        /**
+         * 초기 processCount를 지정하지 않아도 charInfo가 변하면 loading도 변하게 되어있으므로 charInfo 종속성 처리 이후 loading 종속성 처리 rerendering됨.
+         * 따라서 처음 프로세스 카운트는 지정하지 않는다.
+         */
+        // setProcessCount(USER_PROCESS_COUNT) // 초기 구역경계선 스타일 설정을 위해 프로세스 카운트 설정 (따로 변수를 만들수도 있는데 기존 변수를 이용)
+      } else { 
+        console.log('charinfo not exist')
+      }
     }
-  }, [charInfo])
+    localStorage.setItem("useProcess", JSON.stringify(useProcess))
+  }, [charInfo, useProcess])
 
-
-  React.useEffect(() => {
-    console.log('regionMode changed')
-  }, [regionMode]);
 
 
   React.useEffect(() => {
+    // console.log('resetButtonHidden=', resetButtonHidden, ', processCount=', processCount, ', loading=', loading, ', tableStyle=', tableStyle)
     if (processCount >= INIT_PROCESS_COUNT) {
       drawRegion(table)
     }
     if (!loading && !firstLoading) {
       firstLoading = true
       // if (charInfo) {
-      //   setSubmitButtonDisabled(false)
+      // setSubmitButtonDisabled(false)
       // }
     }
-  }, [resetButtonHidden, processCount, loading]);
+  }, [resetButtonHidden, processCount, loading, tableStyle]);
 
 
   return (
