@@ -56,6 +56,7 @@ export const UnionRaider = () => {
   const [realTimeRender, setRealTimeRender] = React.useState(false) // 실시간 보기 세팅
   const [processCount, setProcessCount] = React.useState(INIT_PROCESS_COUNT)
   const [useProcess, setUseProcess] = React.useState(localStorage.getItem("useProcess") ? JSON.parse(localStorage.getItem("useProcess")) : false) // 유니온 배치프로세스 선택 모드
+  const [useProcessDisabled, setUseProcessDisabled] = React.useState(false)
   console.log('useProcess check = ', useProcess)
   const handleUseProcess = () => {
     setUseProcess(!useProcess)
@@ -69,6 +70,7 @@ export const UnionRaider = () => {
     setPauseButtonHidden(true)
     setContinueButtonHidden(true)
     setResetButtonHidden(false)
+    setUseProcessDisabled(true)
     e.preventDefault() // event의 클릭 기본동작 방지
     // 유니온 배치 작업이 완료되었는지 체크후 에러로 보이는 상황이라면 버튼락 풀기
     // setButtonDisabled(false)
@@ -99,7 +101,7 @@ export const UnionRaider = () => {
     setPauseButtonHidden(true)
     setContinueButtonHidden(true)
     setResetButtonHidden(true)
-    setResult(null)
+    setUseProcessDisabled(false)
   }
 
   React.useEffect(() => {
@@ -189,6 +191,7 @@ export const UnionRaider = () => {
         </BasicTable>
         <div className="use-process-btn-wrapper text-center">
           <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
+            disabled={useProcessDisabled}
             title={useProcess ? '내 정보 보기' : '자동 배치 모드'}>
           </AfterImageButton>
         </div>
