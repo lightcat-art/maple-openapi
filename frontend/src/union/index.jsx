@@ -19,6 +19,11 @@ import { LoadingTable } from '../common';
 let unionWorker = new WebWorker().getUnionWorker(worker)
 let firstLoading = false
 
+// hover 와 select를 비활성화 하고, 
+export const INIT_PROCESS_COUNT = -1 // 초기 테이블 생성시 프로세스 타입 . 
+export const ALGO_PROCESS_COUNT = 0 // 알고리즘 사용 시 프로세스 타입.
+export const USER_PROCESS_COUNT = -2 // 알고리즘 사용 시 프로세스 타입.
+
 let blockColor = []
 for (let i = 100; i <= 1500; i += 100) {
   const varName = '--block-color-' + i
@@ -47,14 +52,14 @@ export const UnionRaider = () => {
   const [responseUnionBlock, setResponseUnionBlock] = React.useState([])
   const [regionMode, setRegionMode] = React.useState(false) // 지역선택모드인지, 단일셀 선택모드인지 세팅
   const [realTimeRender, setRealTimeRender] = React.useState(false) // 실시간 보기 세팅
-  const [processCount, setProcessCount] = React.useState(0)
+  const [processCount, setProcessCount] = React.useState(INIT_PROCESS_COUNT)
 
 
 
   const handleFormSubmit = (e) => {
     unionWorker = new WebWorker().getUnionWorker(worker)
     unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, cnt: 1 })
-    // setProcessCount(0)
+    setProcessCount(ALGO_PROCESS_COUNT)
     setSubmitButtonDisabled(true)
     setPauseButtonHidden(true)
     setContinueButtonHidden(true)
@@ -126,7 +131,12 @@ export const UnionRaider = () => {
       // const styleValue = blockType.setTableStyleValue(table, domiBlocks)
       // setTableStyle(blockType.getTableStyle(styleValue))
       setTableStyle(blockType.getUserInfoStyle(table, domiBlocks));
-      setProcessCount(-1) // 초기 구역경계선 스타일 설정을 위해 프로세스 카운트 설정 (따로 변수를 만들수도 있는데 기존 변수를 이용)
+
+      /**
+       * 초기 processCount를 지정하지 않아도 charInfo가 변하면 loading도 변하게 되어있으므로 charInfo 종속성 처리 이후 loading 종속성 처리 rerendering됨.
+       * 따라서 처음 프로세스 카운트는 지정하지 않는다.
+       */
+      // setProcessCount(USER_PROCESS_COUNT) // 초기 구역경계선 스타일 설정을 위해 프로세스 카운트 설정 (따로 변수를 만들수도 있는데 기존 변수를 이용)
     }
   }, [charInfo])
 
@@ -137,10 +147,10 @@ export const UnionRaider = () => {
 
 
   React.useEffect(() => {
-    if (processCount < 0) {
-      drawRegion(table, true)
-    } else {
+    if (processCount >= INIT_PROCESS_COUNT) { 
       drawRegion(table, false)
+    } else {
+      // drawRegion(table, false)
     }
     if (!loading && !firstLoading) {
       firstLoading = true
@@ -155,7 +165,15 @@ export const UnionRaider = () => {
     <>
       <CharMenu page='union'></CharMenu>
       <div className="container-fluid" >
-        <BasicTable table={table} setTable={setTable} style={{ paddingTop: '30px', paddingBottom: '30px' }} tableStyle={tableStyle} submitDisabled={submitButtonDisabled} regionMode={regionMode}></BasicTable>
+        <BasicTable
+          table={table}
+          setTable={setTable}
+          style={{ paddingTop: '30px', paddingBottom: '30px' }}
+          tableStyle={tableStyle}
+          submitDisabled={submitButtonDisabled}
+          regionMode={regionMode}
+          processCount={processCount}>
+        </BasicTable>
         <div className="row justify-content-center" style={{ marginTop: '20px' }}>
           <div className="col-2"></div>
           <div className="col-auto">
@@ -286,10 +304,10 @@ function drawBlockBorder(row, col, rowLen, colLen) {
           } else if (directionDesc[i] === bottom) {
             // cellDOM.style.BorderBottomColor = '#df3838'
             cellDOM.style.borderBottomWidth = '4px'
-          }else if (directionDesc[i] === right) {
+          } else if (directionDesc[i] === right) {
             // cellDOM.style.borderRightColor = '#df3838'
             cellDOM.style.borderRightWidth = '4px'
-          }else if (directionDesc[i] === left) {
+          } else if (directionDesc[i] === left) {
             // cellDOM.style.borderLeftColor = '#df3838'
             cellDOM.style.borderLeftWidth = '4px'
           }
@@ -337,11 +355,12 @@ function drawRegionByBlock(rowLen, colLen, row, col, direction) {
 }
 
 function checkBorderWidth(cellDOM, nearCellDOM) {
-  if (cellDOM.className.includes('block') && nearCellDOM.className.includes('block')) {
+  
+  if (cellDOM.className.includes('block') && nearCellDOM.className.includes('block')) { // 자기도 블록이고 주변도 블록일시
     return blockBorderWidth
-  } else if (!cellDOM.className.includes('block') && !nearCellDOM.className.includes('block')) {
+  } else if (!cellDOM.className.includes('block') && !nearCellDOM.className.includes('block')) { // 자기와 주변이 모두 블록이 아닐시
     return regionBorderWidth
-  } else {
+  } else { // 자기 또는 주변중 하나가 블록일시
     return regionBorderWidth
   }
 }

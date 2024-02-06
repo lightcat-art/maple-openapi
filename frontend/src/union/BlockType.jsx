@@ -74,21 +74,51 @@ class BlockType {
     }
 
     getUserInfoStyle(table, domiBlocks) {
-        const direction = Object.values(this.blockDirection)
-        let style = Array.from(Array(table.length), () => Array(table[0].length).fill({}))
+        let rowLen = table.length
+        let colLen = table[0].length
+        let tableStyleValue = Array.from(Array(rowLen), () => Array(colLen).fill(0))
         for (let i = 0; i < domiBlocks.length; i++) {
             const domiBlock = domiBlocks[i]
             for (let j = 0; j < domiBlock.length; j++) {
+                let v = domiBlock[j]
+                let styleValue = 1
+                try {
+                    tableStyleValue[v[0]][v[1]] = styleValue
+                } catch (error) {
+                    console.log('error= ', error)
+                }
+            }
+        }
+
+        let style = Array.from(Array(rowLen), () => Array(colLen).fill({}))
+
+        const direction = [[-1, 0], [1, 0], [0, 1], [0, -1]] // top, left, right, bottom
+        const directionNum = [1, 8, 4, 2]
+        for (let row = 0; row < table.length; row++) {
+            for (let col = 0; col < table[0].length; col++) {
                 let cellMap = {}
                 let cellStyleInfo = {}
-                let v = domiBlock[j]
-                cellStyleInfo['background'] = '#f5eed1'
-                direction.forEach((direction) => {
-                    // cellStyleInfo[direction] = 'none'
-                })
+
+
+                for (let i = 0; i < direction.length; i++) {
+                    let nrow = row + direction[i][0]
+                    let ncol = col + direction[i][1]
+                    if (0 <= ncol && 0 <= nrow && ncol < colLen && nrow < rowLen) {
+                        if (tableStyleValue[row][col] > 0 && tableStyleValue[nrow][ncol] > 0) {
+                            cellStyleInfo[this.blockDirection[directionNum[i]]] = 'none'
+                        } else if (tableStyleValue[row][col] > 0 && tableStyleValue[nrow][ncol] <= 0) {
+                            cellStyleInfo[this.blockDirection[directionNum[i]]] = '3px solid red'
+                        } else if (tableStyleValue[row][col] <= 0 && tableStyleValue[nrow][ncol] > 0) {
+                            cellStyleInfo[this.blockDirection[directionNum[i]]] = 'none'
+                        }
+                    }
+                }
+                if (tableStyleValue[row][col] > 0) {
+                    cellStyleInfo['background'] = '#f5eed1'
+                    cellMap.className = 'block'
+                } 
                 cellMap.style = cellStyleInfo
-                cellMap.className = 'block'
-                style[v[0]][v[1]] = cellMap
+                style[row][col] = cellMap
             }
         }
         return style
@@ -139,7 +169,7 @@ class BlockType {
                     })
                     // todo : 바라보는 방향에 다른 블럭이 존재하면 1px 존재하지 않으면 3px로 설정하도록 수정해야함
                     directionList.exist.forEach((v) => {
-                        // cellStyleMap[v] = '1px solid'
+                        // cellStyleInfo[v] = '3px solid'
                     })
                     cellStyleInfo['background'] = this.blockTypeColor[this.getOnlyColorIdx(table[i][j])]
                     cellMap.style = cellStyleInfo

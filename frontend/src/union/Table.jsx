@@ -3,6 +3,7 @@ import * as React from 'react';
 import { getCellDOM } from './index'
 import './index.css'
 import { getCSSProp } from '../util/util.jsx'
+import { ALGO_PROCESS_COUNT } from './index';
 
 const regionInfo = []
 
@@ -66,7 +67,7 @@ function getRegionCells(region) {
 regionDef()
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
-export function BasicTable({ style, tableStyle, setTable, table, submitDisabled, regionMode }) {
+export function BasicTable({ style, tableStyle, setTable, table, submitDisabled, regionMode, processCount }) {
     const [select, setSelect] = React.useState([])
     // const [regionSelect, setRegionSelect] = React.useState([])
     // This variable will control if the user is dragging or not
@@ -124,8 +125,7 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
 
 
     const handleMouseDown = (e, row, col) => {
-
-        if (submitDisabled) {
+        if (submitDisabled || processCount < ALGO_PROCESS_COUNT) {
             setDrag(false)
             return
         } else {
@@ -184,7 +184,6 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
 
     const handleMultipleSel = (e, row, col) => {
         e.preventDefault();
-
         if (drag) {
             let cellSelected = false
             let cellIdx = select.indexOf(JSON.stringify([row, col]))
@@ -235,7 +234,9 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
     }
 
     const handleMouseEnter = (e, row, col) => {
-
+        if (processCount < ALGO_PROCESS_COUNT) {
+            return
+        }
         const selectedElement = Array.from(
             document.getElementsByClassName('block')
         );
@@ -264,6 +265,9 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
     }
 
     const handleMouseLeave = (e, row, col) => {
+        if (processCount < ALGO_PROCESS_COUNT) {
+            return
+        }
         const selectedElement = Array.from(
             document.getElementsByClassName('block')
         );
