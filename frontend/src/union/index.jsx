@@ -32,6 +32,8 @@ for (let i = 100; i <= 1500; i += 100) {
 const regionBorderWidth = getCSSProp(document.documentElement, '--region-border-width')
 const blockBorderWidth = getCSSProp(document.documentElement, '--block-border-width')
 const cellSelectedColor = getCSSProp(document.documentElement, '--cell-selected-color')
+const blockColorOrigin = getCSSProp(document.documentElement, '--block-color-origin')
+const blockColorOriginBorder = getCSSProp(document.documentElement, '--block-color-origin-bd')
 
 export const UnionRaider = () => {
   const { cname } = useParams();
@@ -39,7 +41,7 @@ export const UnionRaider = () => {
   const [charInfo, loading] = useOutletContext();
   // console.log('unionraider charinfo = ', charInfo)
   // console.log('unionraider loading = ', loading)
-  const blockType = new BlockType(blockColor, cellSelectedColor);
+  const blockType = new BlockType(blockColor, cellSelectedColor, blockColorOrigin, blockColorOriginBorder);
 
   const [table, setTable] = React.useState(Array.from(Array(20), () => Array(22).fill(0)))
   const defaultTableStyle = Array.from(Array(table.length), () => Array(table[0].length).fill({}))
@@ -148,9 +150,7 @@ export const UnionRaider = () => {
 
   React.useEffect(() => {
     if (processCount >= INIT_PROCESS_COUNT) { 
-      drawRegion(table, false)
-    } else {
-      // drawRegion(table, false)
+      drawRegion(table)
     }
     if (!loading && !firstLoading) {
       firstLoading = true
@@ -201,7 +201,7 @@ export function getCellDOM(row, col) {
   return document.getElementById("union-table").getElementsByTagName("tr")[row].getElementsByTagName("td")[col]
 }
 
-function drawRegion(table, blocksBorderTF) {
+function drawRegion(table) {
   const rowLen = table.length
   const colLen = table[0].length
 
@@ -270,52 +270,8 @@ function drawRegion(table, blocksBorderTF) {
       drawRegionByBlock(rowLen, colLen, 3 * rowLen / 4, e, 'top')
     }
   }
-  if (blocksBorderTF) {
-    drawBlockDummyBorder(rowLen, colLen)
-  }
 }
 
-function drawBlockDummyBorder(rowLen, colLen) {
-  for (let i = 0; i < rowLen; i++) {
-    for (let j = 0; j < colLen; j++) {
-      drawBlockBorder(i, j, rowLen, colLen)
-    }
-  }
-}
-
-function drawBlockBorder(row, col, rowLen, colLen) {
-  const top = 'top'
-  const left = 'left'
-  const right = 'right'
-  const bottom = 'bottom'
-  const direction = [[-1, 0], [1, 0], [0, 1], [0, -1]]
-  const directionDesc = [top, bottom, right, left]
-  let cellDOM = getCellDOM(row, col)
-  if (cellDOM.className.includes('block')) {
-    for (let i = 0; i < direction.length; i++) {
-      let nrow = row + direction[i][0]
-      let ncol = col + direction[i][1]
-      if (0 <= ncol && 0 <= nrow && ncol < colLen && nrow < rowLen) {
-        let nearCellDom = getCellDOM(nrow, ncol)
-        if (!nearCellDom.className.includes('block')) {
-          if (directionDesc[i] === top) {
-            // cellDOM.style.borderTopColor = '#df3838'
-            cellDOM.style.borderTopWidth = '4px'
-          } else if (directionDesc[i] === bottom) {
-            // cellDOM.style.BorderBottomColor = '#df3838'
-            cellDOM.style.borderBottomWidth = '4px'
-          } else if (directionDesc[i] === right) {
-            // cellDOM.style.borderRightColor = '#df3838'
-            cellDOM.style.borderRightWidth = '4px'
-          } else if (directionDesc[i] === left) {
-            // cellDOM.style.borderLeftColor = '#df3838'
-            cellDOM.style.borderLeftWidth = '4px'
-          }
-        }
-      }
-    }
-  }
-}
 
 /**
    * 1. 자기도 블록이고 주변에 블록이 있으면 1px

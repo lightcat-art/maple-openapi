@@ -14,8 +14,8 @@
     --block-color-1300: #2ec948; /* 3:L */
     --block-color-1400: #3dccb9; /* 2:I */
     --block-color-1500: #29a9c9; /* 1:dot */
-    --block-color-origin: #ecd4aa; /* 유저 블록정보 색상*/
-    --block-color-origin-dp: #dac195; /* 유저 블록정보 중복색상*/
+    --block-color-origin: #f5eed1; /* 유저 블록정보 색상*/
+    --block-color-origin-bd: #d6c101; /* 유저 블록정보 테두리 색상*/
     --region-border-width: 3px;
     --block-border-width: 1px;
     --cell-selected-hover-color: #969696;

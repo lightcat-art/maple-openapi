@@ -2,7 +2,7 @@ class BlockType {
     // React component에서 선언하는 경우 다시 새로고침하면 인스턴스 날아감.
     // 현재 가지고 있는 블록 정보를 기반으로 화면에 표시할수 있도록 도와주는 클래스
     static instance;
-    constructor(blockColor, selectedTableColor) {
+    constructor(blockColor, selectedTableColor, blockColorOriginBg, blockColorOriginBd) {
         if (BlockType.instance) return BlockType.instance;
         this.baseBlockType = [
             [[0, 0], [0, 1], [1, 1], [1, 2], [1, 3]], // z-asym
@@ -23,8 +23,9 @@ class BlockType {
         ]
         this.closeTableColor = '#ffffff'
         this.selectedTableColor = selectedTableColor
-
         this.blockTypeColor = blockColor
+        this.blockColorOriginBg = blockColorOriginBg // 유저 유니온 정보 블록 배경 색
+        this.blockColorOriginBd = blockColorOriginBd // 유저 유니온 정보 블록 테두리 색
         this.baseBlockSizeIdx = { 5: [0, 5], 4: [6, 10], 3: [11, 12], 2: [13, 13], 1: [14, 14] }
         this.blockDirection = { 1: 'borderTop', 2: 'borderLeft', 4: 'borderRight', 8: 'borderBottom' }
         // [i][j] => i: 블록타입 종류,  j: 블록의 회전에 따른 종류
@@ -107,16 +108,16 @@ class BlockType {
                         if (tableStyleValue[row][col] > 0 && tableStyleValue[nrow][ncol] > 0) {
                             cellStyleInfo[this.blockDirection[directionNum[i]]] = 'none'
                         } else if (tableStyleValue[row][col] > 0 && tableStyleValue[nrow][ncol] <= 0) {
-                            cellStyleInfo[this.blockDirection[directionNum[i]]] = '3px solid red'
+                            cellStyleInfo[this.blockDirection[directionNum[i]]] = '3px solid ' + this.blockColorOriginBd
                         } else if (tableStyleValue[row][col] <= 0 && tableStyleValue[nrow][ncol] > 0) {
                             cellStyleInfo[this.blockDirection[directionNum[i]]] = 'none'
                         }
                     }
                 }
                 if (tableStyleValue[row][col] > 0) {
-                    cellStyleInfo['background'] = '#f5eed1'
+                    cellStyleInfo['background'] = this.blockColorOriginBg
                     cellMap.className = 'block'
-                } 
+                }
                 cellMap.style = cellStyleInfo
                 style[row][col] = cellMap
             }
