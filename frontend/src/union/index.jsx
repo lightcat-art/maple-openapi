@@ -55,8 +55,8 @@ export const UnionRaider = () => {
   const [regionMode, setRegionMode] = React.useState(false) // 지역선택모드인지, 단일셀 선택모드인지 세팅
   const [realTimeRender, setRealTimeRender] = React.useState(false) // 실시간 보기 세팅
   const [processCount, setProcessCount] = React.useState(INIT_PROCESS_COUNT)
-  const [useProcess, setUseProcess] = React.useState(localStorage.getItem("useProcess")? JSON.parse(localStorage.getItem("useProcess")): false) // 유니온 배치프로세스 선택 모드
-  console.log('useProcess check = ',useProcess)
+  const [useProcess, setUseProcess] = React.useState(localStorage.getItem("useProcess") ? JSON.parse(localStorage.getItem("useProcess")) : false) // 유니온 배치프로세스 선택 모드
+  console.log('useProcess check = ', useProcess)
   const handleUseProcess = () => {
     setUseProcess(!useProcess)
   }
@@ -128,12 +128,15 @@ export const UnionRaider = () => {
 
   React.useEffect(() => {
     if (useProcess) {
-      console.log('useProcess true')
-      setTableStyle(defaultTableStyle)
-      
+      if (localStorage.getItem('tableSelect')) {
+        setTableStyle(blockType.getTableStyle(JSON.parse(localStorage.getItem('tableSelect'))))
+      } else {
+        setTableStyle(defaultTableStyle)
+      }
+      setSubmitButtonDisabled(false)
+      setResetButtonHidden(true)
     } else {
       if (charInfo) {
-        console.log('charinfo exist')
         setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock)
         let domiBlocks = []
         charInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
@@ -148,14 +151,14 @@ export const UnionRaider = () => {
          * 따라서 처음 프로세스 카운트는 지정하지 않는다.
          */
         // setProcessCount(USER_PROCESS_COUNT) // 초기 구역경계선 스타일 설정을 위해 프로세스 카운트 설정 (따로 변수를 만들수도 있는데 기존 변수를 이용)
-      } else { 
+      } else {
         console.log('charinfo not exist')
       }
+      setSubmitButtonDisabled(true)
+      setResetButtonHidden(true)
     }
     localStorage.setItem("useProcess", JSON.stringify(useProcess))
   }, [charInfo, useProcess])
-
-
 
   React.useEffect(() => {
     // console.log('resetButtonHidden=', resetButtonHidden, ', processCount=', processCount, ', loading=', loading, ', tableStyle=', tableStyle)

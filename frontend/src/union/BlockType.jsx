@@ -117,6 +117,8 @@ class BlockType {
                 if (tableStyleValue[row][col] > 0) {
                     cellStyleInfo['background'] = this.blockColorOriginBg
                     cellMap.className = 'block'
+                } else {
+                    cellStyleInfo['background'] = this.closeTableColor
                 }
                 cellMap.style = cellStyleInfo
                 style[row][col] = cellMap
