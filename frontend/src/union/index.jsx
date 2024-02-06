@@ -11,7 +11,7 @@ import './index.css'
 import { getCSSProp } from '../util/util.jsx'
 import { useParams, useOutletContext } from 'react-router-dom'
 import { Menu } from '../common'
-import { Button } from '../common/clickable'
+import { Button, AfterImageButton } from '../common/clickable'
 import { CharMenu } from '../character';
 import { LoadingTable } from '../common';
 
@@ -55,6 +55,13 @@ export const UnionRaider = () => {
   const [regionMode, setRegionMode] = React.useState(false) // 지역선택모드인지, 단일셀 선택모드인지 세팅
   const [realTimeRender, setRealTimeRender] = React.useState(false) // 실시간 보기 세팅
   const [processCount, setProcessCount] = React.useState(INIT_PROCESS_COUNT)
+  const [useProcess, setUseProcess] = React.useState(false) // 유니온 배치프로세스 선택 모드
+
+  const handleUseProcess = () => {
+    setUseProcess(!useProcess)
+  }
+  React.useEffect(() => {
+  }, [useProcess])
 
 
 
@@ -149,14 +156,14 @@ export const UnionRaider = () => {
 
 
   React.useEffect(() => {
-    if (processCount >= INIT_PROCESS_COUNT) { 
+    if (processCount >= INIT_PROCESS_COUNT) {
       drawRegion(table)
     }
     if (!loading && !firstLoading) {
       firstLoading = true
-      if (charInfo) {
-        setSubmitButtonDisabled(false)
-      }
+      // if (charInfo) {
+      //   setSubmitButtonDisabled(false)
+      // }
     }
   }, [resetButtonHidden, processCount, loading]);
 
@@ -174,6 +181,11 @@ export const UnionRaider = () => {
           regionMode={regionMode}
           processCount={processCount}>
         </BasicTable>
+        <div className="use-process-btn-wrapper text-center">
+          <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
+            title={useProcess ? '내 정보 보기' : '자동 배치 모드'}>
+          </AfterImageButton>
+        </div>
         <div className="row justify-content-center" style={{ marginTop: '20px' }}>
           <div className="col-2"></div>
           <div className="col-auto">
@@ -311,7 +323,7 @@ function drawRegionByBlock(rowLen, colLen, row, col, direction) {
 }
 
 function checkBorderWidth(cellDOM, nearCellDOM) {
-  
+
   if (cellDOM.className.includes('block') && nearCellDOM.className.includes('block')) { // 자기도 블록이고 주변도 블록일시
     return blockBorderWidth
   } else if (!cellDOM.className.includes('block') && !nearCellDOM.className.includes('block')) { // 자기와 주변이 모두 블록이 아닐시
