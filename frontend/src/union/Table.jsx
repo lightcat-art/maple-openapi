@@ -123,7 +123,8 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
 
 
     const handleMouseDown = (e, row, col) => {
-        if (submitDisabled || processCount < ALGO_PROCESS_COUNT) {
+        console.log('mouse down submitdisabled=', submitDisabled, ', processCount=', processCount)
+        if (submitDisabled) {
             setDrag(false)
             return
         } else {
@@ -232,7 +233,7 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
     }
 
     const handleMouseEnter = (e, row, col) => {
-        if (processCount < ALGO_PROCESS_COUNT) {
+        if (submitDisabled) {
             return
         }
         const selectedElement = Array.from(
@@ -263,7 +264,7 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
     }
 
     const handleMouseLeave = (e, row, col) => {
-        if (processCount < ALGO_PROCESS_COUNT) {
+        if (submitDisabled) {
             return
         }
         const selectedElement = Array.from(

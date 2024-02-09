@@ -164,9 +164,9 @@ export const UnionRaider = () => {
 
   React.useEffect(() => {
     // console.log('resetButtonHidden=', resetButtonHidden, ', processCount=', processCount, ', loading=', loading, ', tableStyle=', tableStyle)
-    if (processCount >= INIT_PROCESS_COUNT) {
-      drawRegion(table)
-    }
+    // if (processCount >= INIT_PROCESS_COUNT) {
+    drawRegion(table)
+    // }
     if (!loading && !firstLoading) {
       firstLoading = true
       // if (charInfo) {
