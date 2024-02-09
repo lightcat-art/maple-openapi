@@ -20,9 +20,9 @@ let unionWorker = new WebWorker().getUnionWorker(worker)
 let firstLoading = false
 
 // hover 와 select를 비활성화 하고, 
-export const INIT_PROCESS_COUNT = -1 // 초기 테이블 생성시 프로세스 타입 . 
-export const ALGO_PROCESS_COUNT = 0 // 알고리즘 사용 시 프로세스 타입.
-export const USER_PROCESS_COUNT = -2 // 유저 테이블 가져오기시 프로세스 타입.
+export const PROCESS_INIT = -2 // 초기 테이블 생성 단계
+export const PROCESS_ALGO = 0 // 알고리즘 배치 시작 이후
+export const PROCESS_READY = -1 // 유저 테이블 가져오기 단계 또는 셀 선택 단계 
 
 let blockColor = []
 for (let i = 100; i <= 1500; i += 100) {
@@ -54,10 +54,9 @@ export const UnionRaider = () => {
   const [responseUnionBlock, setResponseUnionBlock] = React.useState([])
   const [regionMode, setRegionMode] = React.useState(false) // 지역선택모드인지, 단일셀 선택모드인지 세팅
   const [realTimeRender, setRealTimeRender] = React.useState(false) // 실시간 보기 세팅
-  const [processCount, setProcessCount] = React.useState(INIT_PROCESS_COUNT)
+  const [processType, setProcessType] = React.useState(PROCESS_INIT)
   const [useProcess, setUseProcess] = React.useState(localStorage.getItem("useProcess") ? JSON.parse(localStorage.getItem("useProcess")) : false) // 유니온 배치프로세스 선택 모드
   const [useProcessDisabled, setUseProcessDisabled] = React.useState(false)
-  console.log('useProcess check = ', useProcess)
   const handleUseProcess = () => {
     setUseProcess(!useProcess)
   }
@@ -65,7 +64,7 @@ export const UnionRaider = () => {
   const handleFormSubmit = (e) => {
     unionWorker = new WebWorker().getUnionWorker(worker)
     unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, cnt: 1 })
-    setProcessCount(ALGO_PROCESS_COUNT)
+    setProcessType(PROCESS_ALGO)
     setSubmitButtonDisabled(true)
     setPauseButtonHidden(true)
     setContinueButtonHidden(true)
@@ -115,7 +114,7 @@ export const UnionRaider = () => {
       const result = event.data;
       if (result) {
         if (result.count) {
-          setProcessCount(result.count)
+          setProcessType(result.count)
         }
         if (result.domiBlocks) {
           const styleValue = blockType.setTableStyleValue(result.table, result.domiBlocks)
@@ -129,7 +128,11 @@ export const UnionRaider = () => {
   }, [unionWorker]);
 
   React.useEffect(() => {
+    console.log('useProcess change check')
     if (useProcess) {
+      if (charInfo) {
+        setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock)
+      }
       if (localStorage.getItem('tableSelect')) {
         setTableStyle(blockType.getTableStyle(JSON.parse(localStorage.getItem('tableSelect'))))
       } else {
@@ -160,6 +163,7 @@ export const UnionRaider = () => {
       setResetButtonHidden(true)
     }
     localStorage.setItem("useProcess", JSON.stringify(useProcess))
+    setProcessType(PROCESS_READY)
   }, [charInfo, useProcess])
 
   React.useEffect(() => {
@@ -173,7 +177,7 @@ export const UnionRaider = () => {
       // setSubmitButtonDisabled(false)
       // }
     }
-  }, [resetButtonHidden, processCount, loading, tableStyle]);
+  }, [resetButtonHidden, processType, loading, tableStyle]);
 
 
   return (
@@ -187,7 +191,7 @@ export const UnionRaider = () => {
           tableStyle={tableStyle}
           submitDisabled={submitButtonDisabled}
           regionMode={regionMode}
-          processCount={processCount}>
+          processType={processType}>
         </BasicTable>
         <div className="use-process-btn-wrapper text-center">
           <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}

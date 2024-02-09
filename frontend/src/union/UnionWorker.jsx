@@ -8,10 +8,10 @@ export default () => {
     // const importTest = new BlockTypeTest()
     // importTest.test()
 
-    // console.log('Received message from main thread : ', e.data)
-    // console.log('Received union block : ', e.data.unionBlock)
-    // console.log('Received table : ', e.data.table)
-    // console.log('Received cnt : ', e.data.cnt)
+    console.log('Received message from main thread : ', e.data)
+    console.log('Received union block : ', e.data.unionBlock)
+    console.log('Received table : ', e.data.table)
+    console.log('Received cnt : ', e.data.cnt)
 
     let o = execute(e.data.table, e.data.unionBlock)
 

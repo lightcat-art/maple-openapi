@@ -3,7 +3,7 @@ import * as React from 'react';
 import { getCellDOM } from './index'
 import './index.css'
 import { getCSSProp } from '../util/util.jsx'
-import { ALGO_PROCESS_COUNT } from './index';
+import { PROCESS_INIT } from './index';
 
 const regionInfo = []
 
@@ -65,7 +65,7 @@ function getRegionCells(region) {
 regionDef()
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
-export function BasicTable({ style, tableStyle, setTable, table, submitDisabled, regionMode, processCount }) {
+export function BasicTable({ style, tableStyle, setTable, table, submitDisabled, regionMode, processType }) {
     const [select, setSelect] = React.useState([])
     // const [regionSelect, setRegionSelect] = React.useState([])
     // This variable will control if the user is dragging or not
@@ -81,13 +81,13 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
             document.getElementsByClassName('not-selected')
         );
         let table = Array.from(new Array(tableStyle.length), () => new Array(tableStyle[0].length).fill(0))
+        let selectExist = false
         for (var value of selectedElement.values()) {
             let position = value.getAttribute('uniqkey').split('-');
             const row = Number(position[0])
             const col = Number(position[1])
 
             table[row][col] = 1
-
             // if (regionMode) {
             //     const regionCells = getRegionCells(checkRegion(row, col))
             //     for (let regionCell of regionCells) {
@@ -114,8 +114,16 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
         //         cellDom.style.backgroundColor = cellNotSelectedColor
         //     }
         // }
-        setTable(table)
-
+        // 처음 페이지 진입할때 이미 localStorage가 있으면 업데이트하면 안됨.
+        console.log('table select update. processType = ', processType)
+        if (processType === PROCESS_INIT) {
+            setTable(JSON.parse(localStorage.getItem("tableSelect")))
+            setSelect(JSON.parse(localStorage.getItem("positionSelect")))
+        } else {
+            setTable(table)
+            localStorage.setItem("tableSelect", JSON.stringify(table))
+            localStorage.setItem("positionSelect", JSON.stringify(select))
+        }
 
 
     }, [drag]);
@@ -123,7 +131,6 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
 
 
     const handleMouseDown = (e, row, col) => {
-        console.log('mouse down submitdisabled=', submitDisabled, ', processCount=', processCount)
         if (submitDisabled) {
             setDrag(false)
             return
