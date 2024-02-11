@@ -1,6 +1,9 @@
 import './index.css';
 import { Link } from "react-router-dom";
 
+export const TABLE_ROW_LEN = 20
+export const TABLE_COL_LEN = 22
+
 export const Menu = ({ page }) => {
 
     return (

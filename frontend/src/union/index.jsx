@@ -10,7 +10,7 @@ import { CheckBox, SwitchCheckBox } from '../common/checkBox'
 import './index.css'
 import { getCSSProp } from '../util/util.jsx'
 import { useParams, useOutletContext } from 'react-router-dom'
-import { Menu } from '../common'
+import { Menu, TABLE_ROW_LEN, TABLE_COL_LEN } from '../common'
 import { Button, AfterImageButton } from '../common/clickable'
 import { CharMenu } from '../character';
 import { LoadingTable } from '../common';
@@ -22,7 +22,7 @@ let firstLoading = false
 // hover 와 select를 비활성화 하고, 
 export const PROCESS_INIT = -2 // 초기 테이블 생성 단계
 export const PROCESS_ALGO = 0 // 알고리즘 배치 시작 이후
-export const PROCESS_READY = -1 // 유저 테이블 가져오기 단계 또는 셀 선택 단계 
+export const PROCESS_READY = -1 // 유저 테이블 가져오기 단계 또는 셀 선택 단계
 
 let blockColor = []
 for (let i = 100; i <= 1500; i += 100) {
@@ -43,8 +43,8 @@ export const UnionRaider = () => {
   // console.log('unionraider loading = ', loading)
   const blockType = new BlockType(blockColor, cellSelectedColor, blockColorOrigin, blockColorOriginBorder);
 
-  const [table, setTable] = React.useState(Array.from(Array(20), () => Array(22).fill(0)))
-  const defaultTableStyle = Array.from(Array(table.length), () => Array(table[0].length).fill({}))
+  const [table, setTable] = React.useState(Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN)).fill(0))
+  const defaultTableStyle = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill({}))
   const [tableStyle, setTableStyle] = React.useState(defaultTableStyle)
   const [result, setResult] = React.useState(null)
   const [submitButtonDisabled, setSubmitButtonDisabled] = React.useState(true)
@@ -169,7 +169,7 @@ export const UnionRaider = () => {
   React.useEffect(() => {
     // console.log('resetButtonHidden=', resetButtonHidden, ', processCount=', processCount, ', loading=', loading, ', tableStyle=', tableStyle)
     // if (processCount >= INIT_PROCESS_COUNT) {
-    drawRegion(table)
+    drawRegion(TABLE_ROW_LEN, TABLE_COL_LEN)
     // }
     if (!loading && !firstLoading) {
       firstLoading = true
@@ -226,9 +226,7 @@ export function getCellDOM(row, col) {
   return document.getElementById("union-table").getElementsByTagName("tr")[row].getElementsByTagName("td")[col]
 }
 
-function drawRegion(table) {
-  const rowLen = table.length
-  const colLen = table[0].length
+function drawRegion(rowLen, colLen) {
 
   // tabe style이 들어오는거 인식하네..? tablestyle과 lastResult state는 같은 단계에서 설정되므로 
   // 그다음 lastResult state 변경을 감지할땐 tablestyle도 같이 렌더링된 이후이다. 따라서 인식이 되는것.

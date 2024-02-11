@@ -4,7 +4,7 @@ import { getCellDOM } from './index'
 import './index.css'
 import { getCSSProp } from '../util/util.jsx'
 import { PROCESS_INIT } from './index';
-
+import { TABLE_ROW_LEN, TABLE_COL_LEN } from '../common'
 const regionInfo = []
 
 const cellSelectedHoverColor = getCSSProp(document.documentElement, '--cell-selected-hover-color')
@@ -12,9 +12,7 @@ const cellNotSelectedHoverColor = getCSSProp(document.documentElement, '--cell-n
 const cellSelectedColor = getCSSProp(document.documentElement, '--cell-selected-color')
 const cellNotSelectedColor = getCSSProp(document.documentElement, '--cell-not-selected-color')
 
-function regionDef() {
-    const rowLen = 20
-    const colLen = 22
+function regionDef(rowLen, colLen) {
     const regionCount = 16
     for (let i = 0; i < regionCount; i++) {
         regionInfo.push([])
@@ -62,7 +60,7 @@ function getRegionCells(region) {
     return regionInfo[region]
 }
 
-regionDef()
+regionDef(TABLE_ROW_LEN, TABLE_COL_LEN)
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
 export function BasicTable({ style, tableStyle, setTable, table, submitDisabled, regionMode, processType }) {
@@ -80,7 +78,7 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
         const notSelectedElement = Array.from(
             document.getElementsByClassName('not-selected')
         );
-        let table = Array.from(new Array(tableStyle.length), () => new Array(tableStyle[0].length).fill(0))
+        let table = Array.from(new Array(TABLE_ROW_LEN), () => new Array(TABLE_COL_LEN).fill(0))
         let selectExist = false
         for (var value of selectedElement.values()) {
             let position = value.getAttribute('uniqkey').split('-');
