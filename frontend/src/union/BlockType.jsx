@@ -74,9 +74,8 @@ class BlockType {
         return resultPosition
     }
 
-    getUserInfoStyle(table, domiBlocks) {
-        let rowLen = table.length
-        let colLen = table[0].length
+    getUserInfoStyle(rowLen, colLen, domiBlocks) {
+
         let tableStyleValue = Array.from(Array(rowLen), () => Array(colLen).fill(0))
         for (let i = 0; i < domiBlocks.length; i++) {
             const domiBlock = domiBlocks[i]
@@ -95,8 +94,8 @@ class BlockType {
 
         const direction = [[-1, 0], [1, 0], [0, 1], [0, -1]] // top, left, right, bottom
         const directionNum = [1, 8, 4, 2]
-        for (let row = 0; row < table.length; row++) {
-            for (let col = 0; col < table[0].length; col++) {
+        for (let row = 0; row < rowLen; row++) {
+            for (let col = 0; col < colLen; col++) {
                 let cellMap = {}
                 let cellStyleInfo = {}
 

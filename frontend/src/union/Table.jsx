@@ -70,7 +70,6 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
     const [drag, setDrag] = React.useState(false)
     const [selectMode, setSelectMode] = React.useState(true) // 선택모드 인지, 해제모드 인지 세팅
 
-
     React.useEffect(() => {
         const selectedElement = Array.from(
             document.getElementsByClassName('selected')
@@ -113,13 +112,13 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
         //     }
         // }
         // 처음 페이지 진입할때 이미 localStorage가 있으면 업데이트하면 안됨.
-        console.log('table select update. processType = ', processType)
         if (processType === PROCESS_INIT) {
             if (localStorage.getItem("tableSelect")) {
                 setTable(JSON.parse(localStorage.getItem("tableSelect")))
             } else {
                 // 이게 없으면 tableSelect와 positionSelect가 생성되지 않은 초기 페이지 진입케이스에서 table DOM이 생성되지 않아 오류가 남.
-                setTable(table)
+                // table state 생성시 20,1 로 잘못생성되던 문제떄문인것으로 파악됨. setTable은 여기서 안해줘도 될듯.
+                // setTable(table)
             }
             if (localStorage.getItem("positionSelect")) {
                 setSelect(JSON.parse(localStorage.getItem("positionSelect")))
@@ -152,7 +151,8 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
             const regionCells = getRegionCells(checkRegion(row, col))
             let regionSelected = true
             for (const regionCell of regionCells) {
-                if (table[regionCell[0]][regionCell[1]] < 1) {
+                const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
+                if (regionCellIdx < 0) {
                     regionSelected = false
                 }
             }
@@ -204,12 +204,6 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
 
             if (regionMode) {
                 const regionCells = getRegionCells(checkRegion(row, col))
-                let regionSelected = true
-                for (const regionCell of regionCells) {
-                    if (table[regionCell[0]][regionCell[1]] < 1) {
-                        regionSelected = false
-                    }
-                }
                 if (selectMode) {
                     setSelectMode(true)
                     for (const regionCell of regionCells) {

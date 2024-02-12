@@ -43,7 +43,7 @@ export const UnionRaider = () => {
   // console.log('unionraider loading = ', loading)
   const blockType = new BlockType(blockColor, cellSelectedColor, blockColorOrigin, blockColorOriginBorder);
 
-  const [table, setTable] = React.useState(Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN)).fill(0))
+  const [table, setTable] = React.useState(Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill(0)))
   const defaultTableStyle = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill({}))
   const [tableStyle, setTableStyle] = React.useState(defaultTableStyle)
   const [result, setResult] = React.useState(null)
@@ -93,9 +93,7 @@ export const UnionRaider = () => {
   const handleFormReset = (e) => {
     new WebWorker().clearUnionWorker()
     unionWorker = new WebWorker().getUnionWorker(worker)
-    // setTable(table)
     setTableStyle(defaultTableStyle)
-    console.log('worker terminate')
     setSubmitButtonDisabled(false)
     setPauseButtonHidden(true)
     setContinueButtonHidden(true)
@@ -128,7 +126,7 @@ export const UnionRaider = () => {
   }, [unionWorker]);
 
   React.useEffect(() => {
-    console.log('useProcess change check')
+    // console.log('useProcess change check. useProcess=',useProcess,', table =',table)
     if (useProcess) {
       if (charInfo) {
         setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock)
@@ -145,11 +143,11 @@ export const UnionRaider = () => {
         setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock)
         let domiBlocks = []
         charInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
-          domiBlocks.push(blockType.transformPosition(block.blockPosition, table.length / 2, table[0].length / 2))
+          domiBlocks.push(blockType.transformPosition(block.blockPosition, TABLE_ROW_LEN / 2, TABLE_COL_LEN / 2))
         })
         // const styleValue = blockType.setTableStyleValue(table, domiBlocks)
         // setTableStyle(blockType.getTableStyle(styleValue))
-        setTableStyle(blockType.getUserInfoStyle(table, domiBlocks));
+        setTableStyle(blockType.getUserInfoStyle(TABLE_ROW_LEN, TABLE_COL_LEN, domiBlocks));
 
         /**
          * 초기 processCount를 지정하지 않아도 charInfo가 변하면 loading도 변하게 되어있으므로 charInfo 종속성 처리 이후 loading 종속성 처리 rerendering됨.
@@ -157,7 +155,7 @@ export const UnionRaider = () => {
          */
         // setProcessCount(USER_PROCESS_COUNT) // 초기 구역경계선 스타일 설정을 위해 프로세스 카운트 설정 (따로 변수를 만들수도 있는데 기존 변수를 이용)
       } else {
-        console.log('charinfo not exist')
+        // console.log('charinfo not exist')
       }
       setSubmitButtonDisabled(true)
       setResetButtonHidden(true)
