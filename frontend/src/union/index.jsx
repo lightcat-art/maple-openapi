@@ -17,7 +17,7 @@ import { LoadingTable } from '../common';
 
 
 let unionWorker = new WebWorker().getUnionWorker(worker)
-let firstLoading = false
+let loadingDone = false
 
 // hover 와 select를 비활성화 하고, 
 export const PROCESS_INIT = -2 // 초기 테이블 생성 단계
@@ -104,7 +104,7 @@ export const UnionRaider = () => {
   }
 
   React.useEffect(() => {
-    firstLoading = false
+    loadingDone = false
   }, [])
 
   // let users = [1,3,4,2,2,4,5]
@@ -168,11 +168,11 @@ export const UnionRaider = () => {
 
   React.useEffect(() => {
     // console.log('resetButtonHidden=', resetButtonHidden, ', processCount=', processCount, ', loading=', loading, ', tableStyle=', tableStyle)
-    // if (processCount >= INIT_PROCESS_COUNT) {
-    drawRegion(TABLE_ROW_LEN, TABLE_COL_LEN)
+    // if (processType >= PROCESS_READY) {
+      drawRegion(TABLE_ROW_LEN, TABLE_COL_LEN)
     // }
-    if (!loading && !firstLoading) {
-      firstLoading = true
+    if (!loading && !loadingDone) {
+      loadingDone = true
       // if (charInfo) {
       // setSubmitButtonDisabled(false)
       // }
