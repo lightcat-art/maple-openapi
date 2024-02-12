@@ -58,56 +58,61 @@ export default () => {
     }
 
     console.log('origin success : ', threads[0].complete, ', 1 : ', threads[1].complete, ', 2: ', threads[2].complete, ', 3: ', threads[3].complete)
-    let domiBlocks = null
-    let processCount = null
-    if (threads[0].complete) {
-      // console.log('origin success')
-      // console.log('blocks:', threads[0].resultBlocks)
-      domiBlocks = threads[0].resultDomiBlocks
-      processCount = threads[0].addProcessCount()
-    } else if (threads[1].complete) {
-      // console.log('yxSym success')
-      // console.log('blocks:', threads[1].resultBlocks)
-      // postMessage({ table: table, domiBlocks: threads[1].resultDomiBlocks })
-      let resultDomiBlocks = []
-      for (let domiBlock of threads[1].resultDomiBlocks) {
-        let resultDomiBlock = []
-        for (let coord of domiBlock) {
-          resultDomiBlock.push([coord[1], coord[0]])
+    if (threads[0].complete || threads[1].complete || threads[2].complete || threads[3].complete) {
+      let domiBlocks = null
+      let processCount = null
+      if (threads[0].complete) {
+        // console.log('origin success')
+        // console.log('blocks:', threads[0].resultBlocks)
+        domiBlocks = threads[0].resultDomiBlocks
+        processCount = threads[0].addProcessCount()
+      } else if (threads[1].complete) {
+        // console.log('yxSym success')
+        // console.log('blocks:', threads[1].resultBlocks)
+        // postMessage({ table: table, domiBlocks: threads[1].resultDomiBlocks })
+        let resultDomiBlocks = []
+        for (let domiBlock of threads[1].resultDomiBlocks) {
+          let resultDomiBlock = []
+          for (let coord of domiBlock) {
+            resultDomiBlock.push([coord[1], coord[0]])
+          }
+          resultDomiBlocks.push(resultDomiBlock)
         }
-        resultDomiBlocks.push(resultDomiBlock)
-      }
-      domiBlocks = resultDomiBlocks
-      processCount = threads[1].addProcessCount()
-    } else if (threads[2].complete) {
-      // console.log('origSym success')
-      // console.log('blocks:', threads[2].resultBlocks)
-      let resultDomiBlocks = []
-      for (let domiBlock of threads[2].resultDomiBlocks) {
-        let resultDomiBlock = []
-        for (let coord of domiBlock) {
-          resultDomiBlock.push([table.length - 1 - coord[0], table[0].length - 1 - coord[1]])
+        domiBlocks = resultDomiBlocks
+        processCount = threads[1].addProcessCount()
+      } else if (threads[2].complete) {
+        // console.log('origSym success')
+        // console.log('blocks:', threads[2].resultBlocks)
+        let resultDomiBlocks = []
+        for (let domiBlock of threads[2].resultDomiBlocks) {
+          let resultDomiBlock = []
+          for (let coord of domiBlock) {
+            resultDomiBlock.push([table.length - 1 - coord[0], table[0].length - 1 - coord[1]])
+          }
+          resultDomiBlocks.push(resultDomiBlock)
         }
-        resultDomiBlocks.push(resultDomiBlock)
-      }
-      domiBlocks = resultDomiBlocks
-      processCount = threads[2].addProcessCount()
-    } else if (threads[3].complete) {
-      // console.log('yxOrigSym success')
-      // console.log('blocks:', threads[3].resultBlocks)
-      let resultDomiBlocks = []
-      for (let domiBlock of threads[3].resultDomiBlocks) {
-        let resultDomiBlock = []
-        for (let coord of domiBlock) {
-          resultDomiBlock.push([table.length - 1 - coord[1], table[0].length - 1 - coord[0]])
+        domiBlocks = resultDomiBlocks
+        processCount = threads[2].addProcessCount()
+      } else if (threads[3].complete) {
+        // console.log('yxOrigSym success')
+        // console.log('blocks:', threads[3].resultBlocks)
+        let resultDomiBlocks = []
+        for (let domiBlock of threads[3].resultDomiBlocks) {
+          let resultDomiBlock = []
+          for (let coord of domiBlock) {
+            resultDomiBlock.push([table.length - 1 - coord[1], table[0].length - 1 - coord[0]])
+          }
+          resultDomiBlocks.push(resultDomiBlock)
         }
-        resultDomiBlocks.push(resultDomiBlock)
+        domiBlocks = resultDomiBlocks
+        processCount = threads[3].addProcessCount()
       }
-      domiBlocks = resultDomiBlocks
-      processCount = threads[3].addProcessCount()
+
+      postMessage({ table: table, domiBlocks: domiBlocks, count: processCount })
+    } else {
+      postMessage({ count: -99 })
     }
 
-    postMessage({ table: table, domiBlocks: domiBlocks, count: processCount })
   }
 
   class PromiseTest {

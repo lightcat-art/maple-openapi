@@ -23,6 +23,7 @@ let loadingDone = false
 export const PROCESS_INIT = -2 // 초기 테이블 생성 단계
 export const PROCESS_ALGO = 0 // 알고리즘 배치 시작 이후
 export const PROCESS_READY = -1 // 유저 테이블 가져오기 단계 또는 셀 선택 단계
+export const PROCESS_FAIL = -99
 
 let blockColor = []
 for (let i = 100; i <= 1500; i += 100) {
@@ -112,14 +113,18 @@ export const UnionRaider = () => {
       const result = event.data;
       if (result) {
         if (result.count) {
-          setProcessType(result.count)
+          if (result.count === PROCESS_FAIL) {
+            alert('fail to find root')
+          } else {
+            console.log('result count=',result.count)
+            setProcessType(result.count)
+            if (result.domiBlocks) {
+              const styleValue = blockType.setTableStyleValue(result.table, result.domiBlocks)
+              const tableStyle = blockType.getTableStyle(styleValue)
+              setTableStyle(tableStyle);
+            }
+          }
         }
-        if (result.domiBlocks) {
-          const styleValue = blockType.setTableStyleValue(result.table, result.domiBlocks)
-          const tableStyle = blockType.getTableStyle(styleValue)
-          setTableStyle(tableStyle);
-        }
-
       }
     });
 
