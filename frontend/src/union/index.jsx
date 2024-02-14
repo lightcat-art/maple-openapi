@@ -1,8 +1,7 @@
 import './index.css'
 import * as React from 'react';
 import axios from 'axios';
-import UnionRaiderSetting from './UnionRaiderSetting';
-import BlockType from './BlockType';
+import BlockManager from './BlockManager';
 import { BasicTable } from './Table';
 import WebWorker from '../util/worker'
 import worker from './UnionWorker'
@@ -43,7 +42,7 @@ export const UnionRaider = () => {
   const [charInfo, loading] = useOutletContext();
   console.log('unionraider charinfo = ', charInfo)
   console.log('unionraider loading = ', loading)
-  const blockType = new BlockType(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder);
+  const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder);
 
   const [table, setTable] = React.useState(Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill(0)))
   const defaultTableStyle = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill({}))
@@ -59,6 +58,8 @@ export const UnionRaider = () => {
   const [processType, setProcessType] = React.useState(PROCESS_INIT)
   const [useProcess, setUseProcess] = React.useState(localStorage.getItem("useProcess") ? JSON.parse(localStorage.getItem("useProcess")) : false) // 유니온 배치프로세스 선택 모드
   const [useProcessDisabled, setUseProcessDisabled] = React.useState(false)
+  const [blockCount, setBlockCount] = React.useState(Array.from(Array(blockManager.baseBlockType.length).fill(0)))
+
   const handleUseProcess = () => {
     setUseProcess(!useProcess)
   }
@@ -117,11 +118,11 @@ export const UnionRaider = () => {
           if (result.count === PROCESS_FAIL) {
             alert('fail to find root')
           } else {
-            console.log('result count=',result.count)
+            console.log('result count=', result.count)
             setProcessType(result.count)
             if (result.domiBlocks) {
-              const styleValue = blockType.setTableStyleValue(result.table, result.domiBlocks)
-              const tableStyle = blockType.getTableStyle(styleValue)
+              const styleValue = blockManager.setTableStyleValue(result.table, result.domiBlocks)
+              const tableStyle = blockManager.getTableStyle(styleValue)
               setTableStyle(tableStyle);
             }
           }
@@ -132,13 +133,18 @@ export const UnionRaider = () => {
   }, [unionWorker]);
 
   React.useEffect(() => {
+    console.log('block count setting')
+    if (charInfo) {
+      setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock)
+      setBlockCount(blockManager.getBlockCount(charInfo.userUnionRaiderResponse.unionBlock))
+    }
+  }, [charInfo])
+
+  React.useEffect(() => {
     // console.log('useProcess change check. useProcess=',useProcess,', table =',table)
     if (useProcess) {
-      if (charInfo) {
-        setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock)
-      }
       if (localStorage.getItem('tableSelect')) {
-        setTableStyle(blockType.getTableStyle(JSON.parse(localStorage.getItem('tableSelect'))))
+        setTableStyle(blockManager.getTableStyle(JSON.parse(localStorage.getItem('tableSelect'))))
       } else {
         setTableStyle(defaultTableStyle)
       }
@@ -146,14 +152,13 @@ export const UnionRaider = () => {
       setResetButtonHidden(true)
     } else {
       if (charInfo) {
-        setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock)
         let domiBlocks = []
         charInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
-          domiBlocks.push(blockType.transformPosition(block.blockPosition, TABLE_ROW_LEN / 2, TABLE_COL_LEN / 2))
+          domiBlocks.push(blockManager.transformPosition(block.blockPosition, TABLE_ROW_LEN / 2, TABLE_COL_LEN / 2))
         })
         // const styleValue = blockType.setTableStyleValue(table, domiBlocks)
         // setTableStyle(blockType.getTableStyle(styleValue))
-        setTableStyle(blockType.getUserInfoStyle(TABLE_ROW_LEN, TABLE_COL_LEN, domiBlocks));
+        setTableStyle(blockManager.getUserInfoStyle(TABLE_ROW_LEN, TABLE_COL_LEN, domiBlocks));
 
         /**
          * 초기 processCount를 지정하지 않아도 charInfo가 변하면 loading도 변하게 되어있으므로 charInfo 종속성 처리 이후 loading 종속성 처리 rerendering됨.
@@ -173,7 +178,7 @@ export const UnionRaider = () => {
   React.useEffect(() => {
     // console.log('resetButtonHidden=', resetButtonHidden, ', processCount=', processCount, ', loading=', loading, ', tableStyle=', tableStyle)
     // if (processType >= PROCESS_READY) {
-      drawRegion(TABLE_ROW_LEN, TABLE_COL_LEN)
+    drawRegion(TABLE_ROW_LEN, TABLE_COL_LEN)
     // }
     if (!loading && !loadingDone) {
       loadingDone = true
@@ -197,6 +202,7 @@ export const UnionRaider = () => {
           regionMode={regionMode}
           processType={processType}>
         </BasicTable>
+        <div>{blockCount}</div>
         <div className="use-process-btn-wrapper text-center">
           <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
             disabled={useProcessDisabled}

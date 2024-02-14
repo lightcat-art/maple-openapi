@@ -1,9 +1,9 @@
-class BlockType {
+class BlockManager {
     // React component에서 선언하는 경우 다시 새로고침하면 인스턴스 날아감.
     // 현재 가지고 있는 블록 정보를 기반으로 화면에 표시할수 있도록 도와주는 클래스
     static instance;
     constructor(blockColor, selectedTableColor, basicTableColor, blockColorOriginBg, blockColorOriginBd) {
-        if (BlockType.instance) return BlockType.instance;
+        if (BlockManager.instance) return BlockManager.instance;
         this.baseBlockType = [
             [[0, 0], [0, 1], [1, 1], [1, 2], [1, 3]], // z-asym
             [[0, 0], [0, 1], [1, 1], [2, 1], [2, 2]], // z-sym
@@ -33,7 +33,33 @@ class BlockType {
         this.getAllBlockType();
         this.closeTableValue = 0 // 유니온 지도에서 채울수 없는 부분
         this.blankTableValue = 1 // 유니온 지도에서 채워질 부분 (비어있는 부분)
-        BlockType.instance = this;
+        BlockManager.instance = this;
+    }
+
+    getBlockCount(requestBlocks) {
+        if (!requestBlocks) {
+            console.log("raider information is null.");
+            return;
+        }
+        let resultCount = Array.from(Array(this.baseBlockType.length).fill(0))
+        requestBlocks.forEach(block => {
+            const normalizedBlock = this.normalizeOriginBlock(block.blockPosition)
+            const idx = this.getBlockIdx(normalizedBlock)
+            resultCount[idx]++
+        })
+        return resultCount
+    }
+
+    getBlockIdx(block) {
+        for (let i = 0; i < this.allBlockType.length; i++) {
+            let blockType = Array.from(this.allBlockType[i])
+            for (let j = 0; j < blockType.length; j++) {
+                let blockRotateType = blockType[j]
+                if (JSON.stringify(block) === JSON.stringify(blockRotateType)) {
+                    return i
+                }
+            }
+        }
     }
 
     getDefaultTableStyle(table) {
@@ -61,6 +87,26 @@ class BlockType {
         let minCol = Math.min(...block.map(v => v[1]))
 
         return block.map(v => [v[0] - minRow, v[1] - minCol]).sort()
+    }
+
+    /**
+*  * map형태 ex) [{x: 24, y: 25}, ...] 로 되어있는 유니온 초기 오브젝트를 normalize
+* --------
+* 초기 오브젝트 x,y :
+* 좌측으로 1칸씩 이동하면 x가 1씩 감소
+* 우측으로 1칸씩 이동하면 x가 1씩 증가
+* 아래로 1칸씩 이동하면 y가 1씩 감소
+* 위로 1칸씩 이동하면 y가 1씩 증가
+* -> 좌표평면 규칙이므로 matrix 형태로 변환시켜야함.
+* --------
+* @param {*} block 
+* @returns 
+*/
+    normalizeOriginBlock(block) {
+        let minY = Math.min(...block.map(v => v.y))
+        let minX = Math.min(...block.map(v => v.x))
+
+        return block.map(v => [v.y - minY, v.x - minX]).sort()
     }
 
     /**
@@ -338,4 +384,4 @@ class BlockType {
 
 }
 
-export default BlockType;
+export default BlockManager;
