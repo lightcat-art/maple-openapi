@@ -2,7 +2,7 @@ class BlockType {
     // React component에서 선언하는 경우 다시 새로고침하면 인스턴스 날아감.
     // 현재 가지고 있는 블록 정보를 기반으로 화면에 표시할수 있도록 도와주는 클래스
     static instance;
-    constructor(blockColor, selectedTableColor, blockColorOriginBg, blockColorOriginBd) {
+    constructor(blockColor, selectedTableColor, basicTableColor, blockColorOriginBg, blockColorOriginBd) {
         if (BlockType.instance) return BlockType.instance;
         this.baseBlockType = [
             [[0, 0], [0, 1], [1, 1], [1, 2], [1, 3]], // z-asym
@@ -21,7 +21,7 @@ class BlockType {
             [[0, 0], [0, 1]], // I
             [[0, 0]], // dot
         ]
-        this.closeTableColor = '#ffffff'
+        this.closeTableColor = basicTableColor
         this.selectedTableColor = selectedTableColor
         this.blockTypeColor = blockColor
         this.blockColorOriginBg = blockColorOriginBg // 유저 유니온 정보 블록 배경 색

@@ -33,6 +33,7 @@ for (let i = 100; i <= 1500; i += 100) {
 const regionBorderWidth = getCSSProp(document.documentElement, '--region-border-width')
 const blockBorderWidth = getCSSProp(document.documentElement, '--block-border-width')
 const cellSelectedColor = getCSSProp(document.documentElement, '--cell-selected-color')
+const cellNotSelectedColor = getCSSProp(document.documentElement, '--cell-not-selected-color')
 const blockColorOrigin = getCSSProp(document.documentElement, '--block-color-origin')
 const blockColorOriginBorder = getCSSProp(document.documentElement, '--block-color-origin-bd')
 
@@ -40,9 +41,9 @@ export const UnionRaider = () => {
   const { cname } = useParams();
   const param = { nickname: cname }
   const [charInfo, loading] = useOutletContext();
-  // console.log('unionraider charinfo = ', charInfo)
-  // console.log('unionraider loading = ', loading)
-  const blockType = new BlockType(blockColor, cellSelectedColor, blockColorOrigin, blockColorOriginBorder);
+  console.log('unionraider charinfo = ', charInfo)
+  console.log('unionraider loading = ', loading)
+  const blockType = new BlockType(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder);
 
   const [table, setTable] = React.useState(Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill(0)))
   const defaultTableStyle = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill({}))
