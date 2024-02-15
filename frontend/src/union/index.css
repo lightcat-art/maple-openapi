@@ -35,13 +35,27 @@
 .union-table-wrapper {
     padding-top: 30px;
     padding-bottom: 30px;
+
 }
 
 .block-count {
-    text-align: center;
     padding-top: 30px;
     padding-bottom: 30px;
 }
+
+
+
+.base-block-cell {
+    /* position: relative; */
+    width: 8px;
+    height: 8px;
+}
+
+.base-block-wrapper{
+    margin-top: 5px;
+    position: absolute;
+}
+
 
 .union-table {
     border: 4px solid black;
@@ -51,6 +65,7 @@
     position: relative;
     margin-left: auto;
     margin-right: auto;
+
     /* margin-top: 4vh; */
 }
 

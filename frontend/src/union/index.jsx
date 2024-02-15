@@ -125,11 +125,6 @@ export const UnionRaider = () => {
 
   React.useEffect(() => {
     loadingDone = false
-
-    const baseBlock = blockManager.baseBlockType
-    let maxRow = Math.max(...baseBlock[0].map(v => v[0]))
-    let maxCol = Math.max(...baseBlock[0].map(v => v[1]))
-    
   }, [])
 
   // let users = [1,3,4,2,2,4,5]
@@ -225,7 +220,48 @@ export const UnionRaider = () => {
     }
   }, [resetButtonHidden, processType, loading, tableStyle]);
 
+  const BlockCountContainer = (props) => {
+    return (
+      <div className={`container pt-1 block-${props.idx} ${props.className}`} style={props.style}>
+        <div className="row justify-content-center">
+          <div className={`col-auto ${props.blockClassName}`}>{baseBlock(props.idx)}</div>
+          <AfterImageButton style={{marginLeft: '70px'}} className="col-auto" disabled={blockCountDisabled[props.idx]} action={() => handleDecrease(props.idx)} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
+          <div className="col-auto pt-1">{blockCount[props.idx]}</div>
+          <AfterImageButton className="col-auto" action={() => handleIncrease(props.idx)} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
+        </div>
+      </div>
+    )
+  }
 
+  const baseBlock = (idx) => {
+    const block = blockManager.baseBlockType[idx]
+    const blockColor = blockManager.blockTypeColor[idx]
+    let maxRow = Math.max(...block.map(v => v[0]))
+    let maxCol = Math.max(...block.map(v => v[1]))
+    let blockStyle = Array.from(Array(maxRow + 1), () => Array(maxCol + 1).fill({}))
+
+    block.forEach((pos) => {
+      blockStyle[pos[0]][pos[1]] = { background: blockColor }
+    })
+
+    return (
+      <div className="base-block-wrapper">
+        <table className="base-block">
+          <tbody>
+            {blockStyle.map((row, i) => (
+              <tr key={i}>
+                {row.map((v, j) => (
+                  <td
+                    key={j} className="base-block-cell" style={v} uniqkey={`${i}-${j}`}>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  };
 
   return (
     <>
@@ -242,35 +278,23 @@ export const UnionRaider = () => {
               processType={processType}>
             </BasicTable>
           </div>
-          <div className="col-3 block-count">
-            <div className="container block-0">
-              <div className="row">
-                
-                <AfterImageButton className="col-auto" disabled={blockCountDisabled[0]} action={() => handleDecrease(0)} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
-                <div className="col-auto">{blockCount[0]}</div>
-                <AfterImageButton className="col-auto" action={() => handleIncrease(0)} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
-              </div>
-            </div>
-            <div className="container block-1">
-              <div className="row">
-                <AfterImageButton className="col-auto" imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>} />
-                <div className="col-auto" >{blockCount[1]}</div>
-                <AfterImageButton className="col-auto" imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
-              </div>
-            </div>
-            <div>{blockCount[2]}</div>
-            <div>{blockCount[3]}</div>
-            <div>{blockCount[4]}</div>
-            <div>{blockCount[5]}</div>
-            <div>{blockCount[6]}</div>
-            <div>{blockCount[7]}</div>
-            <div>{blockCount[8]}</div>
-            <div>{blockCount[9]}</div>
-            <div>{blockCount[10]}</div>
-            <div>{blockCount[11]}</div>
-            <div>{blockCount[12]}</div>
-            <div>{blockCount[13]}</div>
-            <div>{blockCount[14]}</div>
+          <div className="col-auto block-count">
+            <BlockCountContainer blockClassName="pt-1" idx={0}/>
+            <BlockCountContainer idx={1}/>
+            <BlockCountContainer idx={2}/>
+            <BlockCountContainer idx={3}/>
+            <BlockCountContainer blockClassName="pt-2" idx={4}/>
+            <BlockCountContainer blockClassName="pt-1" idx={5}/>
+            <BlockCountContainer blockClassName="pt-1" idx={6}/>
+            <BlockCountContainer idx={7}/>
+            <BlockCountContainer blockClassName="pt-1" idx={8}/>
+            <BlockCountContainer blockClassName="pt-2" idx={9}/>
+            <BlockCountContainer blockClassName="pt-1" idx={10}/>
+            <BlockCountContainer blockClassName="pt-2" idx={11}/>
+            <BlockCountContainer blockClassName="pt-1" idx={12}/>
+            <BlockCountContainer blockClassName="pt-2" idx={13}/>
+            <BlockCountContainer blockClassName="pt-2" idx={14}/>
+            
           </div>
         </div>
       </div>
