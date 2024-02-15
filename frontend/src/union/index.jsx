@@ -12,6 +12,8 @@ import { useParams, useOutletContext } from 'react-router-dom'
 import { Menu, TABLE_ROW_LEN, TABLE_COL_LEN } from '../common'
 import { Button, AfterImageButton } from '../common/clickable'
 import { CharMenu } from '../character';
+import decreaseIcon from '../static/icons/chevron_left_FILL0_wght400_GRAD0_opsz20.png'
+import increaseIcon from '../static/icons/chevron_right_FILL0_wght400_GRAD0_opsz20.png'
 import { LoadingTable } from '../common';
 
 
@@ -59,6 +61,7 @@ export const UnionRaider = () => {
   const [useProcess, setUseProcess] = React.useState(localStorage.getItem("useProcess") ? JSON.parse(localStorage.getItem("useProcess")) : false) // 유니온 배치프로세스 선택 모드
   const [useProcessDisabled, setUseProcessDisabled] = React.useState(false)
   const [blockCount, setBlockCount] = React.useState(Array.from(Array(blockManager.baseBlockType.length).fill(0)))
+  const [blockCountDisabled, setBlockCountDisabled] = React.useState(Array.from(Array(blockManager.baseBlockType.length).fill(false)))
 
   const handleUseProcess = () => {
     setUseProcess(!useProcess)
@@ -104,8 +107,29 @@ export const UnionRaider = () => {
     setUseProcessDisabled(false)
   }
 
+  const handleDecrease = (idx) => {
+    setBlockCount(prev => {
+      prev[idx]--
+      if (prev[idx] <= 0) {
+      }
+      return [...prev]
+    })
+  }
+
+  const handleIncrease = (idx) => {
+    setBlockCount(prev => {
+      prev[idx]++
+      return [...prev]
+    })
+  }
+
   React.useEffect(() => {
     loadingDone = false
+
+    const baseBlock = blockManager.baseBlockType
+    let maxRow = Math.max(...baseBlock[0].map(v => v[0]))
+    let maxCol = Math.max(...baseBlock[0].map(v => v[1]))
+    
   }, [])
 
   // let users = [1,3,4,2,2,4,5]
@@ -135,10 +159,23 @@ export const UnionRaider = () => {
   React.useEffect(() => {
     console.log('block count setting')
     if (charInfo) {
-      setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock)
-      setBlockCount(blockManager.getBlockCount(charInfo.userUnionRaiderResponse.unionBlock))
+      setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock) // blockCount가 알고리즘 입력으로 들어갈 준비가 되면 제거할 코드
+      const extractCount = blockManager.getBlockCount(charInfo.userUnionRaiderResponse.unionBlock)
+      setBlockCount(extractCount)
     }
   }, [charInfo])
+
+  React.useEffect(() => {
+    let decreaseDisabled = []
+    for (let i = 0; i < blockCount.length; i++) {
+      if (blockCount[i] <= 0) {
+        decreaseDisabled.push(true)
+      } else {
+        decreaseDisabled.push(false)
+      }
+    }
+    setBlockCountDisabled(decreaseDisabled)
+  }, [blockCount])
 
   React.useEffect(() => {
     // console.log('useProcess change check. useProcess=',useProcess,', table =',table)
@@ -189,20 +226,55 @@ export const UnionRaider = () => {
   }, [resetButtonHidden, processType, loading, tableStyle]);
 
 
+
   return (
     <>
       <CharMenu page='union'></CharMenu>
-      <div className="container-fluid" >
-        <BasicTable
-          table={table}
-          setTable={setTable}
-          style={{ paddingTop: '30px', paddingBottom: '30px' }}
-          tableStyle={tableStyle}
-          submitDisabled={submitButtonDisabled}
-          regionMode={regionMode}
-          processType={processType}>
-        </BasicTable>
-        <div>{blockCount}</div>
+      <div className="container-fluid">
+        <div className="row justify-content-center">
+          <div className="col-auto">
+            <BasicTable
+              table={table}
+              setTable={setTable}
+              tableStyle={tableStyle}
+              submitDisabled={submitButtonDisabled}
+              regionMode={regionMode}
+              processType={processType}>
+            </BasicTable>
+          </div>
+          <div className="col-3 block-count">
+            <div className="container block-0">
+              <div className="row">
+                
+                <AfterImageButton className="col-auto" disabled={blockCountDisabled[0]} action={() => handleDecrease(0)} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
+                <div className="col-auto">{blockCount[0]}</div>
+                <AfterImageButton className="col-auto" action={() => handleIncrease(0)} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
+              </div>
+            </div>
+            <div className="container block-1">
+              <div className="row">
+                <AfterImageButton className="col-auto" imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>} />
+                <div className="col-auto" >{blockCount[1]}</div>
+                <AfterImageButton className="col-auto" imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
+              </div>
+            </div>
+            <div>{blockCount[2]}</div>
+            <div>{blockCount[3]}</div>
+            <div>{blockCount[4]}</div>
+            <div>{blockCount[5]}</div>
+            <div>{blockCount[6]}</div>
+            <div>{blockCount[7]}</div>
+            <div>{blockCount[8]}</div>
+            <div>{blockCount[9]}</div>
+            <div>{blockCount[10]}</div>
+            <div>{blockCount[11]}</div>
+            <div>{blockCount[12]}</div>
+            <div>{blockCount[13]}</div>
+            <div>{blockCount[14]}</div>
+          </div>
+        </div>
+      </div>
+      <div>
         <div className="use-process-btn-wrapper text-center">
           <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
             disabled={useProcessDisabled}
@@ -230,6 +302,11 @@ export const UnionRaider = () => {
 
     </>
   )
+}
+
+
+export function getBlockTypeDOM(row) {
+  return document.getElementById("union-block-type")[row]
 }
 
 export function getCellDOM(row, col) {

@@ -304,11 +304,11 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
     }
 
     return (
-        <div onMouseUp={(e) => handleMouseUp()}>
+        <div className="union-table-wrapper" onMouseUp={(e) => handleMouseUp()}>
             {/* <div className="row">
                 <div className="col-2"></div>
             </div> */}
-            <div style={style}
+            <div
             // style={{ position: relative }}
             // onMouseMove={(e) => preventOutsideDrag(e)}
             >
