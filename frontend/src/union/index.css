@@ -38,12 +38,14 @@
 
 }
 
-.block-count {
+.block-counts {
     padding-top: 30px;
     padding-bottom: 30px;
 }
 
-
+.block-tooltip {
+    z-index: 999;
+}
 
 .base-block-cell {
     /* position: relative; */
@@ -54,8 +56,8 @@
 .base-block-wrapper{
     margin-top: 5px;
     position: absolute;
+    z-index: -999;
 }
-
 
 .union-table {
     border: 4px solid black;

@@ -14,8 +14,7 @@ import { Button, AfterImageButton } from '../common/clickable'
 import { CharMenu } from '../character';
 import decreaseIcon from '../static/icons/chevron_left_FILL0_wght400_GRAD0_opsz20.png'
 import increaseIcon from '../static/icons/chevron_right_FILL0_wght400_GRAD0_opsz20.png'
-import { LoadingTable } from '../common';
-
+import { Tooltip } from 'react-tooltip'
 
 let unionWorker = new WebWorker().getUnionWorker(worker)
 let loadingDone = false
@@ -62,6 +61,7 @@ export const UnionRaider = () => {
   const [useProcessDisabled, setUseProcessDisabled] = React.useState(false)
   const [blockCount, setBlockCount] = React.useState(Array.from(Array(blockManager.baseBlockType.length).fill(0)))
   const [blockCountDisabled, setBlockCountDisabled] = React.useState(Array.from(Array(blockManager.baseBlockType.length).fill(false)))
+  const [blockDesc, setBlockDesc] = React.useState([])
 
   const handleUseProcess = () => {
     setUseProcess(!useProcess)
@@ -155,8 +155,9 @@ export const UnionRaider = () => {
     console.log('block count setting')
     if (charInfo) {
       setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock) // blockCount가 알고리즘 입력으로 들어갈 준비가 되면 제거할 코드
-      const extractCount = blockManager.getBlockCount(charInfo.userUnionRaiderResponse.unionBlock)
-      setBlockCount(extractCount)
+      const extractMap = blockManager.getBlockCount(charInfo.userUnionRaiderResponse.unionBlock)
+      setBlockCount(extractMap.count)
+      setBlockDesc(extractMap.desc)
     }
   }, [charInfo])
 
@@ -222,12 +223,12 @@ export const UnionRaider = () => {
 
   const BlockCountContainer = (props) => {
     return (
-      <div className={`container pt-1 block-${props.idx} ${props.className}`} style={props.style}>
+      <div className={`container pt-1 block-count block-${props.idx} ${props.className? props.className: ''}`} style={props.style}>
         <div className="row justify-content-center">
-          <div className={`col-auto ${props.blockClassName}`}>{baseBlock(props.idx)}</div>
-          <AfterImageButton style={{marginLeft: '70px'}} className="col-auto" disabled={blockCountDisabled[props.idx]} action={() => handleDecrease(props.idx)} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
+          <div className={`col-auto ${props.blockClassName? props.blockClassName: ''}`} data-tooltip-id={`block-tooltip-${props.idx}`}>{baseBlock(props.idx)}</div>
+          <AfterImageButton style={{ marginLeft: '70px' }} className="col-auto block-decrease" disabled={blockCountDisabled[props.idx]} action={() => handleDecrease(props.idx)} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
           <div className="col-auto pt-1">{blockCount[props.idx]}</div>
-          <AfterImageButton className="col-auto" action={() => handleIncrease(props.idx)} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
+          <AfterImageButton className="col-auto block-increase" action={() => handleIncrease(props.idx)} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
         </div>
       </div>
     )
@@ -263,6 +264,40 @@ export const UnionRaider = () => {
     )
   };
 
+  const BlockTooltip = () => {
+    if (!blockDesc) {
+      return <></>
+    }
+    function getTooltips() {
+      let tooltips = []
+      for (let i = 0; i < blockDesc.length; i++) {
+        let classDescDoms = []
+        for (let j = 0; j < blockDesc[i].classDesc.length; j++) {
+          let classDesc = blockDesc[i].classDesc[j]
+          classDescDoms.push(
+            <>
+              <div>{classDesc.level}</div>
+              <div>{classDesc.className}</div>
+              <div>{classDesc.type}</div>
+            </>)
+        }
+
+        tooltips.push(
+          <Tooltip id={`block-tooltip-${i}`} className='block-tooltip'>
+            <div>{blockDesc[i].desc}</div>
+            <div>
+              {classDescDoms}
+            </div>
+          </Tooltip>
+        )
+      }
+      return tooltips
+    }
+    return (
+      <div>{getTooltips()}</div>
+    )
+  }
+
   return (
     <>
       <CharMenu page='union'></CharMenu>
@@ -278,23 +313,24 @@ export const UnionRaider = () => {
               processType={processType}>
             </BasicTable>
           </div>
-          <div className="col-auto block-count">
-            <BlockCountContainer blockClassName="pt-1" idx={0}/>
-            <BlockCountContainer idx={1}/>
-            <BlockCountContainer idx={2}/>
-            <BlockCountContainer idx={3}/>
-            <BlockCountContainer blockClassName="pt-2" idx={4}/>
-            <BlockCountContainer blockClassName="pt-1" idx={5}/>
-            <BlockCountContainer blockClassName="pt-1" idx={6}/>
-            <BlockCountContainer idx={7}/>
-            <BlockCountContainer blockClassName="pt-1" idx={8}/>
-            <BlockCountContainer blockClassName="pt-2" idx={9}/>
-            <BlockCountContainer blockClassName="pt-1" idx={10}/>
-            <BlockCountContainer blockClassName="pt-2" idx={11}/>
-            <BlockCountContainer blockClassName="pt-1" idx={12}/>
-            <BlockCountContainer blockClassName="pt-2" idx={13}/>
-            <BlockCountContainer blockClassName="pt-2" idx={14}/>
-            
+          <div className="col-auto block-counts">
+            <BlockTooltip></BlockTooltip>
+            <BlockCountContainer blockClassName="pt-1" idx={0} />
+            <BlockCountContainer idx={1} />
+            <BlockCountContainer idx={2} />
+            <BlockCountContainer idx={3} />
+            <BlockCountContainer blockClassName="pt-2" idx={4} />
+            <BlockCountContainer blockClassName="pt-1" idx={5} />
+            <BlockCountContainer blockClassName="pt-1" idx={6} />
+            <BlockCountContainer idx={7} />
+            <BlockCountContainer blockClassName="pt-1" idx={8} />
+            <BlockCountContainer blockClassName="pt-2" idx={9} />
+            <BlockCountContainer blockClassName="pt-1" idx={10} />
+            <BlockCountContainer blockClassName="pt-2" idx={11} />
+            <BlockCountContainer blockClassName="pt-1" idx={12} />
+            <BlockCountContainer blockClassName="pt-2" idx={13} />
+            <BlockCountContainer blockClassName="pt-2" idx={14} />
+
           </div>
         </div>
       </div>

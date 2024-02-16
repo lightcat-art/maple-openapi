@@ -1,10 +1,24 @@
+class BlockDesc {
+    constructor(desc, classDesc) {
+        this.desc = desc
+        this.classDesc = classDesc
+    }
+}
+
+class BlockClassDesc {
+    constructor(level, className, type) {
+        this.level = level
+        this.className = className
+        this.type = type
+    }
+}
 class BlockManager {
     // React component에서 선언하는 경우 다시 새로고침하면 인스턴스 날아감.
     // 현재 가지고 있는 블록 정보를 기반으로 화면에 표시할수 있도록 도와주는 클래스
     static instance;
     constructor(blockColor, selectedTableColor, basicTableColor, blockColorOriginBg, blockColorOriginBd) {
         if (BlockManager.instance) return BlockManager.instance;
-        this.baseBlockType = [
+        this.baseBlockType = [ // 블록타입별 좌표
             [[0, 0], [0, 1], [1, 1], [1, 2], [1, 3]], // z-asym
             [[0, 0], [0, 1], [1, 1], [2, 1], [2, 2]], // z-sym
             [[0, 1], [1, 0], [1, 1], [1, 2], [2, 1]], // +
@@ -21,22 +35,49 @@ class BlockManager {
             [[0, 0], [0, 1]], // I
             [[0, 0]], // dot
         ]
-        this.closeTableColor = basicTableColor
-        this.selectedTableColor = selectedTableColor
-        this.blockTypeColor = blockColor
+        this.baseBlockDesc = [ // 블록타입별 설명
+            '250Lv~ 해적',
+            '250Lv~ 제논',
+            '250Lv~ 마법사',
+            '250Lv~ 도적',
+            '250Lv~ 궁수',
+            '250Lv~ 전사',
+            '200Lv~ 해적',
+            '200Lv~ 마법사',
+            '200Lv~ 제논/도적',
+            '200Lv~ 궁수\n120Lv~ 메이플M',
+            '200Lv~ 전사',
+            '140Lv~ 궁수/도적/마법사\n70Lv~ 메이플M',
+            '140Lv~ 전사/해적',
+            '100Lv~ 전직업\n50Lv~ 메이플M',
+            '60Lv~ 전직업\n30Lv~ 메이플M',
+        ]
+        this.blockTypeColor = blockColor // 블록타입별 색상
+        this.closeTableColor = basicTableColor // 기본 테이블 색상
+        this.selectedTableColor = selectedTableColor // 선택시 테이블 색상
         this.blockColorOriginBg = blockColorOriginBg // 유저 유니온 정보 블록 배경 색
         this.blockColorOriginBd = blockColorOriginBd // 유저 유니온 정보 블록 테두리 색
         this.baseBlockSizeIdx = { 5: [0, 5], 4: [6, 10], 3: [11, 12], 2: [13, 13], 1: [14, 14] }
         this.blockDirection = { 1: 'borderTop', 2: 'borderLeft', 4: 'borderRight', 8: 'borderBottom' }
         // [i][j] => i: 블록타입 종류,  j: 블록의 회전에 따른 종류
-        this.allBlockType = new Array(this.baseBlockType.length)
-        this.getAllBlockType();
+        this.allBlockType = new Array(this.baseBlockType.length) // 블록타입의 모든 회전케이스 저장객체
+        this.initAllBlockType(); // 회전케이스 계산
         this.closeTableValue = 0 // 유니온 지도에서 채울수 없는 부분
         this.blankTableValue = 1 // 유니온 지도에서 채워질 부분 (비어있는 부분)
         BlockManager.instance = this;
     }
 
+    initBlockDesc() {
+        let blockDescList = []
+        for (let i = 0; i < this.baseBlockType.length; i++) {
+            blockDescList.push(new BlockDesc(this.baseBlockDesc[i], []))
+        }
+        return blockDescList
+    }
+
+
     getBlockCount(requestBlocks) {
+        let blockDescList = this.initBlockDesc()
         if (!requestBlocks) {
             console.log("raider information is null.");
             return;
@@ -46,8 +87,10 @@ class BlockManager {
             const normalizedBlock = this.normalizeOriginBlock(block.blockPosition)
             const idx = this.getBlockIdx(normalizedBlock)
             resultCount[idx]++
+
+            blockDescList[idx].classDesc.push(new BlockClassDesc(block.blockLevel, block.blockClass, block.blockType))
         })
-        return resultCount
+        return {count: resultCount, desc: blockDescList}
     }
 
     getBlockIdx(block) {
@@ -316,7 +359,7 @@ class BlockManager {
     /**
      * 유니온에 존재하는 모든 블록 종류에 대한 정보 init
      */
-    getAllBlockType() {
+    initAllBlockType() {
         for (let k = 0; k < this.baseBlockType.length; k++) {
             this.allBlockType[k] = new Set()
             const baseBlockElement = this.baseBlockType[k]
