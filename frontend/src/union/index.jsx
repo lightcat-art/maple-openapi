@@ -223,9 +223,9 @@ export const UnionRaider = () => {
 
   const BlockCountContainer = (props) => {
     return (
-      <div className={`container pt-1 block-count block-${props.idx} ${props.className? props.className: ''}`} style={props.style}>
+      <div className={`container pt-1 block-count block-${props.idx} ${props.className? props.className: ''}`} style={props.style} data-tooltip-id={`block-tooltip-${props.idx}`}>
         <div className="row justify-content-center">
-          <div className={`col-auto ${props.blockClassName? props.blockClassName: ''}`} data-tooltip-id={`block-tooltip-${props.idx}`}>{baseBlock(props.idx)}</div>
+          <div className={`col-auto ${props.blockClassName? props.blockClassName: ''}`}>{baseBlock(props.idx)}</div>
           <AfterImageButton style={{ marginLeft: '70px' }} className="col-auto block-decrease" disabled={blockCountDisabled[props.idx]} action={() => handleDecrease(props.idx)} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
           <div className="col-auto pt-1">{blockCount[props.idx]}</div>
           <AfterImageButton className="col-auto block-increase" action={() => handleIncrease(props.idx)} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
