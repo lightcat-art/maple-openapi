@@ -405,7 +405,7 @@ export const UnionRaider = () => {
               setTable={setTable}
               tableStyle={tableStyle}
               setTableStyle={setTableStyle}
-              submitDisabled={submitButtonDisabled}
+              isStart={isStart}
               useProcessDisabled={useProcessDisabled}
               regionMode={regionMode}
               processType={processType}

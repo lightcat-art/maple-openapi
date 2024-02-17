@@ -61,7 +61,7 @@ function getRegionCells(region) {
 regionDef(TABLE_ROW_LEN, TABLE_COL_LEN)
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
-export function BasicTable({ tableStyle, setTableStyle, setTable, table, submitDisabled, regionMode, processType, initSelectDisabled }) {
+export function BasicTable({ tableStyle, setTableStyle, setTable, table, regionMode, processType, initSelectDisabled, isStart }) {
     const [select, setSelect] = React.useState([])
     // This variable will control if the user is dragging or not
     const [drag, setDrag] = React.useState(false)
@@ -128,7 +128,7 @@ export function BasicTable({ tableStyle, setTableStyle, setTable, table, submitD
 
 
     const handleMouseDown = (e, row, col) => {
-        if (submitDisabled) {
+        if (isStart) {
             setDrag(false)
             return
         } else {
@@ -232,7 +232,7 @@ export function BasicTable({ tableStyle, setTableStyle, setTable, table, submitD
     }
 
     const handleMouseEnter = (e, row, col) => {
-        if (submitDisabled) {
+        if (isStart) {
             return
         }
         const selectedElement = Array.from(
@@ -263,7 +263,7 @@ export function BasicTable({ tableStyle, setTableStyle, setTable, table, submitD
     }
 
     const handleMouseLeave = (e, row, col) => {
-        if (submitDisabled) {
+        if (isStart) {
             return
         }
         const selectedElement = Array.from(
