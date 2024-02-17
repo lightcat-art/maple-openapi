@@ -227,7 +227,7 @@ export const UnionRaider = () => {
         setTableStyle(defaultTableStyle)
       }
       setSubmitButtonDisabled(false)
-      setResetButtonHidden(true)
+      // setResetButtonHidden(true)
     } else {
       if (charInfo) {
         let domiBlocks = []
@@ -247,7 +247,7 @@ export const UnionRaider = () => {
         // console.log('charinfo not exist')
       }
       setSubmitButtonDisabled(true)
-      setResetButtonHidden(true)
+      // setResetButtonHidden(true)
     }
     localStorage.setItem("useProcess", JSON.stringify(useProcess))
     setProcessType(PROCESS_READY)
@@ -385,7 +385,7 @@ export const UnionRaider = () => {
           </div>
           <div className="col-auto start-wrapper text-center">
             <AfterImageButton className="start-btn ps-3" action={handleStart}
-              // disabled={useProcessDisabled}
+              disabled={submitButtonDisabled}
               title={isStart ? '리셋' : '시작'}>
             </AfterImageButton>
           </div>
