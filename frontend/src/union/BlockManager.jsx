@@ -1,8 +1,7 @@
 class BlockTooltip {
-    constructor(majorClass, domiDesc, grade, levelDesc) {
-        this.majorClass = majorClass
+    constructor(desc, domiDesc, grade) {
+        this.desc = desc
         this.grade = grade
-        this.levelDesc = levelDesc
         this.domiDesc = domiDesc
     }
 }
@@ -37,39 +36,39 @@ class BlockManager {
             [[0, 0], [0, 1]], // I
             [[0, 0]], // dot
         ]
-        this.baseBlockDesc = [ // 블록타입별 설명
-            ['SSS', '250Lv~'],
-            ['SSS', '250Lv~'],
-            ['SSS', '250Lv~'],
-            ['SSS', '250Lv~'],
-            ['SSS', '250Lv~'],
-            ['SSS', '250Lv~'],
-            ['SS', '200Lv~'],
-            ['SS', '200Lv~'],
-            ['SS', '200Lv~'],
-            ['SS', '200Lv~', '120Lv~ : 모바일'],
-            ['SS', '200Lv~'],
-            ['S', '140Lv~', '70Lv~ : 모바일'],
-            ['S', '140Lv~'],
-            ['A', '100Lv~', '50Lv~ : 모바일'],
-            ['B', '60Lv~', '30Lv~ : 모바일']
+        this.baseBlockGrade = [ // 블록타입별 설명
+            ['SSS'],
+            ['SSS'],
+            ['SSS'],
+            ['SSS'],
+            ['SSS'],
+            ['SSS'],
+            ['SS'],
+            ['SS'],
+            ['SS'],
+            ['SS'],
+            ['SS'],
+            ['S'],
+            ['S'],
+            ['A'],
+            ['B']
         ]
-        this.baseBlockMajorClass = [
-            ['해적'],
-            ['제논'],
-            ['마법사'],
-            ['도적'],
-            ['궁수'],
-            ['전사'],
-            ['해적'],
-            ['마법사'],
-            ['제논', '도적'],
-            ['궁수', '모바일'],
-            ['전사'],
-            ['궁수', '도적', '마법사', '모바일'],
-            ['전사', '해적'],
-            ['전직업', '모바일'],
-            ['전직업', '모바일'],
+        this.baseBlockDesc = [
+            [['250Lv','해적']],
+            [['250Lv','제논']],
+            [['250Lv','마법사']],
+            [['250Lv','도적']],
+            [['250Lv','궁수']],
+            [['250Lv','전사']],
+            [['200Lv','해적']],
+            [['200Lv','마법사']],
+            [['200Lv','제논', '도적']],
+            [['200Lv','궁수'], ['120Lv','모바일']],
+            [['200Lv','전사']],
+            [['140Lv','궁수', '도적', '마법사'], ['70Lv','모바일']],
+            [['140Lv','전사', '해적']],
+            [['100Lv','전직업'], ['50Lv','모바일']],
+            [['60Lv','전직업'], ['30Lv','모바일']],
         ]
         this.blockTypeColor = blockColor // 블록타입별 색상
         this.closeTableColor = basicTableColor // 기본 테이블 색상
@@ -89,7 +88,7 @@ class BlockManager {
     initBlockDesc() {
         let blockDescList = []
         for (let i = 0; i < this.baseBlockType.length; i++) {
-            blockDescList.push(new BlockTooltip(this.baseBlockMajorClass[i], [], this.baseBlockDesc[i][0], this.baseBlockDesc[i].splice(1)))
+            blockDescList.push(new BlockTooltip(this.baseBlockDesc[i], [], this.baseBlockGrade[i][0]))
         }
         return blockDescList
     }

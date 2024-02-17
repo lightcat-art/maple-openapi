@@ -274,20 +274,22 @@ export const UnionRaider = () => {
       for (let i = 0; i < blockDesc.length; i++) {
         let gradeDom = <AfterImageBadgeLight className='block-grade' title={blockDesc[i].grade}></AfterImageBadgeLight>
 
-        let levelDoms = []
-        for (let j = 0; j < blockDesc[i].levelDesc.length; j++) {
-          let levelDesc = blockDesc[i].levelDesc[j]
-          levelDoms.push(
-            <AfterImageBadgeLight className='block-level-desc' title={levelDesc}></AfterImageBadgeLight>
-          )
-        }
+        // let levelDoms = []
+        // for (let j = 0; j < blockDesc[i].levelDesc.length; j++) {
+        //   let levelDesc = blockDesc[i].levelDesc[j]
+        //   levelDoms.push(
+        //     <AfterImageBadgeLight className='block-level-desc' title={levelDesc}></AfterImageBadgeLight>
+        //   )
+        // }
 
-        let majorClassDoms = []
-        for (let j = 0; j < blockDesc[i].majorClass.length; j++) {
-          let majorClass = blockDesc[i].majorClass[j]
-          majorClassDoms.push(
-            <AfterImageBadgeLight className='block-desc' title={majorClass}></AfterImageBadgeLight>
-          )
+        let descDoms = []
+        for (let j = 0; j < blockDesc[i].desc.length; j++) {
+          let row = blockDesc[i].desc[j]
+          let rows = []
+          for (let k = 0; k < row.length; k++) {
+            rows.push(<AfterImageBadgeLight className='block-desc' title={row[k]}></AfterImageBadgeLight>)
+          }
+          descDoms.push(rows)
         }
 
         let classDescDoms = []
@@ -305,12 +307,20 @@ export const UnionRaider = () => {
 
         tooltips.push(
           <Tooltip id={`block-tooltip-${i}`} className='block-tooltip'>
-            
+
             <div>{gradeDom}</div>
-            <div>{levelDoms}</div>
+            {/* <div>{levelDoms}</div> */}
 
             <div>
-              {majorClassDoms}
+              {descDoms.map((row, i) => (
+                <div key={i}>
+                  {row.map((v, j) => (
+                    <>
+                      {v}
+                    </>
+                  ))}
+                </div>
+              ))}
             </div>
             {classDescDoms.length !== 0 ?
               <><Divider></Divider><div>점령 캐릭터 정보</div></>
