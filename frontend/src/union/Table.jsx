@@ -1,4 +1,3 @@
-import { all } from 'axios';
 import * as React from 'react';
 import { getCellDOM } from './index'
 import './index.css'
@@ -10,8 +9,6 @@ import { AfterImageButton } from '../common/clickable'
 const regionInfo = []
 const cellSelectedHoverColor = getCSSProp(document.documentElement, '--cell-selected-hover-color')
 const cellNotSelectedHoverColor = getCSSProp(document.documentElement, '--cell-not-selected-hover-color')
-const cellSelectedColor = getCSSProp(document.documentElement, '--cell-selected-color')
-const cellNotSelectedColor = getCSSProp(document.documentElement, '--cell-not-selected-color')
 
 function regionDef(rowLen, colLen) {
     const regionCount = 16
@@ -74,11 +71,7 @@ export function BasicTable({ tableStyle, setTableStyle, setTable, table, submitD
         const selectedElement = Array.from(
             document.getElementsByClassName('selected')
         );
-        const notSelectedElement = Array.from(
-            document.getElementsByClassName('not-selected')
-        );
         let table = Array.from(new Array(TABLE_ROW_LEN), () => new Array(TABLE_COL_LEN).fill(0))
-        let selectExist = false
         for (var value of selectedElement.values()) {
             let position = value.getAttribute('uniqkey').split('-');
             const row = Number(position[0])

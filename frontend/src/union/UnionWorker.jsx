@@ -2,172 +2,14 @@
 export default () => {
   self.addEventListener('message', e => { // eslint-disable-line no-restricted-globals
     if (!e) return;
-    let cnt = e.data.cnt;
-
-    // self.importScripts('http://localhost:3000/BlockTypeTest.js') // eslint-disable-line no-restricted-globals
-    // const importTest = new BlockTypeTest()
-    // importTest.test()
 
     console.log('Received message from main thread : ', e.data)
     console.log('Received union block : ', e.data.unionBlock)
     console.log('Received table : ', e.data.table)
     console.log('Received cnt : ', e.data.cnt)
 
-    let o = execute(e.data.table, e.data.unionBlock)
-
-    // const setting = new UnionRaiderSetting(e.data.unionBlock, e.data.table, true)
-    // const result = setting.checkFittableTest({ 4: 19, 5: 21 }, 175)
-    // console.log('checkFittableTest result = ', result)
-
+    execute(e.data.table, e.data.unionBlock)
   })
-
-  async function execute(table, unionBlock) {
-    let threads = []
-    let yxSym = [], origSym = [], yxOrigSym = []
-    for (let i = 0; i < table[0].length; i++) {
-      yxSym[i] = [];
-      for (let j = 0; j < table.length; j++)
-        yxSym[i][j] = table[j][i]
-    }
-    for (let i = 0; i < table.length; i++) {
-      origSym[i] = [];
-      for (let j = 0; j < table[0].length; j++)
-        origSym[i][j] = table[table.length - 1 - i][table[0].length - 1 - j]
-    }
-    for (let i = 0; i < table[0].length; i++) {
-      yxOrigSym[i] = [];
-      for (let j = 0; j < table.length; j++)
-        yxOrigSym[i][j] = table[table.length - 1 - j][table[0].length - 1 - i]
-    }
-
-
-    threads.push(new UnionRaiderSetting(unionBlock, table, true))
-    threads.push(new UnionRaiderSetting(unionBlock, yxSym, false))
-    threads.push(new UnionRaiderSetting(unionBlock, origSym, false))
-    threads.push(new UnionRaiderSetting(unionBlock, yxOrigSym, false))
-    const a = threads[0].classify()
-    const b = threads[1].classify()
-    const c = threads[2].classify()
-    const d = threads[3].classify()
-    let o = await Promise.race([a, b, c, d])
-    // let o = await Promise.race([a])
-    // console.log('race o = ', o)
-    for (let thread of threads) {
-      console.log('stop request')
-      thread.stopRequest()
-    }
-
-    console.log('origin success : ', threads[0].complete, ', 1 : ', threads[1].complete, ', 2: ', threads[2].complete, ', 3: ', threads[3].complete)
-    if (threads[0].complete || threads[1].complete || threads[2].complete || threads[3].complete) {
-      let domiBlocks = null
-      let processCount = null
-      if (threads[0].complete) {
-        // console.log('origin success')
-        // console.log('blocks:', threads[0].resultBlocks)
-        domiBlocks = threads[0].resultDomiBlocks
-        processCount = threads[0].addProcessCount()
-      } else if (threads[1].complete) {
-        // console.log('yxSym success')
-        // console.log('blocks:', threads[1].resultBlocks)
-        // postMessage({ table: table, domiBlocks: threads[1].resultDomiBlocks })
-        let resultDomiBlocks = []
-        for (let domiBlock of threads[1].resultDomiBlocks) {
-          let resultDomiBlock = []
-          for (let coord of domiBlock) {
-            resultDomiBlock.push([coord[1], coord[0]])
-          }
-          resultDomiBlocks.push(resultDomiBlock)
-        }
-        domiBlocks = resultDomiBlocks
-        processCount = threads[1].addProcessCount()
-      } else if (threads[2].complete) {
-        // console.log('origSym success')
-        // console.log('blocks:', threads[2].resultBlocks)
-        let resultDomiBlocks = []
-        for (let domiBlock of threads[2].resultDomiBlocks) {
-          let resultDomiBlock = []
-          for (let coord of domiBlock) {
-            resultDomiBlock.push([table.length - 1 - coord[0], table[0].length - 1 - coord[1]])
-          }
-          resultDomiBlocks.push(resultDomiBlock)
-        }
-        domiBlocks = resultDomiBlocks
-        processCount = threads[2].addProcessCount()
-      } else if (threads[3].complete) {
-        // console.log('yxOrigSym success')
-        // console.log('blocks:', threads[3].resultBlocks)
-        let resultDomiBlocks = []
-        for (let domiBlock of threads[3].resultDomiBlocks) {
-          let resultDomiBlock = []
-          for (let coord of domiBlock) {
-            resultDomiBlock.push([table.length - 1 - coord[1], table[0].length - 1 - coord[0]])
-          }
-          resultDomiBlocks.push(resultDomiBlock)
-        }
-        domiBlocks = resultDomiBlocks
-        processCount = threads[3].addProcessCount()
-      }
-
-      postMessage({ table: table, domiBlocks: domiBlocks, count: processCount })
-    } else {
-      postMessage({ count: -99 })
-    }
-
-  }
-
-  class PromiseTest {
-    constructor(num) {
-      // this.table = table
-      // this.blocks = blocks
-      this.num = num
-    }
-
-    async classify() {
-      this.result = await this.scan()
-      return this.result
-    }
-
-    async scan() {
-      switch (this.num) {
-        case 1:
-          await this.sleep(1000)
-          console.log('1')
-          return "1"
-        case 2:
-          await this.sleep(2000)
-          console.log('2')
-          return "2"
-        case 3:
-          await this.sleep(3000)
-          console.log('3')
-          return "3"
-        case 4:
-          await this.sleep(4000)
-          console.log('4')
-          return "4"
-      }
-    }
-
-    sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-  }
-
-  class BaseBlock {
-    constructor(count, size, coord, binary) {
-      this.size = size
-      this.count = count
-      this.binary = binary
-      this.coord = coord
-    }
-  }
-
-  class Block extends BaseBlock {
-    constructor(count, size, coord, binary, rotates) {
-      super(count, size, coord, binary)
-      this.rotates = rotates
-    }
-  }
 
   class UnionRaiderSetting {
 
@@ -724,15 +566,12 @@ export default () => {
     checkFittable(blocks, targetSum) {
       // console.log('fittable check start')
       let numMap = {}
-      let numBlockElem = 0
       for (let i = 0; i < blocks.length; i++) {
         if (blocks[i].size in numMap) {
           numMap[blocks[i].size] = numMap[blocks[i].size] + blocks[i].count
         } else {
           numMap[blocks[i].size] = blocks[i].count
         }
-
-        numBlockElem += blocks[i].count * blocks[i].size
       }
       // console.log('현재 블록덩어리의 산정공간 : ', targetSum, ', 소유한 블록리스트 : ', numMap, ', 블록원자단위 개수:', numBlockElem)
       // 모든 블록 길이의 합이 더미사이즈 보다 작거나 같다면 가능한것으로 판단할것
@@ -777,7 +616,6 @@ export default () => {
         console.log('table space is enough')
         return true
       }
-      let cache = new Map()
       let impossibleCache = new Map()
       const result = this.dpImprove(targetSum, numMap, impossibleCache)
       console.log('dp result = ', result);
@@ -966,6 +804,115 @@ export default () => {
       }
       // 다 돌았는데도 반환되는게 없으면 null 반환
       return null
+    }
+  }
+
+  async function execute(table, unionBlock) {
+    let threads = []
+    let yxSym = [], origSym = [], yxOrigSym = []
+    for (let i = 0; i < table[0].length; i++) {
+      yxSym[i] = [];
+      for (let j = 0; j < table.length; j++)
+        yxSym[i][j] = table[j][i]
+    }
+    for (let i = 0; i < table.length; i++) {
+      origSym[i] = [];
+      for (let j = 0; j < table[0].length; j++)
+        origSym[i][j] = table[table.length - 1 - i][table[0].length - 1 - j]
+    }
+    for (let i = 0; i < table[0].length; i++) {
+      yxOrigSym[i] = [];
+      for (let j = 0; j < table.length; j++)
+        yxOrigSym[i][j] = table[table.length - 1 - j][table[0].length - 1 - i]
+    }
+
+
+    threads.push(new UnionRaiderSetting(unionBlock, table, true))
+    threads.push(new UnionRaiderSetting(unionBlock, yxSym, false))
+    threads.push(new UnionRaiderSetting(unionBlock, origSym, false))
+    threads.push(new UnionRaiderSetting(unionBlock, yxOrigSym, false))
+    const a = threads[0].classify()
+    const b = threads[1].classify()
+    const c = threads[2].classify()
+    const d = threads[3].classify()
+    await Promise.race([a, b, c, d])
+    // let o = await Promise.race([a])
+    // console.log('race o = ', o)
+    for (let thread of threads) {
+      console.log('stop request')
+      thread.stopRequest()
+    }
+
+    console.log('origin success : ', threads[0].complete, ', 1 : ', threads[1].complete, ', 2: ', threads[2].complete, ', 3: ', threads[3].complete)
+    if (threads[0].complete || threads[1].complete || threads[2].complete || threads[3].complete) {
+      let domiBlocks = null
+      let processCount = null
+      if (threads[0].complete) {
+        // console.log('origin success')
+        // console.log('blocks:', threads[0].resultBlocks)
+        domiBlocks = threads[0].resultDomiBlocks
+        processCount = threads[0].addProcessCount()
+      } else if (threads[1].complete) {
+        // console.log('yxSym success')
+        // console.log('blocks:', threads[1].resultBlocks)
+        // postMessage({ table: table, domiBlocks: threads[1].resultDomiBlocks })
+        let resultDomiBlocks = []
+        for (let domiBlock of threads[1].resultDomiBlocks) {
+          let resultDomiBlock = []
+          for (let coord of domiBlock) {
+            resultDomiBlock.push([coord[1], coord[0]])
+          }
+          resultDomiBlocks.push(resultDomiBlock)
+        }
+        domiBlocks = resultDomiBlocks
+        processCount = threads[1].addProcessCount()
+      } else if (threads[2].complete) {
+        // console.log('origSym success')
+        // console.log('blocks:', threads[2].resultBlocks)
+        let resultDomiBlocks = []
+        for (let domiBlock of threads[2].resultDomiBlocks) {
+          let resultDomiBlock = []
+          for (let coord of domiBlock) {
+            resultDomiBlock.push([table.length - 1 - coord[0], table[0].length - 1 - coord[1]])
+          }
+          resultDomiBlocks.push(resultDomiBlock)
+        }
+        domiBlocks = resultDomiBlocks
+        processCount = threads[2].addProcessCount()
+      } else if (threads[3].complete) {
+        // console.log('yxOrigSym success')
+        // console.log('blocks:', threads[3].resultBlocks)
+        let resultDomiBlocks = []
+        for (let domiBlock of threads[3].resultDomiBlocks) {
+          let resultDomiBlock = []
+          for (let coord of domiBlock) {
+            resultDomiBlock.push([table.length - 1 - coord[1], table[0].length - 1 - coord[0]])
+          }
+          resultDomiBlocks.push(resultDomiBlock)
+        }
+        domiBlocks = resultDomiBlocks
+        processCount = threads[3].addProcessCount()
+      }
+
+      postMessage({ table: table, domiBlocks: domiBlocks, count: processCount })
+    } else {
+      postMessage({ count: -99 })
+    }
+  }
+
+  class BaseBlock {
+    constructor(count, size, coord, binary) {
+      this.size = size
+      this.count = count
+      this.binary = binary
+      this.coord = coord
+    }
+  }
+
+  class Block extends BaseBlock {
+    constructor(count, size, coord, binary, rotates) {
+      super(count, size, coord, binary)
+      this.rotates = rotates
     }
   }
 

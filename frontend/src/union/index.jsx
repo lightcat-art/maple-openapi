@@ -1,15 +1,14 @@
 import './index.css'
 import * as React from 'react';
-import axios from 'axios';
 import BlockManager from './BlockManager';
 import { BasicTable } from './Table';
 import WebWorker from '../util/worker'
 import worker from './UnionWorker'
-import { CheckBox, SwitchCheckBox } from '../common/checkBox'
+import { SwitchCheckBox } from '../common/checkBox'
 import './index.css'
 import { getCSSProp } from '../util/util.jsx'
-import { useParams, useOutletContext } from 'react-router-dom'
-import { Menu, TABLE_ROW_LEN, TABLE_COL_LEN } from '../common'
+import { useOutletContext } from 'react-router-dom'
+import { TABLE_ROW_LEN, TABLE_COL_LEN } from '../common'
 import { Button, AfterImageButton, AfterImageBadgeLight } from '../common/clickable'
 import { Divider } from '../common/divider.jsx'
 import { CharMenu } from '../character';
@@ -39,11 +38,7 @@ const blockColorOrigin = getCSSProp(document.documentElement, '--block-color-ori
 const blockColorOriginBorder = getCSSProp(document.documentElement, '--block-color-origin-bd')
 
 export const UnionRaider = () => {
-  const { cname } = useParams();
-  const param = { nickname: cname }
   const [charInfo, loading] = useOutletContext();
-  console.log('unionraider charinfo = ', charInfo)
-  console.log('unionraider loading = ', loading)
   const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder);
 
 
@@ -51,14 +46,13 @@ export const UnionRaider = () => {
   const [table, setTable] = React.useState(defaultTable)
   const defaultTableStyle = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill({}))
   const [tableStyle, setTableStyle] = React.useState(defaultTableStyle)
-  const [result, setResult] = React.useState(null)
   const [submitButtonDisabled, setSubmitButtonDisabled] = React.useState(true)
-  const [pauseButtonHidden, setPauseButtonHidden] = React.useState(true)
-  const [continueButtonHidden, setContinueButtonHidden] = React.useState(true)
+  // const [pauseButtonHidden, setPauseButtonHidden] = React.useState(true)
+  // const [continueButtonHidden, setContinueButtonHidden] = React.useState(true)
   const [resetButtonHidden, setResetButtonHidden] = React.useState(true)
   const [responseUnionBlock, setResponseUnionBlock] = React.useState([])
   const [regionMode, setRegionMode] = React.useState(false) // 지역선택모드인지, 단일셀 선택모드인지 세팅
-  const [realTimeRender, setRealTimeRender] = React.useState(false) // 실시간 보기 세팅
+  // const [realTimeRender, setRealTimeRender] = React.useState(false) // 실시간 보기 세팅
   const [processType, setProcessType] = React.useState(PROCESS_INIT)
   const [useProcess, setUseProcess] = React.useState(localStorage.getItem("useProcess") ? JSON.parse(localStorage.getItem("useProcess")) : false) // 유니온 배치프로세스 선택 모드
   const [useProcessDisabled, setUseProcessDisabled] = React.useState(false)
@@ -81,8 +75,8 @@ export const UnionRaider = () => {
     unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, cnt: 1 })
     setProcessType(PROCESS_ALGO)
     setSubmitButtonDisabled(true)
-    setPauseButtonHidden(true)
-    setContinueButtonHidden(true)
+    // setPauseButtonHidden(true)
+    // setContinueButtonHidden(true)
     setResetButtonHidden(false)
     setUseProcessDisabled(true)
     setInitSelectDisabled(true)
@@ -92,27 +86,27 @@ export const UnionRaider = () => {
     // window.scrollTo(0, 0) // 창 맨위로 이동
   }
 
-  const handleFormPause = (e) => {
-    setSubmitButtonDisabled(true)
-    setPauseButtonHidden(true)
-    setContinueButtonHidden(false)
-    setResetButtonHidden(false)
-  }
+  // const handleFormPause = (e) => {
+  //   setSubmitButtonDisabled(true)
+  //   setPauseButtonHidden(true)
+  //   setContinueButtonHidden(false)
+  //   setResetButtonHidden(false)
+  // }
 
-  const handleFormContinue = (e) => {
-    setSubmitButtonDisabled(true)
-    setPauseButtonHidden(false)
-    setContinueButtonHidden(true)
-    setResetButtonHidden(true)
-  }
+  // const handleFormContinue = (e) => {
+  //   setSubmitButtonDisabled(true)
+  //   setPauseButtonHidden(false)
+  //   setContinueButtonHidden(true)
+  //   setResetButtonHidden(true)
+  // }
 
   const handleFormReset = (e) => {
     new WebWorker().clearUnionWorker()
     unionWorker = new WebWorker().getUnionWorker(worker)
     setTableStyle(defaultTableStyle)
     setSubmitButtonDisabled(false)
-    setPauseButtonHidden(true)
-    setContinueButtonHidden(true)
+    // setPauseButtonHidden(true)
+    // setContinueButtonHidden(true)
     setResetButtonHidden(true)
     setUseProcessDisabled(false)
     setInitSelectDisabled(false)
@@ -145,7 +139,6 @@ export const UnionRaider = () => {
     }
   }, [])
 
-  // let users = [1,3,4,2,2,4,5]
   React.useEffect(() => {
 
     unionWorker.addEventListener('message', (event) => {
@@ -405,7 +398,6 @@ export const UnionRaider = () => {
             <div className="text-center">
               <Button className='reset' action={handleFormReset} disabled={resetButtonHidden} title="리셋" style={{ marginTop: '10px', width: '70px' }}></Button>
             </div>
-            <div>{result}</div>
           </div>
           <div className="col-2"></div>
         </div>
