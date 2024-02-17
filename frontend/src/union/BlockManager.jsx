@@ -1,11 +1,13 @@
-class BlockDesc {
-    constructor(desc, classDesc) {
-        this.desc = desc
-        this.classDesc = classDesc
+class BlockTooltip {
+    constructor(majorClass, domiDesc, grade, levelDesc) {
+        this.majorClass = majorClass
+        this.grade = grade
+        this.levelDesc = levelDesc
+        this.domiDesc = domiDesc
     }
 }
 
-class BlockClassDesc {
+class BlockDomiTooltip {
     constructor(level, className, type) {
         this.level = level
         this.className = className
@@ -36,38 +38,38 @@ class BlockManager {
             [[0, 0]], // dot
         ]
         this.baseBlockDesc = [ // 블록타입별 설명
-            '250Lv~ 해적',
-            '250Lv~ 제논',
-            '250Lv~ 마법사',
-            '250Lv~ 도적',
-            '250Lv~ 궁수',
-            '250Lv~ 전사',
-            '200Lv~ 해적',
-            '200Lv~ 마법사',
-            '200Lv~ 제논/도적',
-            '200Lv~ 궁수\n120Lv~ 메이플M',
-            '200Lv~ 전사',
-            '140Lv~ 궁수/도적/마법사ㆍ70Lv~ 메이플M',
-            '140Lv~ 전사/해적',
-            '100Lv~ 전직업\n50Lv~ 메이플M',
-            '60Lv~ 전직업\n30Lv~ 메이플M',
+            ['SSS', '250Lv~'],
+            ['SSS', '250Lv~'],
+            ['SSS', '250Lv~'],
+            ['SSS', '250Lv~'],
+            ['SSS', '250Lv~'],
+            ['SSS', '250Lv~'],
+            ['SS', '200Lv~'],
+            ['SS', '200Lv~'],
+            ['SS', '200Lv~'],
+            ['SS', '200Lv~', '120Lv~ : 모바일'],
+            ['SS', '200Lv~'],
+            ['S', '140Lv~', '70Lv~ : 모바일'],
+            ['S', '140Lv~'],
+            ['A', '100Lv~', '50Lv~ : 모바일'],
+            ['B', '60Lv~', '30Lv~ : 모바일']
         ]
-        this.baseBlockGrade = [
-            ['SSS 해적'],
-            ['SSS 제논'],
-            ['SSS 마법사'],
-            ['SSS 도적'],
-            ['SSS 궁수'],
-            ['SSS 전사'],
-            ['SS 해적'],
-            ['SS 마법사'],
-            ['SS 제논','SS 도적'],
-            ['SS 궁수', 'SS 메이플M'],
-            ['SS 전사'],
-            ['S 궁수','S 도적','S 마법사','S 메이플M'],
-            ['S 전사','S 해적'],
-            ['A 전직업','A 메이플M'],
-            ['B 전직업','B 메이플M'],
+        this.baseBlockMajorClass = [
+            ['해적'],
+            ['제논'],
+            ['마법사'],
+            ['도적'],
+            ['궁수'],
+            ['전사'],
+            ['해적'],
+            ['마법사'],
+            ['제논', '도적'],
+            ['궁수', '모바일'],
+            ['전사'],
+            ['궁수', '도적', '마법사', '모바일'],
+            ['전사', '해적'],
+            ['전직업', '모바일'],
+            ['전직업', '모바일'],
         ]
         this.blockTypeColor = blockColor // 블록타입별 색상
         this.closeTableColor = basicTableColor // 기본 테이블 색상
@@ -87,7 +89,7 @@ class BlockManager {
     initBlockDesc() {
         let blockDescList = []
         for (let i = 0; i < this.baseBlockType.length; i++) {
-            blockDescList.push(new BlockDesc(this.baseBlockGrade[i], []))
+            blockDescList.push(new BlockTooltip(this.baseBlockMajorClass[i], [], this.baseBlockDesc[i][0], this.baseBlockDesc[i].splice(1)))
         }
         return blockDescList
     }
@@ -105,9 +107,9 @@ class BlockManager {
             const idx = this.getBlockIdx(normalizedBlock)
             resultCount[idx]++
 
-            blockDescList[idx].classDesc.push(new BlockClassDesc(block.blockLevel, block.blockClass, block.blockType))
+            blockDescList[idx].domiDesc.push(new BlockDomiTooltip(block.blockLevel, block.blockClass, block.blockType))
         })
-        return {count: resultCount, desc: blockDescList}
+        return { count: resultCount, desc: blockDescList }
     }
 
     getBlockIdx(block) {

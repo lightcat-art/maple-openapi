@@ -48,7 +48,7 @@
     /* max-width: 500px; */
 }
 
-.block-desc{
+.block-desc, .block-level-desc, .block-grade{
     border-color: '#ffffff';
     font-weight: bold;
     margin-left: 5px;

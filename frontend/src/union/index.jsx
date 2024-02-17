@@ -10,7 +10,7 @@ import './index.css'
 import { getCSSProp } from '../util/util.jsx'
 import { useParams, useOutletContext } from 'react-router-dom'
 import { Menu, TABLE_ROW_LEN, TABLE_COL_LEN } from '../common'
-import { Button, AfterImageButton } from '../common/clickable'
+import { Button, AfterImageButton, AfterImageBadgeLight } from '../common/clickable'
 import { Divider } from '../common/divider.jsx'
 import { CharMenu } from '../character';
 import decreaseIcon from '../static/icons/chevron_left_FILL0_wght400_GRAD0_opsz20.png'
@@ -272,20 +272,30 @@ export const UnionRaider = () => {
     function getTooltips() {
       let tooltips = []
       for (let i = 0; i < blockDesc.length; i++) {
-        let descDoms = []
-        for (let j = 0; j < blockDesc[i].desc.length; j++) {
-          let desc = blockDesc[i].desc[j]
-          descDoms.push(
-            <AfterImageButton className='block-desc' title={desc}></AfterImageButton>
+        let gradeDom = <AfterImageBadgeLight className='block-grade' title={blockDesc[i].grade}></AfterImageBadgeLight>
+
+        let levelDoms = []
+        for (let j = 0; j < blockDesc[i].levelDesc.length; j++) {
+          let levelDesc = blockDesc[i].levelDesc[j]
+          levelDoms.push(
+            <AfterImageBadgeLight className='block-level-desc' title={levelDesc}></AfterImageBadgeLight>
+          )
+        }
+
+        let majorClassDoms = []
+        for (let j = 0; j < blockDesc[i].majorClass.length; j++) {
+          let majorClass = blockDesc[i].majorClass[j]
+          majorClassDoms.push(
+            <AfterImageBadgeLight className='block-desc' title={majorClass}></AfterImageBadgeLight>
           )
         }
 
         let classDescDoms = []
-        blockDesc[i].classDesc = blockDesc[i].classDesc.sort(function (a, b) {
+        blockDesc[i].domiDesc = blockDesc[i].domiDesc.sort(function (a, b) {
           return b.level - a.level;
         })
-        for (let j = 0; j < blockDesc[i].classDesc.length; j++) {
-          let classDesc = blockDesc[i].classDesc[j]
+        for (let j = 0; j < blockDesc[i].domiDesc.length; j++) {
+          let classDesc = blockDesc[i].domiDesc[j]
           classDescDoms.push(
             <>
               <div>ㆍLv.{classDesc.level} {classDesc.className}</div>
@@ -295,8 +305,12 @@ export const UnionRaider = () => {
 
         tooltips.push(
           <Tooltip id={`block-tooltip-${i}`} className='block-tooltip'>
-            <div className='block-desc-wrapper'>
-              {descDoms}
+            
+            <div>{gradeDom}</div>
+            <div>{levelDoms}</div>
+
+            <div>
+              {majorClassDoms}
             </div>
             {classDescDoms.length !== 0 ?
               <><Divider></Divider><div>점령 캐릭터 정보</div></>
