@@ -55,6 +55,7 @@ export const UnionRaider = () => {
   // const [realTimeRender, setRealTimeRender] = React.useState(false) // 실시간 보기 세팅
   const [processType, setProcessType] = React.useState(PROCESS_INIT)
   const [useProcess, setUseProcess] = React.useState(localStorage.getItem("useProcess") ? JSON.parse(localStorage.getItem("useProcess")) : false) // 유니온 배치프로세스 선택 모드
+  const [isStart, setIsStart] = React.useState(false)
   const [useProcessDisabled, setUseProcessDisabled] = React.useState(false)
   const [blockCount, setBlockCount] = React.useState(Array.from(Array(blockManager.baseBlockType.length).fill(0)))
   const [blockCountDisabled, setBlockCountDisabled] = React.useState(Array.from(Array(blockManager.baseBlockType.length).fill(false)))
@@ -68,6 +69,37 @@ export const UnionRaider = () => {
       setInitSelectDisabled(false)
     }
     setUseProcess(!useProcess)
+  }
+
+  const resetAction = () => {
+    new WebWorker().clearUnionWorker()
+    unionWorker = new WebWorker().getUnionWorker(worker)
+    setTableStyle(defaultTableStyle)
+    // setSubmitButtonDisabled(false)
+    // setPauseButtonHidden(true)
+    // setContinueButtonHidden(true)
+    // setResetButtonHidden(true)
+    setUseProcessDisabled(false)
+    setInitSelectDisabled(false)
+  }
+  const handleStart = (e) => {
+    if (isStart) {
+      //리셋 버튼 동작
+      resetAction()
+    } else {
+      //시작 버튼 동작
+      unionWorker = new WebWorker().getUnionWorker(worker)
+      unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, cnt: 1 })
+      setProcessType(PROCESS_ALGO)
+      // setSubmitButtonDisabled(true)
+      // setPauseButtonHidden(true)
+      // setContinueButtonHidden(true)
+      // setResetButtonHidden(false)
+      setUseProcessDisabled(true)
+      setInitSelectDisabled(true)
+      e.preventDefault() // event의 클릭 기본동작 방지
+    }
+    setIsStart(!isStart)
   }
 
   const handleFormSubmit = (e) => {
@@ -147,6 +179,8 @@ export const UnionRaider = () => {
         if (result.count) {
           if (result.count === PROCESS_FAIL) {
             alert('fail to find root')
+            resetAction()
+            setIsStart(false)
           } else {
             console.log('result count=', result.count)
             setProcessType(result.count)
@@ -349,15 +383,15 @@ export const UnionRaider = () => {
               title={useProcess ? '내 정보 보기' : '자동 배치 모드'}>
             </AfterImageButton>
           </div>
-          <div className="col-auto text-center">
-            {/* <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox> */}
-            <Button className='start' action={handleFormSubmit} disabled={submitButtonDisabled} title="시작" ></Button>
+          <div className="col-auto start-wrapper text-center">
+            <AfterImageButton className="start-btn ps-3" action={handleStart}
+              // disabled={useProcessDisabled}
+              title={isStart ? '리셋' : '시작'}>
+            </AfterImageButton>
           </div>
-          <div className="col-auto text-center">
-            {/* <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
-              <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div> */}
-            <Button className='reset' action={handleFormReset} disabled={resetButtonHidden} title="리셋"></Button>
-          </div>
+          {/* <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox>
+          <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
+          <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div> */}
           <div className="col-auto">
             <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
           </div>
