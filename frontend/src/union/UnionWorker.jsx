@@ -61,9 +61,6 @@ export default () => {
       return this.processCount
     }
 
-
-
-
     parseRaider() {
       console.log('parseRaider start')
       if (!this.requestBlocks) {

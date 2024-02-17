@@ -91,6 +91,7 @@
 
 .start, .reset {
     font-weight: bold;
+    width: 70px;
 }
 
 /* .union-button {

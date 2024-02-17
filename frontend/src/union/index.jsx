@@ -185,7 +185,7 @@ export const UnionRaider = () => {
   }, [blockCount])
 
   React.useEffect(() => {
-    console.log('useProcess change check. useProcess=',useProcess,', table =',table)
+    console.log('useProcess change check. useProcess=', useProcess, ', table =', table)
     if (useProcess) {
       if (localStorage.getItem('tableSelect')) {
         setTableStyle(blockManager.getTableStyle(JSON.parse(localStorage.getItem('tableSelect'))))
@@ -341,6 +341,28 @@ export const UnionRaider = () => {
   return (
     <>
       <CharMenu page='union'></CharMenu>
+      <div className='container-fluid'>
+        <div className="row justify-content-center" style={{ marginTop: '30px' }}>
+          <div className="col-auto use-process-btn-wrapper text-center">
+            <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
+              disabled={useProcessDisabled}
+              title={useProcess ? '내 정보 보기' : '자동 배치 모드'}>
+            </AfterImageButton>
+          </div>
+          <div className="col-auto text-center">
+            {/* <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox> */}
+            <Button className='start' action={handleFormSubmit} disabled={submitButtonDisabled} title="시작" ></Button>
+          </div>
+          <div className="col-auto text-center">
+            {/* <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
+              <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div> */}
+            <Button className='reset' action={handleFormReset} disabled={resetButtonHidden} title="리셋"></Button>
+          </div>
+          <div className="col-auto">
+            <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
+          </div>
+        </div>
+      </div>
       <div className="container-fluid">
         <div className="row justify-content-center">
           <div className="col-auto">
@@ -354,7 +376,7 @@ export const UnionRaider = () => {
               regionMode={regionMode}
               processType={processType}
               initSelectDisabled={initSelectDisabled}
-              >
+            >
             </BasicTable>
           </div>
           <div className="col-auto block-counts">
@@ -374,35 +396,9 @@ export const UnionRaider = () => {
             <BlockCountContainer blockClassName="pt-1" idx={12} />
             <BlockCountContainer blockClassName="pt-2" idx={13} />
             <BlockCountContainer blockClassName="pt-2" idx={14} />
-
           </div>
         </div>
       </div>
-      <div>
-        <div className="use-process-btn-wrapper text-center">
-          <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
-            disabled={useProcessDisabled}
-            title={useProcess ? '내 정보 보기' : '자동 배치 모드'}>
-          </AfterImageButton>
-        </div>
-        <div className="row justify-content-center" style={{ marginTop: '20px' }}>
-          <div className="col-2"></div>
-          <div className="col-auto">
-            <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
-            {/* <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox> */}
-            <div className="text-center">
-              <Button className='start' action={handleFormSubmit} disabled={submitButtonDisabled} title="시작" style={{ marginTop: '10px', width: '70px' }}></Button>
-            </div>
-            {/* <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
-              <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div> */}
-            <div className="text-center">
-              <Button className='reset' action={handleFormReset} disabled={resetButtonHidden} title="리셋" style={{ marginTop: '10px', width: '70px' }}></Button>
-            </div>
-          </div>
-          <div className="col-2"></div>
-        </div>
-      </div>
-
     </>
   )
 }
