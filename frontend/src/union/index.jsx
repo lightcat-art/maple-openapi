@@ -46,7 +46,9 @@ export const UnionRaider = () => {
   console.log('unionraider loading = ', loading)
   const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder);
 
-  const [table, setTable] = React.useState(Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill(0)))
+
+  const defaultTable = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill(0))
+  const [table, setTable] = React.useState(defaultTable)
   const defaultTableStyle = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill({}))
   const [tableStyle, setTableStyle] = React.useState(defaultTableStyle)
   const [result, setResult] = React.useState(null)
@@ -63,8 +65,14 @@ export const UnionRaider = () => {
   const [blockCount, setBlockCount] = React.useState(Array.from(Array(blockManager.baseBlockType.length).fill(0)))
   const [blockCountDisabled, setBlockCountDisabled] = React.useState(Array.from(Array(blockManager.baseBlockType.length).fill(false)))
   const [blockDesc, setBlockDesc] = React.useState([])
+  const [initSelectDisabled, setInitSelectDisabled] = React.useState(false)
 
   const handleUseProcess = () => {
+    if (useProcess) {
+      setInitSelectDisabled(true)
+    } else {
+      setInitSelectDisabled(false)
+    }
     setUseProcess(!useProcess)
   }
 
@@ -77,6 +85,7 @@ export const UnionRaider = () => {
     setContinueButtonHidden(true)
     setResetButtonHidden(false)
     setUseProcessDisabled(true)
+    setInitSelectDisabled(true)
     e.preventDefault() // event의 클릭 기본동작 방지
     // 유니온 배치 작업이 완료되었는지 체크후 에러로 보이는 상황이라면 버튼락 풀기
     // setButtonDisabled(false)
@@ -106,6 +115,7 @@ export const UnionRaider = () => {
     setContinueButtonHidden(true)
     setResetButtonHidden(true)
     setUseProcessDisabled(false)
+    setInitSelectDisabled(false)
   }
 
   const handleDecrease = (idx) => {
@@ -124,8 +134,15 @@ export const UnionRaider = () => {
     })
   }
 
+
+
   React.useEffect(() => {
     loadingDone = false
+    if (useProcess) {
+      setInitSelectDisabled(false)
+    } else {
+      setInitSelectDisabled(true)
+    }
   }, [])
 
   // let users = [1,3,4,2,2,4,5]
@@ -175,7 +192,7 @@ export const UnionRaider = () => {
   }, [blockCount])
 
   React.useEffect(() => {
-    // console.log('useProcess change check. useProcess=',useProcess,', table =',table)
+    console.log('useProcess change check. useProcess=',useProcess,', table =',table)
     if (useProcess) {
       if (localStorage.getItem('tableSelect')) {
         setTableStyle(blockManager.getTableStyle(JSON.parse(localStorage.getItem('tableSelect'))))
@@ -274,14 +291,6 @@ export const UnionRaider = () => {
       for (let i = 0; i < blockDesc.length; i++) {
         let gradeDom = <AfterImageBadgeLight className='block-grade' title={blockDesc[i].grade}></AfterImageBadgeLight>
 
-        // let levelDoms = []
-        // for (let j = 0; j < blockDesc[i].levelDesc.length; j++) {
-        //   let levelDesc = blockDesc[i].levelDesc[j]
-        //   levelDoms.push(
-        //     <AfterImageBadgeLight className='block-level-desc' title={levelDesc}></AfterImageBadgeLight>
-        //   )
-        // }
-
         let descDoms = []
         for (let j = 0; j < blockDesc[i].desc.length; j++) {
           let row = blockDesc[i].desc[j]
@@ -309,7 +318,6 @@ export const UnionRaider = () => {
           <Tooltip id={`block-tooltip-${i}`} className='block-tooltip'>
 
             <div>{gradeDom}</div>
-            {/* <div>{levelDoms}</div> */}
 
             <div>
               {descDoms.map((row, i) => (
@@ -323,7 +331,7 @@ export const UnionRaider = () => {
               ))}
             </div>
             {classDescDoms.length !== 0 ?
-              <><Divider></Divider><div>점령 캐릭터 정보</div></>
+              <><Divider></Divider><div>소유 캐릭터 정보</div></>
               : <></>}
 
             <div className='class-desc-wrapper'>{classDescDoms}</div>
@@ -347,9 +355,13 @@ export const UnionRaider = () => {
               table={table}
               setTable={setTable}
               tableStyle={tableStyle}
+              setTableStyle={setTableStyle}
               submitDisabled={submitButtonDisabled}
+              useProcessDisabled={useProcessDisabled}
               regionMode={regionMode}
-              processType={processType}>
+              processType={processType}
+              initSelectDisabled={initSelectDisabled}
+              >
             </BasicTable>
           </div>
           <div className="col-auto block-counts">

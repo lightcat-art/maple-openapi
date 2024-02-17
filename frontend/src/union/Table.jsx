@@ -5,8 +5,9 @@ import './index.css'
 import { getCSSProp } from '../util/util.jsx'
 import { PROCESS_INIT } from './index';
 import { TABLE_ROW_LEN, TABLE_COL_LEN } from '../common'
-const regionInfo = []
+import { AfterImageButton } from '../common/clickable'
 
+const regionInfo = []
 const cellSelectedHoverColor = getCSSProp(document.documentElement, '--cell-selected-hover-color')
 const cellNotSelectedHoverColor = getCSSProp(document.documentElement, '--cell-not-selected-hover-color')
 const cellSelectedColor = getCSSProp(document.documentElement, '--cell-selected-color')
@@ -63,9 +64,8 @@ function getRegionCells(region) {
 regionDef(TABLE_ROW_LEN, TABLE_COL_LEN)
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
-export function BasicTable({ style, tableStyle, setTable, table, submitDisabled, regionMode, processType }) {
+export function BasicTable({ tableStyle, setTableStyle, setTable, table, submitDisabled, regionMode, processType, initSelectDisabled }) {
     const [select, setSelect] = React.useState([])
-    // const [regionSelect, setRegionSelect] = React.useState([])
     // This variable will control if the user is dragging or not
     const [drag, setDrag] = React.useState(false)
     const [selectMode, setSelectMode] = React.useState(true) // 선택모드 인지, 해제모드 인지 세팅
@@ -293,6 +293,14 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
         setDrag(false)
     }
 
+    const handleInitSelect = () => {
+        setSelect([])
+        localStorage.removeItem('tableSelect')
+        localStorage.removeItem('positionSelect')
+        setTable(Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill(0)))
+        setTableStyle(Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill({})))
+    }
+
     // 드래그하는 도중 전체 테이블셀을 계속 스캔
     const getClassName = (row, col) => {
         for (let i = 0; i < select.length; i++) {
@@ -305,22 +313,15 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
 
     return (
         <div className="union-table-wrapper" onMouseUp={(e) => handleMouseUp()}>
-            {/* <div className="row">
-                <div className="col-2"></div>
-            </div> */}
             <div
-            // style={{ position: relative }}
             // onMouseMove={(e) => preventOutsideDrag(e)}
             >
                 <table id='union-table' className='union-table'
-                // onMouseMove={(e) => e.stopPropagation()}
-                // style={{ borderSpacing: '0px' }}
                 >
                     <tbody className='union-table-body'>
                         {tableStyle.map((row, i) => (
                             <tr key={i}>
                                 {row.map((v, j) => (
-                                    // <div className={`${getRegionClass(i, j)}`}>
                                     <td
                                         onMouseDown={(e) => handleMouseDown(e, i, j)}
                                         // onMouseUp={(e) => handleMouseUp()}
@@ -337,9 +338,13 @@ export function BasicTable({ style, tableStyle, setTable, table, submitDisabled,
                     </tbody>
                 </table>
             </div>
-            {/* <div className="row">
-                <div className="col-2"></div>
-            </div> */}
+            <div className="init-select-wrapper text-center">
+                <AfterImageButton className="init-select-btn ps-3"
+                    action={handleInitSelect}
+                    disabled={initSelectDisabled}
+                    title='선택 영역 초기화'>
+                </AfterImageButton>
+            </div>
         </div>
     );
 }
