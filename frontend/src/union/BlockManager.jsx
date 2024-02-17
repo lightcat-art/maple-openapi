@@ -47,10 +47,27 @@ class BlockManager {
             '200Lv~ 제논/도적',
             '200Lv~ 궁수\n120Lv~ 메이플M',
             '200Lv~ 전사',
-            '140Lv~ 궁수/도적/마법사\n70Lv~ 메이플M',
+            '140Lv~ 궁수/도적/마법사ㆍ70Lv~ 메이플M',
             '140Lv~ 전사/해적',
             '100Lv~ 전직업\n50Lv~ 메이플M',
             '60Lv~ 전직업\n30Lv~ 메이플M',
+        ]
+        this.baseBlockGrade = [
+            ['SSS 해적'],
+            ['SSS 제논'],
+            ['SSS 마법사'],
+            ['SSS 도적'],
+            ['SSS 궁수'],
+            ['SSS 전사'],
+            ['SS 해적'],
+            ['SS 마법사'],
+            ['SS 제논','SS 도적'],
+            ['SS 궁수', 'SS 메이플M'],
+            ['SS 전사'],
+            ['S 궁수','S 도적','S 마법사','S 메이플M'],
+            ['S 전사','S 해적'],
+            ['A 전직업','A 메이플M'],
+            ['B 전직업','B 메이플M'],
         ]
         this.blockTypeColor = blockColor // 블록타입별 색상
         this.closeTableColor = basicTableColor // 기본 테이블 색상
@@ -70,7 +87,7 @@ class BlockManager {
     initBlockDesc() {
         let blockDescList = []
         for (let i = 0; i < this.baseBlockType.length; i++) {
-            blockDescList.push(new BlockDesc(this.baseBlockDesc[i], []))
+            blockDescList.push(new BlockDesc(this.baseBlockGrade[i], []))
         }
         return blockDescList
     }

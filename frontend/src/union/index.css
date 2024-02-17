@@ -43,8 +43,17 @@
     padding-bottom: 30px;
 }
 
-.block-tooltip {
+.block-counts .block-tooltip {
     z-index: 999;
+    /* max-width: 500px; */
+}
+
+.block-desc{
+    border-color: '#ffffff';
+    font-weight: bold;
+    margin-left: 5px;
+    margin-top: 3px;
+    margin-bottom: 3px;
 }
 
 .base-block-cell {

@@ -11,6 +11,7 @@ import { getCSSProp } from '../util/util.jsx'
 import { useParams, useOutletContext } from 'react-router-dom'
 import { Menu, TABLE_ROW_LEN, TABLE_COL_LEN } from '../common'
 import { Button, AfterImageButton } from '../common/clickable'
+import { Divider } from '../common/divider.jsx'
 import { CharMenu } from '../character';
 import decreaseIcon from '../static/icons/chevron_left_FILL0_wght400_GRAD0_opsz20.png'
 import increaseIcon from '../static/icons/chevron_right_FILL0_wght400_GRAD0_opsz20.png'
@@ -223,9 +224,9 @@ export const UnionRaider = () => {
 
   const BlockCountContainer = (props) => {
     return (
-      <div className={`container pt-1 block-count block-${props.idx} ${props.className? props.className: ''}`} style={props.style} data-tooltip-id={`block-tooltip-${props.idx}`}>
+      <div className={`container pt-1 block-count block-${props.idx} ${props.className ? props.className : ''}`} style={props.style} data-tooltip-id={`block-tooltip-${props.idx}`}>
         <div className="row justify-content-center">
-          <div className={`col-auto ${props.blockClassName? props.blockClassName: ''}`}>{baseBlock(props.idx)}</div>
+          <div className={`col-auto ${props.blockClassName ? props.blockClassName : ''}`}>{baseBlock(props.idx)}</div>
           <AfterImageButton style={{ marginLeft: '70px' }} className="col-auto block-decrease" disabled={blockCountDisabled[props.idx]} action={() => handleDecrease(props.idx)} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
           <div className="col-auto pt-1">{blockCount[props.idx]}</div>
           <AfterImageButton className="col-auto block-increase" action={() => handleIncrease(props.idx)} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
@@ -271,23 +272,37 @@ export const UnionRaider = () => {
     function getTooltips() {
       let tooltips = []
       for (let i = 0; i < blockDesc.length; i++) {
+        let descDoms = []
+        for (let j = 0; j < blockDesc[i].desc.length; j++) {
+          let desc = blockDesc[i].desc[j]
+          descDoms.push(
+            <AfterImageButton className='block-desc' title={desc}></AfterImageButton>
+          )
+        }
+
         let classDescDoms = []
+        blockDesc[i].classDesc = blockDesc[i].classDesc.sort(function (a, b) {
+          return b.level - a.level;
+        })
         for (let j = 0; j < blockDesc[i].classDesc.length; j++) {
           let classDesc = blockDesc[i].classDesc[j]
           classDescDoms.push(
             <>
-              <div>{classDesc.level}</div>
-              <div>{classDesc.className}</div>
-              <div>{classDesc.type}</div>
+              <div>ㆍLv.{classDesc.level} {classDesc.className}</div>
             </>)
         }
 
+
         tooltips.push(
           <Tooltip id={`block-tooltip-${i}`} className='block-tooltip'>
-            <div>{blockDesc[i].desc}</div>
-            <div>
-              {classDescDoms}
+            <div className='block-desc-wrapper'>
+              {descDoms}
             </div>
+            {classDescDoms.length !== 0 ?
+              <><Divider></Divider><div>점령 캐릭터 정보</div></>
+              : <></>}
+
+            <div className='class-desc-wrapper'>{classDescDoms}</div>
           </Tooltip>
         )
       }

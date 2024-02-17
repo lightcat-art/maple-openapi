@@ -1,0 +1,6 @@
+.divider {
+   border-bottom: 1px solid rgb(102, 102, 102);
+   /* border-bottom-color: gray; */
+   margin-top: 5px;
+   margin-bottom: 6px;
+}
