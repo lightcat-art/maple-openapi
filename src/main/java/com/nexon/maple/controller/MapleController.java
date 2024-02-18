@@ -117,7 +117,7 @@ public class MapleController {
 
 
         BasicResponse basicResponse = basicApi.get(idRes.getOcid(), formattedNow);
-//        PopularityResponse popularityResponse = popularityApi.get(idRes.getOcid(), formattedNow);
+        PopularityResponse popularityResponse = popularityApi.get(idRes.getOcid(), formattedNow);
 //        StatResponse statResponse = statApi.get(idRes.getOcid(), formattedNow);
 //        HyperStatResponse hyperStatResponse = hyperStatApi.get(idRes.getOcid(), formattedNow);
 //        PropensityResponse propensityResponse = propensityApi.get(idRes.getOcid(), formattedNow);
@@ -142,11 +142,11 @@ public class MapleController {
 //        HexaMatrixResponse hexaMatrixResponse = hexaMatrixApi.get(idRes.getOcid(), formattedNow);
 //        HexaMatrixStatResponse hexaMatrixStatResponse = hexaMatrixStatApi.get(idRes.getOcid(), formattedNow);
 //        DojangResponse dojangResponse = dojangApi.get(idRes.getOcid(), formattedNow);
-//
-//        // 유니온 랭킹 정보
-//        RankingUnionResponse rankingUnionResponse = rankingUnionApi
-//                .get(formattedNow, basicResponse.getWorldName(), idRes.getOcid(), 1);
-//
+
+        // 유니온 랭킹 정보
+        RankingUnionResponse rankingUnionResponse = rankingUnionApi
+                .get(formattedNow, basicResponse.getWorldName(), idRes.getOcid(), 1);
+
 //        String myClassNamFull = rankingUnionResponse.getRanking().get(0).getClassName()
 //                + "-" + rankingUnionResponse.getRanking().get(0).getSubClassName();
 //        String wholeClassNmFull = rankingUnionResponse.getRanking().get(0).getClassName() + "-" + "전체 전직";
@@ -169,13 +169,13 @@ public class MapleController {
 //
 //        RankingAchievementResponse rankingAchievementResponse = rankingAchievementApi.get(formattedNow, idRes.getOcid(), 1);
 
-//        UserUnionResponse userUnionResponse = userUnionApi.get(idRes.getOcid(), formattedNow);
+        UserUnionResponse userUnionResponse = userUnionApi.get(idRes.getOcid(), formattedNow);
 
         UserUnionRaiderResponse userUnionRaiderResponse = userUnionRaiderApi.get(idRes.getOcid(), formattedNow);
 
         CharacterOverallResponse out = CharacterOverallResponse.builder()
                 .basicResponse(basicResponse)
-//                .popularityResponse(popularityResponse)
+                .popularityResponse(popularityResponse)
 //                .statResponse(statResponse)
 //                .hyperStatResponse(hyperStatResponse)
 //                .propensityResponse(propensityResponse).abilityResponse(abilityResponse)
@@ -193,7 +193,9 @@ public class MapleController {
 //                .rankingOverallWholeClassResponse(rankOverallWholeClassResponse)
 //                .rankingDojangMyClassResponse(rankDojangMyClassResponse)
 //                .rankingDojangWholeClassResponse(rankDojangWholeClassResponse)
-//                .rankingUnionResponse(rankingUnionResponse).rankingAchievementResponse(rankingAchievementResponse)
+                .rankingUnionResponse(rankingUnionResponse)
+//                .rankingAchievementResponse(rankingAchievementResponse)
+                .userUnionResponse(userUnionResponse)
                 .userUnionRaiderResponse(userUnionRaiderResponse)
                 .build();
         ResponseCacheManager.getInstance().addCharacterCache(request.getNickname(), out);

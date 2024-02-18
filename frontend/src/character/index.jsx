@@ -7,6 +7,7 @@ import expandLessIcon from '../static/icons/expand_less_FILL0_wght400_GRAD0_opsz
 import { useParams, Outlet } from 'react-router-dom'
 import axios from 'axios';
 import { Loading } from '../common';
+import { WorldImage } from '../common/image.jsx'
 
 
 export const CharacterLayout = () => {
@@ -40,28 +41,27 @@ export const CharMenu = ({ page }) => {
     const { cname } = useParams();
     return (
         <>
-            <div className="container-fluid">
-                <div className="row">
-                    <div className="col col-2"></div>
-                    <div className="col-auto">
-                        <ul className="nav char-tab">
-                            {page === 'union' ?
+            <div className="char-main">
+                <div className="char-main-inner">
+                    {/* <div className="col col-2"></div>
+                    <div className="col col-auto"> */}
+                    <ul className="nav">
+                        {page === 'union' ?
+                            <>
+                                <AfterImageLink to={`/c/${cname}/union`} className="nav-item nav-link active" title="유니온"></AfterImageLink>
+                                <AfterImageLink to={`/c/${cname}/equip`} className="nav-item nav-link" title="능력치 · 장비"></AfterImageLink>
+                            </> :
+                            page === 'equip' ?
                                 <>
-                                    <AfterImageLink to={`/c/${cname}/union`} className="nav-item nav-link active" title="유니온"></AfterImageLink>
-                                    <AfterImageLink to={`/c/${cname}/equip`} className="nav-item nav-link" title="능력치 · 장비"></AfterImageLink>
-                                </> :
-                                page === 'equip' ?
-                                    <>
-                                        <AfterImageLink to={`/c/${cname}/union`} className="nav-item nav-link" title="유니온"></AfterImageLink>
-                                        <AfterImageLink to={`/c/${cname}/equip`} className="nav-item nav-link active" title="능력치 · 장비"></AfterImageLink>
-                                    </>
-                                    :
-                                    <>
-                                    </>
-                            }
-                        </ul>
-                    </div>
-                    <div className="col col-2"></div>
+                                    <AfterImageLink to={`/c/${cname}/union`} className="nav-item nav-link" title="유니온"></AfterImageLink>
+                                    <AfterImageLink to={`/c/${cname}/equip`} className="nav-item nav-link active" title="능력치 · 장비"></AfterImageLink>
+                                </>
+                                :
+                                <>
+                                </>
+                        }
+                    </ul>
+                    {/* </div> */}
                 </div>
             </div>
         </>
@@ -76,42 +76,62 @@ export const CharacterBasic = ({ charInfo, loading }) => {
     }
 
     return (
-        <>
-            <div className="char-basic container-fluid">
-                <div className="row justify-content-center">
-                    <div className="col-2"></div>
-                    <div className="col-auto">
+        <div>
+            <div className="char-main">
+                <div className="char-main-inner">
+                    <div className="char-basic container-fluid">
+
                         {/* 캐릭터 정보 표시 */}
                         {loading ?
-                            <><Loading></Loading></>
+                            <Loading></Loading>
                             : !charInfo ?
-                                <>검색 결과가 없습니다.</> :
+                                <div className="row justify-content-center">검색 결과가 없습니다.</div> :
                                 isDetailView ?
-                                    <>
-                                        <img src={charInfo.basicResponse.characterImage} alt="" />
-                                        <div>{charInfo.basicResponse.characterName}</div>
-                                        <div>Lv.{charInfo.basicResponse.characterLevel}&nbsp;{charInfo.basicResponse.characterClass}</div>
-                                    </>
+                                    <div className="row">
+                                        <div className="col-auto">
+                                            <img src={charInfo.basicResponse.characterImage} alt="" />
+                                        </div>
+                                        <div className="col-auto">
+                                            <div className='container'>
+                                                <div className='row'>
+                                                    <div className='col'>
+                                                        <span className="char-name">{charInfo.basicResponse.characterName}</span>
+                                                        <span className="char-class">&nbsp;&nbsp;&nbsp;{charInfo.basicResponse.characterClass}</span>
+                                                    </div>
+                                                </div>
+                                                <div className='row'>
+                                                    <div className='col-auto'>
+                                                        <WorldImage server={charInfo.basicResponse.worldName}></WorldImage> {charInfo.basicResponse.worldName}
+                                                    </div>
+                                                    <div className='col-auto'>
+                                                        {charInfo.basicResponse.characterLevel}Lv
+                                                    </div>
+                                                    <div className='col-auto'>
+                                                        {charInfo.basicResponse.characterGuildName}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
                                     :
                                     <>
-                                        <div className="card" style={{ width: '18rem', mineight: '2px' }}>
-                                            dfdf
-                                        </div>
+                                        <span>dfdfs</span>
                                     </>
                         }
-                        <div className="char-fold-btn-wrapper text-center">
-                            <AfterImageButton className="char-fold-btn ps-3" action={handleDetailView}
-                                title={isDetailView ? '기본정보 접기' : '기본정보 펼치기'}
-                                imgsrc={isDetailView ?
-                                    <img className="char-fold-btn-img ps-2" src={expandLessIcon} alt=""></img> :
-                                    <img className="char-fold-btn-img ps-2" src={expandMoreIcon} alt=""></img>}>
-                            </AfterImageButton>
-                        </div>
+                    </div>
+                    <div className="char-fold-btn-wrapper text-center">
+                        <AfterImageButton className="char-fold-btn ps-3" action={handleDetailView}
+                            title={isDetailView ? '기본정보 접기' : '기본정보 펼치기'}
+                            imgsrc={isDetailView ?
+                                <img className="char-fold-btn-img ps-2" src={expandLessIcon} alt=""></img> :
+                                <img className="char-fold-btn-img ps-2" src={expandMoreIcon} alt=""></img>}>
+                        </AfterImageButton>
                     </div>
                     <div className="col-2"></div>
                 </div>
             </div>
             {/* <CharMenu page='union'></CharMenu> */}
-        </>
+        </div >
     )
 }

@@ -41,7 +41,7 @@ export const UnionRaider = () => {
   const [charInfo, loading] = useOutletContext();
   const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder);
 
-
+  console.log('charInfo=',charInfo)
   const defaultTable = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill(0))
   const [table, setTable] = React.useState(defaultTable)
   const defaultTableStyle = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill({}))
@@ -316,14 +316,14 @@ export const UnionRaider = () => {
     const getTooltips = () => {
       let tooltips = []
       for (let i = 0; i < blockDesc.length; i++) {
-        let gradeDom = <AfterImageBadgeLight key={`block-grade-${i}`} className='block-grade' title={blockDesc[i].grade}></AfterImageBadgeLight>
+        let gradeDom = <AfterImageBadgeLight className='block-grade' title={blockDesc[i].grade}></AfterImageBadgeLight>
 
         let descDoms = []
         for (let j = 0; j < blockDesc[i].desc.length; j++) {
           let row = blockDesc[i].desc[j]
           let rows = []
           for (let k = 0; k < row.length; k++) {
-            rows.push(<AfterImageBadgeLight key={`block-desc-${i}-${j}-${k}`} className='block-desc' title={row[k]}></AfterImageBadgeLight>)
+            rows.push(<AfterImageBadgeLight className='block-desc' title={row[k]}></AfterImageBadgeLight>)
           }
           descDoms.push(rows)
         }

@@ -1,0 +1,23 @@
+.char-main {
+    max-width: 1080px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.char-main-inner {
+    margin-left: 10px;
+}
+
+.char-basic {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.char-name {
+    font-size: 30px;
+    /* font-weight: bold; */
+}
+
+.char-class {
+    color: #4d4d4d;
+}
