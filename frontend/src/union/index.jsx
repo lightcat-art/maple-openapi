@@ -295,10 +295,10 @@ export const UnionRaider = () => {
         <table className="base-block">
           <tbody>
             {blockStyle.map((row, i) => (
-              <tr key={i}>
+              <tr key={`base-block-${i}`}>
                 {row.map((v, j) => (
                   <td
-                    key={j} className="base-block-cell" style={v} uniqkey={`${i}-${j}`}>
+                    key={`base-block-${i}-${j}`} className="base-block-cell" style={v} uniqkey={`${i}-${j}`}>
                   </td>
                 ))}
               </tr>
@@ -313,17 +313,17 @@ export const UnionRaider = () => {
     if (!blockDesc) {
       return <></>
     }
-    function getTooltips() {
+    const getTooltips = () => {
       let tooltips = []
       for (let i = 0; i < blockDesc.length; i++) {
-        let gradeDom = <AfterImageBadgeLight className='block-grade' title={blockDesc[i].grade}></AfterImageBadgeLight>
+        let gradeDom = <AfterImageBadgeLight key={`block-grade-${i}`} className='block-grade' title={blockDesc[i].grade}></AfterImageBadgeLight>
 
         let descDoms = []
         for (let j = 0; j < blockDesc[i].desc.length; j++) {
           let row = blockDesc[i].desc[j]
           let rows = []
           for (let k = 0; k < row.length; k++) {
-            rows.push(<AfterImageBadgeLight className='block-desc' title={row[k]}></AfterImageBadgeLight>)
+            rows.push(<AfterImageBadgeLight key={`block-desc-${i}-${j}-${k}`} className='block-desc' title={row[k]}></AfterImageBadgeLight>)
           }
           descDoms.push(rows)
         }
@@ -335,24 +335,23 @@ export const UnionRaider = () => {
         for (let j = 0; j < blockDesc[i].domiDesc.length; j++) {
           let classDesc = blockDesc[i].domiDesc[j]
           classDescDoms.push(
-            <>
-              <div>ㆍLv.{classDesc.level} {classDesc.className}</div>
-            </>)
+            <div key={`domi-${i}-${j}`}>ㆍLv.{classDesc.level} {classDesc.className}</div>
+          )
         }
 
 
         tooltips.push(
-          <Tooltip id={`block-tooltip-${i}`} className='block-tooltip'>
+          <Tooltip key={`block-tooltip-${i}`} id={`block-tooltip-${i}`} className='block-tooltip'>
 
             <div>{gradeDom}</div>
 
             <div>
               {descDoms.map((row, i) => (
-                <div key={i}>
+                <div key={`tooltip-${i}`}>
                   {row.map((v, j) => (
-                    <>
+                    <span key={`tooltip-${i}-${j}`}>
                       {v}
-                    </>
+                    </span>
                   ))}
                 </div>
               ))}
@@ -368,7 +367,9 @@ export const UnionRaider = () => {
       return tooltips
     }
     return (
-      <div>{getTooltips()}</div>
+      <div>
+        {getTooltips()}
+      </div>
     )
   }
 

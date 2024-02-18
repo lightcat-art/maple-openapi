@@ -85,39 +85,19 @@ export const CharacterBasic = ({ charInfo, loading }) => {
                         {loading ?
                             <><Loading></Loading></>
                             : !charInfo ?
-                            <>검색 결과가 없습니다.</> :
-                            isDetailView ?
-                                <>
-                                    {/* <div class="card" style={{ width: '18rem' }}>
-                                    <img class="card-img-top" src={arcana} alt="Card image cap" />
-                                    <div class="card-body">
-                                        <h5 class="card-title">Card title</h5>
-                                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                                    </div>
-                                </div> */}
-
-                                    <div className="char-card card flex-row flex-wrap">
-                                        <div className="card-header border-0">
-                                            <img src={charInfo.basicResponse.characterImage} alt="" />
+                                <>검색 결과가 없습니다.</> :
+                                isDetailView ?
+                                    <>
+                                        <img src={charInfo.basicResponse.characterImage} alt="" />
+                                        <div>{charInfo.basicResponse.characterName}</div>
+                                        <div>Lv.{charInfo.basicResponse.characterLevel}&nbsp;{charInfo.basicResponse.characterClass}</div>
+                                    </>
+                                    :
+                                    <>
+                                        <div className="card" style={{ width: '18rem', mineight: '2px' }}>
+                                            dfdf
                                         </div>
-                                        <div className="card-block px-5">
-                                            <h4 style={{ fontSize: '30px' }} className="card-title">{charInfo.basicResponse.characterName}</h4>
-                                            <p className="card-text">Lv.{charInfo.basicResponse.characterLevel}&nbsp;{charInfo.basicResponse.characterClass}</p>
-                                            {/* <a href="#" className="btn btn-primary">BUTTON</a> */}
-                                        </div>
-                                        {/* <div class="w-100"></div> */}
-                                        <div className="card-footer w-100 text-muted">
-                                            FOOTER
-                                        </div>
-                                    </div>
-                                </>
-                                :
-                                <>
-                                    <div className="card" style={{ width: '18rem', mineight: '2px' }}>
-                                        dfdf
-                                    </div>
-                                </>
+                                    </>
                         }
                         <div className="char-fold-btn-wrapper text-center">
                             <AfterImageButton className="char-fold-btn ps-3" action={handleDetailView}
