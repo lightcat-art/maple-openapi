@@ -61,7 +61,7 @@ function getRegionCells(region) {
 regionDef(TABLE_ROW_LEN, TABLE_COL_LEN)
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
-export function BasicTable({ tableStyle, setTableStyle, setTable, table, regionMode, processType, initSelectDisabled, isStart }) {
+export function BasicTable({ tableStyle, setTableStyle, setTable, table, regionMode, processType, initSelectDisabled, isStart, isProcessFail }) {
     const [select, setSelect] = React.useState([])
     // This variable will control if the user is dragging or not
     const [drag, setDrag] = React.useState(false)
@@ -331,6 +331,7 @@ export function BasicTable({ tableStyle, setTableStyle, setTable, table, regionM
                     </tbody>
                 </table>
             </div>
+
             <div className="init-select-wrapper text-center">
                 <AfterImageButton className="init-select-btn ps-3"
                     action={handleInitSelect}
@@ -338,6 +339,13 @@ export function BasicTable({ tableStyle, setTableStyle, setTable, table, regionM
                     title='선택 영역 초기화'>
                 </AfterImageButton>
             </div>
+
+            <div>{isProcessFail ?
+                <div className="process-fail text-center">
+                    설정한 영역을 모두 채울수 있는 경우가 없습니다.
+                </div> : <></>}
+            </div>
+
         </div>
     );
 }

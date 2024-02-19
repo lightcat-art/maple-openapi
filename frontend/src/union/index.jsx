@@ -62,6 +62,7 @@ export const UnionRaider = () => {
   const [blockCountDisabled, setBlockCountDisabled] = React.useState(Array.from(Array(blockManager.baseBlockType.length).fill(false)))
   const [blockDesc, setBlockDesc] = React.useState([])
   const [initSelectDisabled, setInitSelectDisabled] = React.useState(false)
+  const [isProcessFail, setIsProcessFail] = React.useState(false)
 
 
   const handleUseProcess = () => {
@@ -99,6 +100,7 @@ export const UnionRaider = () => {
       // setResetButtonHidden(false)
       setUseProcessDisabled(true)
       setInitSelectDisabled(true)
+      setIsProcessFail(false)
       e.preventDefault() // event의 클릭 기본동작 방지
     }
     setIsStart(!isStart)
@@ -190,7 +192,7 @@ export const UnionRaider = () => {
       if (result) {
         if (result.count) {
           if (result.count === PROCESS_FAIL) {
-            alert('fail to find root')
+            setIsProcessFail(true)
             resetAction()
             setIsStart(false)
           } else {
@@ -423,6 +425,7 @@ export const UnionRaider = () => {
                 regionMode={regionMode}
                 processType={processType}
                 initSelectDisabled={initSelectDisabled}
+                isProcessFail={isProcessFail}
               >
               </BasicTable>
             </div>
