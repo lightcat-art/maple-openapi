@@ -76,7 +76,6 @@ export const CharacterBasic = ({ charInfo, loading }) => {
     }
 
     return (
-        <div>
             <div className="char-main">
                 <div className="char-main-inner">
                     <div className="char-basic container-fluid">
@@ -88,7 +87,7 @@ export const CharacterBasic = ({ charInfo, loading }) => {
                                 <div className="row justify-content-center">검색 결과가 없습니다.</div> :
                                 isDetailView ?
                                     <div className="row">
-                                        <div className="col-auto">
+                                        <div className="col-auto char-img">
                                             <img src={charInfo.basicResponse.characterImage} alt="" />
                                         </div>
                                         <div className="col-auto">
@@ -116,22 +115,36 @@ export const CharacterBasic = ({ charInfo, loading }) => {
                                     </div>
                                     :
                                     <>
-                                        <span>dfdfs</span>
+                                        <div className='row'>
+                                            <div className='col-auto char-name-fold'>
+                                                <span>{charInfo.basicResponse.characterName}</span>
+                                            </div>
+                                            <div className='col-auto char-class-fold'>
+                                                <span>&nbsp;&nbsp;&nbsp;{charInfo.basicResponse.characterClass}</span>
+                                            </div>
+                                            <div className='col-auto char-world-fold'>
+                                                <span>&nbsp;<WorldImage server={charInfo.basicResponse.worldName}></WorldImage> {charInfo.basicResponse.worldName}</span>
+                                            </div>
+                                            <div className='col-auto char-level-fold'>
+                                                <span> {charInfo.basicResponse.characterLevel}Lv</span>
+                                            </div>
+                                            <div className='col-auto char-guild-fold'>
+                                                <span> {charInfo.basicResponse.characterGuildName}</span>
+                                            </div>
+                                        </div>
                                     </>
                         }
                     </div>
-                    <div className="char-fold-btn-wrapper text-center">
+                    {/* <div className="char-fold-btn-wrapper text-center">
                         <AfterImageButton className="char-fold-btn ps-3" action={handleDetailView}
                             title={isDetailView ? '기본정보 접기' : '기본정보 펼치기'}
                             imgsrc={isDetailView ?
                                 <img className="char-fold-btn-img ps-2" src={expandLessIcon} alt=""></img> :
                                 <img className="char-fold-btn-img ps-2" src={expandMoreIcon} alt=""></img>}>
                         </AfterImageButton>
-                    </div>
+                    </div> */}
                     <div className="col-2"></div>
                 </div>
             </div>
-            {/* <CharMenu page='union'></CharMenu> */}
-        </div >
     )
 }

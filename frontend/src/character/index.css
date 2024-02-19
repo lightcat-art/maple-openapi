@@ -2,6 +2,7 @@
     max-width: 1080px;
     margin-left: auto;
     margin-right: auto;
+    /* background-color: #383838; */
 }
 
 .char-main-inner {
@@ -9,8 +10,8 @@
 }
 
 .char-basic {
-    margin-top: 20px;
-    margin-bottom: 20px;
+    padding-top: 40px;
+    padding-bottom: 40px;
 }
 
 .char-name {
@@ -20,4 +21,20 @@
 
 .char-class {
     color: #4d4d4d;
+}
+
+.char-img {
+    background-color: #eeeeee;
+    border-radius: 15px;
+    padding: 10px;
+}
+
+.char-name-fold {
+    font-size: 20px;
+    padding-left: 30px;
+}
+
+.char-class-fold, .char-world-fold, .char-world-name-fold, .char-level-fold, .char-guild-fold {
+    color: #4d4d4d;
+    padding-top: 4px;
 }

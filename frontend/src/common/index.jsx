@@ -21,7 +21,7 @@ export const Menu = ({ page }) => {
                     </div>
                 </div>
             </div> */}
-            <div className="container-fluid p-0">
+            <div className="container-fluid p-0 navbar-wrapper">
                 <nav className="navbar navbar-expand navbar-group">
                     <div className="row">
                         <div className="col col-2"></div>
