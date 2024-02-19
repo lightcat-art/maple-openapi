@@ -8,7 +8,7 @@ import { SwitchCheckBox } from '../common/checkBox'
 import './index.css'
 import { getCSSProp } from '../util/util.jsx'
 import { useOutletContext } from 'react-router-dom'
-import { TABLE_ROW_LEN, TABLE_COL_LEN } from '../common'
+import { TABLE_ROW_LEN, TABLE_COL_LEN, ContentLayout } from '../common'
 import { Button, AfterImageButton, AfterImageBadgeLight } from '../common/clickable'
 import { Divider } from '../common/divider.jsx'
 import { CharMenu } from '../character';
@@ -41,7 +41,7 @@ export const UnionRaider = () => {
   const [charInfo, loading] = useOutletContext();
   const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder);
 
-  console.log('charInfo=',charInfo)
+  console.log('charInfo=', charInfo)
   const defaultTable = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill(0))
   const [table, setTable] = React.useState(defaultTable)
   const defaultTableStyle = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill({}))
@@ -376,64 +376,66 @@ export const UnionRaider = () => {
   return (
     <>
       <CharMenu page='union'></CharMenu>
-      <div className='container-fluid'>
-        <div className="row justify-content-center" style={{ marginTop: '30px' }}>
-          <div className="col-auto use-process-btn-wrapper text-center">
-            <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
-              disabled={useProcessDisabled}
-              title={useProcess ? '내 정보 보기' : '자동 배치 모드'}>
-            </AfterImageButton>
-          </div>
-          <div className="col-auto start-wrapper text-center">
-            <AfterImageButton className="start-btn ps-3" action={handleStart}
-              disabled={submitButtonDisabled}
-              title={isStart ? '리셋' : '시작'}>
-            </AfterImageButton>
-          </div>
-          {/* <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox>
+      <ContentLayout>
+        <div className='container-fluid'>
+          <div className="row justify-content-center" style={{ marginTop: '30px' }}>
+            <div className="col-auto use-process-btn-wrapper text-center">
+              <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
+                disabled={useProcessDisabled}
+                title={useProcess ? '내 정보 보기' : '자동 배치 모드'}>
+              </AfterImageButton>
+            </div>
+            <div className="col-auto start-wrapper text-center">
+              <AfterImageButton className="start-btn ps-3" action={handleStart}
+                disabled={submitButtonDisabled}
+                title={isStart ? '리셋' : '시작'}>
+              </AfterImageButton>
+            </div>
+            {/* <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox>
           <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
           <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div> */}
-          <div className="col-auto">
-            <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
+            <div className="col-auto">
+              <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="container-fluid">
-        <div className="row justify-content-center">
-          <div className="col-auto">
-            <BasicTable
-              table={table}
-              setTable={setTable}
-              tableStyle={tableStyle}
-              setTableStyle={setTableStyle}
-              isStart={isStart}
-              useProcessDisabled={useProcessDisabled}
-              regionMode={regionMode}
-              processType={processType}
-              initSelectDisabled={initSelectDisabled}
-            >
-            </BasicTable>
-          </div>
-          <div className="col-auto block-counts">
-            <BlockTooltip></BlockTooltip>
-            <BlockCountContainer blockClassName="pt-1" idx={0} />
-            <BlockCountContainer idx={1} />
-            <BlockCountContainer idx={2} />
-            <BlockCountContainer idx={3} />
-            <BlockCountContainer blockClassName="pt-2" idx={4} />
-            <BlockCountContainer blockClassName="pt-1" idx={5} />
-            <BlockCountContainer blockClassName="pt-1" idx={6} />
-            <BlockCountContainer idx={7} />
-            <BlockCountContainer blockClassName="pt-1" idx={8} />
-            <BlockCountContainer blockClassName="pt-2" idx={9} />
-            <BlockCountContainer blockClassName="pt-1" idx={10} />
-            <BlockCountContainer blockClassName="pt-2" idx={11} />
-            <BlockCountContainer blockClassName="pt-1" idx={12} />
-            <BlockCountContainer blockClassName="pt-2" idx={13} />
-            <BlockCountContainer blockClassName="pt-2" idx={14} />
+        <div className="container-fluid">
+          <div className="row justify-content-center">
+            <div className="col-auto">
+              <BasicTable
+                table={table}
+                setTable={setTable}
+                tableStyle={tableStyle}
+                setTableStyle={setTableStyle}
+                isStart={isStart}
+                useProcessDisabled={useProcessDisabled}
+                regionMode={regionMode}
+                processType={processType}
+                initSelectDisabled={initSelectDisabled}
+              >
+              </BasicTable>
+            </div>
+            <div className="col-auto block-counts">
+              <BlockTooltip></BlockTooltip>
+              <BlockCountContainer blockClassName="pt-1" idx={0} />
+              <BlockCountContainer idx={1} />
+              <BlockCountContainer idx={2} />
+              <BlockCountContainer idx={3} />
+              <BlockCountContainer blockClassName="pt-2" idx={4} />
+              <BlockCountContainer blockClassName="pt-1" idx={5} />
+              <BlockCountContainer blockClassName="pt-1" idx={6} />
+              <BlockCountContainer idx={7} />
+              <BlockCountContainer blockClassName="pt-1" idx={8} />
+              <BlockCountContainer blockClassName="pt-2" idx={9} />
+              <BlockCountContainer blockClassName="pt-1" idx={10} />
+              <BlockCountContainer blockClassName="pt-2" idx={11} />
+              <BlockCountContainer blockClassName="pt-1" idx={12} />
+              <BlockCountContainer blockClassName="pt-2" idx={13} />
+              <BlockCountContainer blockClassName="pt-2" idx={14} />
+            </div>
           </div>
         </div>
-      </div>
+      </ContentLayout>
     </>
   )
 }

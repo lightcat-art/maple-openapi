@@ -51,7 +51,7 @@ export const ContentLayout = ({ children, className, rowClassName, colClassName 
             <div className={`container-fluid ${className? className: ''}`}>
                 <div className={`row ${rowClassName? rowClassName: ''}`}>
                     <div className="col-xl-2"></div>
-                    <div className={`col-auto ${colClassName? colClassName: ''}`}>
+                    <div className={`col ${colClassName? colClassName: ''}`}>
                         {children}
                     </div>
                     <div className="col-xl-2"></div>
