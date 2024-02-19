@@ -17,7 +17,7 @@ export const CharacterLayout = () => {
     const param = { nickname: cname }
     // getCharInfo(param, setCharInfo)
     React.useEffect(() => {
-        axios.get('/api/char/overall', { params: param })
+        axios.get('/api/char/banner', { params: param })
             .then(response => {
                 setCharInfo(response.data)
                 setLoading(false)

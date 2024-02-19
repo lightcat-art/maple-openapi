@@ -37,10 +37,10 @@ function HomeLayout() {
         // <div className="container-fluid">
         <div className="home">
             {/* <div className="container-fluid bg-primary main-bg d-none d-sm-block">
-            </div> */}
-            {/* <div className="container-fluid bg-primary main-bg-tab d-none d-md-block d-xl-none">
-            </div> */}
-            {/* <div className="container-fluid bg-primary main-bg-mob d-sm-none">
+            </div>
+            <div className="container-fluid bg-primary main-bg-tab d-none d-md-block d-xl-none">
+            </div>
+            <div className="container-fluid bg-primary main-bg-mob d-sm-none">
             </div> */}
             {/* <div className="main-bg"></div> */}
 

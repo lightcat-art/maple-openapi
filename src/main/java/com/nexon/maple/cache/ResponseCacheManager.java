@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ResponseCacheManager {
 
-    private Map<String, CharacterOverallResponse> characterCacheMap = new ConcurrentHashMap<String, CharacterOverallResponse>();
+    private final Map<String, CharacterOverallResponse> characterCacheMap = new ConcurrentHashMap<String, CharacterOverallResponse>();
 
     private ResponseCacheManager() {
     }
@@ -24,19 +24,19 @@ public class ResponseCacheManager {
         return this.characterCacheMap;
     }
 
-    public CharacterOverallResponse getCharacterCache(String ocid) {
-        return this.characterCacheMap.get(ocid);
+    public CharacterOverallResponse getCharacterCache(String nickName) {
+        return this.characterCacheMap.get(nickName);
     }
 
-    public void addCharacterCache(String ocid, CharacterOverallResponse response) {
-        this.characterCacheMap.put(ocid, response);
+    public void addCharacterCache(String nickName, CharacterOverallResponse response) {
+        this.characterCacheMap.put(nickName, response);
     }
 
-    public void delCharacterCache(String ocid) {
-        this.characterCacheMap.remove(ocid);
+    public void clearCharacterCacheOne(String nickName) {
+        this.characterCacheMap.remove(nickName);
     }
 
-    public void clearCharacterCache() {
+    public void clearCharacterCacheAll() {
         this.characterCacheMap.clear();
     }
 

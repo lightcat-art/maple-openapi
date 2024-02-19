@@ -2,6 +2,7 @@ package com.nexon.maple.controller;
 
 
 import com.nexon.maple.cache.ResponseCacheManager;
+import com.nexon.maple.common.DateManager;
 import com.nexon.maple.model.character.overall.CharacterOverallRequest;
 import com.nexon.maple.model.character.overall.CharacterOverallResponse;
 import com.nexon.maple.openapi.client.character.*;
@@ -96,10 +97,7 @@ public class MapleController {
 
     @GetMapping("/api/char/overall")
     public CharacterOverallResponse getCharOverall(CharacterOverallRequest request) {
-
-        LocalDate now = LocalDate.now().minusDays(2);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String formattedNow = now.format(formatter);
+        String formattedNow = DateManager.getSearchDate();
 
         logger.info("request nickname = " + request.getNickname() + ", now = " + formattedNow);
         // 필요에 따라 key 저장방식을 ocid로 바꾸는것도 고려 필요.
@@ -201,6 +199,97 @@ public class MapleController {
         ResponseCacheManager.getInstance().addCharacterCache(request.getNickname(), out);
         //
         return out;
+    }
+
+    @GetMapping("/api/char/banner")
+    public CharacterOverallResponse getCharBanner(CharacterOverallRequest request) {
+        String formattedNow = DateManager.getSearchDate();
+        IdResponse idRes = null;
+        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()) == null) {
+            idRes = idApi.get(request.getNickname());
+            CharacterOverallResponse out = CharacterOverallResponse.builder().idResponse(idRes).build();
+            // api 걸리는 시간을 고려하여 다시한번 체크
+            if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()) == null) {
+                ResponseCacheManager.getInstance().addCharacterCache(request.getNickname(), out);
+            }
+        } else {
+            idRes = ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getIdResponse();
+        }
+
+        // 필요한 기능 체크 후 없다면 api call.
+        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getBasicResponse() == null) {
+            BasicResponse basicResponse = basicApi.get(idRes.getOcid(), formattedNow);
+            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setBasicResponse(basicResponse);
+        } else {
+            logger.info("Use getBasicResponse Cache. character name = " + request.getNickname());
+        }
+        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getPopularityResponse() == null) {
+            PopularityResponse popularityResponse = popularityApi.get(idRes.getOcid(), formattedNow);
+            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setPopularityResponse(popularityResponse);
+        } else {
+            logger.info("Use getPopularityResponse Cache. character name = " + request.getNickname());
+        }
+        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getRankingUnionResponse() == null) {
+            RankingUnionResponse rankingUnionResponse = rankingUnionApi
+                    .get(formattedNow, ResponseCacheManager.getInstance().getCharacterCache(
+                            request.getNickname()).getBasicResponse().getWorldName(), idRes.getOcid(), 1);
+            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setRankingUnionResponse(rankingUnionResponse);
+        }
+        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getUserUnionResponse() == null) {
+            UserUnionResponse userUnionResponse = userUnionApi.get(idRes.getOcid(), formattedNow);
+            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setUserUnionResponse(userUnionResponse);
+        }
+        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getUserUnionRaiderResponse() == null) {
+            UserUnionRaiderResponse userUnionRaiderResponse = userUnionRaiderApi.get(idRes.getOcid(), formattedNow);
+            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setUserUnionRaiderResponse(userUnionRaiderResponse);
+        }
+        return ResponseCacheManager.getInstance().getCharacterCache(request.getNickname());
+    }
+
+
+    @GetMapping("/api/char/union-all")
+    public CharacterOverallResponse getCharUnionAll(CharacterOverallRequest request) {
+        String formattedNow = DateManager.getSearchDate();
+        IdResponse idRes = null;
+        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()) == null) {
+            idRes = idApi.get(request.getNickname());
+            CharacterOverallResponse out = CharacterOverallResponse.builder().idResponse(idRes).build();
+            // api 걸리는 시간을 고려하여 다시한번 체크
+            if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()) == null) {
+                ResponseCacheManager.getInstance().addCharacterCache(request.getNickname(), out);
+            }
+        } else {
+            idRes = ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getIdResponse();
+        }
+
+        // 필요한 기능 체크 후 없다면 api call.
+        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getBasicResponse() == null) {
+            BasicResponse basicResponse = basicApi.get(idRes.getOcid(), formattedNow);
+            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setBasicResponse(basicResponse);
+        } else {
+            logger.info("Use getBasicResponse Cache. character name = " + request.getNickname());
+        }
+        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getPopularityResponse() == null) {
+            PopularityResponse popularityResponse = popularityApi.get(idRes.getOcid(), formattedNow);
+            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setPopularityResponse(popularityResponse);
+        } else {
+            logger.info("Use getPopularityResponse Cache. character name = " + request.getNickname());
+        }
+        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getRankingUnionResponse() == null) {
+            RankingUnionResponse rankingUnionResponse = rankingUnionApi
+                    .get(formattedNow, ResponseCacheManager.getInstance().getCharacterCache(
+                            request.getNickname()).getBasicResponse().getWorldName(), idRes.getOcid(), 1);
+            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setRankingUnionResponse(rankingUnionResponse);
+        }
+        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getUserUnionResponse() == null) {
+            UserUnionResponse userUnionResponse = userUnionApi.get(idRes.getOcid(), formattedNow);
+            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setUserUnionResponse(userUnionResponse);
+        }
+        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getUserUnionRaiderResponse() == null) {
+            UserUnionRaiderResponse userUnionRaiderResponse = userUnionRaiderApi.get(idRes.getOcid(), formattedNow);
+            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setUserUnionRaiderResponse(userUnionRaiderResponse);
+        }
+        return ResponseCacheManager.getInstance().getCharacterCache(request.getNickname());
     }
 
     @GetMapping("/api/char/id")
