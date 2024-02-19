@@ -229,20 +229,6 @@ public class MapleController {
         } else {
             logger.info("Use getPopularityResponse Cache. character name = " + request.getNickname());
         }
-        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getRankingUnionResponse() == null) {
-            RankingUnionResponse rankingUnionResponse = rankingUnionApi
-                    .get(formattedNow, ResponseCacheManager.getInstance().getCharacterCache(
-                            request.getNickname()).getBasicResponse().getWorldName(), idRes.getOcid(), 1);
-            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setRankingUnionResponse(rankingUnionResponse);
-        }
-        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getUserUnionResponse() == null) {
-            UserUnionResponse userUnionResponse = userUnionApi.get(idRes.getOcid(), formattedNow);
-            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setUserUnionResponse(userUnionResponse);
-        }
-        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getUserUnionRaiderResponse() == null) {
-            UserUnionRaiderResponse userUnionRaiderResponse = userUnionRaiderApi.get(idRes.getOcid(), formattedNow);
-            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setUserUnionRaiderResponse(userUnionRaiderResponse);
-        }
         return ResponseCacheManager.getInstance().getCharacterCache(request.getNickname());
     }
 
@@ -266,14 +252,6 @@ public class MapleController {
         if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getBasicResponse() == null) {
             BasicResponse basicResponse = basicApi.get(idRes.getOcid(), formattedNow);
             ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setBasicResponse(basicResponse);
-        } else {
-            logger.info("Use getBasicResponse Cache. character name = " + request.getNickname());
-        }
-        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getPopularityResponse() == null) {
-            PopularityResponse popularityResponse = popularityApi.get(idRes.getOcid(), formattedNow);
-            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setPopularityResponse(popularityResponse);
-        } else {
-            logger.info("Use getPopularityResponse Cache. character name = " + request.getNickname());
         }
         if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getRankingUnionResponse() == null) {
             RankingUnionResponse rankingUnionResponse = rankingUnionApi

@@ -7,7 +7,7 @@ import worker from './UnionWorker'
 import { SwitchCheckBox } from '../common/checkBox'
 import './index.css'
 import { getCSSProp } from '../util/util.jsx'
-import { useOutletContext } from 'react-router-dom'
+import { useParams, useOutletContext } from 'react-router-dom'
 import { TABLE_ROW_LEN, TABLE_COL_LEN, ContentLayout } from '../common'
 import { Button, AfterImageButton, AfterImageBadgeLight } from '../common/clickable'
 import { Divider } from '../common/divider.jsx'
@@ -15,6 +15,7 @@ import { CharMenu } from '../character';
 import decreaseIcon from '../static/icons/chevron_left_FILL0_wght400_GRAD0_opsz20.png'
 import increaseIcon from '../static/icons/chevron_right_FILL0_wght400_GRAD0_opsz20.png'
 import { Tooltip } from 'react-tooltip'
+import axios from 'axios';
 
 let unionWorker = new WebWorker().getUnionWorker(worker)
 let loadingDone = false
@@ -38,10 +39,10 @@ const blockColorOrigin = getCSSProp(document.documentElement, '--block-color-ori
 const blockColorOriginBorder = getCSSProp(document.documentElement, '--block-color-origin-bd')
 
 export const UnionRaider = () => {
-  const [charInfo, loading] = useOutletContext();
+  const [charUnionInfo, setCharUnionInfo, loading] = useOutletContext();
   const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder);
-
-  console.log('charInfo=', charInfo)
+  const { cname } = useParams();
+  const param = { nickname: cname }
   const defaultTable = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill(0))
   const [table, setTable] = React.useState(defaultTable)
   const defaultTableStyle = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill({}))
@@ -61,6 +62,7 @@ export const UnionRaider = () => {
   const [blockCountDisabled, setBlockCountDisabled] = React.useState(Array.from(Array(blockManager.baseBlockType.length).fill(false)))
   const [blockDesc, setBlockDesc] = React.useState([])
   const [initSelectDisabled, setInitSelectDisabled] = React.useState(false)
+
 
   const handleUseProcess = () => {
     if (useProcess) {
@@ -163,12 +165,22 @@ export const UnionRaider = () => {
 
 
   React.useEffect(() => {
-    loadingDone = false
+    if (!charUnionInfo) {
+      // charUnionInfo 존재여부 체크를 안해주어도 api call이 안되는데...? 흠... 일단 안전하게 존재여부 체크는 하자.
+      console.log('get union-all api')
+      axios.get('/api/char/union-all', { params: param })
+        .then(response => {
+          setCharUnionInfo(response.data)
+        })
+        .catch(error => console.log(error));
+
+    }
     if (useProcess) {
       setInitSelectDisabled(false)
     } else {
       setInitSelectDisabled(true)
     }
+
   }, [])
 
   React.useEffect(() => {
@@ -182,7 +194,6 @@ export const UnionRaider = () => {
             resetAction()
             setIsStart(false)
           } else {
-            console.log('result count=', result.count)
             setProcessType(result.count)
             if (result.domiBlocks) {
               const styleValue = blockManager.setTableStyleValue(result.table, result.domiBlocks)
@@ -198,13 +209,13 @@ export const UnionRaider = () => {
 
   React.useEffect(() => {
     console.log('block count setting')
-    if (charInfo) {
-      setResponseUnionBlock(charInfo.userUnionRaiderResponse.unionBlock) // blockCount가 알고리즘 입력으로 들어갈 준비가 되면 제거할 코드
-      const extractMap = blockManager.getBlockCount(charInfo.userUnionRaiderResponse.unionBlock)
+    if (charUnionInfo) {
+      setResponseUnionBlock(charUnionInfo.userUnionRaiderResponse.unionBlock) // blockCount가 알고리즘 입력으로 들어갈 준비가 되면 제거할 코드
+      const extractMap = blockManager.getBlockCount(charUnionInfo.userUnionRaiderResponse.unionBlock)
       setBlockCount(extractMap.count)
       setBlockDesc(extractMap.desc)
     }
-  }, [charInfo])
+  }, [charUnionInfo])
 
   React.useEffect(() => {
     let decreaseDisabled = []
@@ -229,9 +240,9 @@ export const UnionRaider = () => {
       setSubmitButtonDisabled(false)
       // setResetButtonHidden(true)
     } else {
-      if (charInfo) {
+      if (charUnionInfo) {
         let domiBlocks = []
-        charInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
+        charUnionInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
           domiBlocks.push(blockManager.transformPosition(block.blockPosition, TABLE_ROW_LEN / 2, TABLE_COL_LEN / 2))
         })
         // const styleValue = blockType.setTableStyleValue(table, domiBlocks)
@@ -251,19 +262,19 @@ export const UnionRaider = () => {
     }
     localStorage.setItem("useProcess", JSON.stringify(useProcess))
     setProcessType(PROCESS_READY)
-  }, [charInfo, useProcess])
+  }, [charUnionInfo, useProcess])
 
   React.useEffect(() => {
     // console.log('resetButtonHidden=', resetButtonHidden, ', processCount=', processCount, ', loading=', loading, ', tableStyle=', tableStyle)
     // if (processType >= PROCESS_READY) {
     drawRegion(TABLE_ROW_LEN, TABLE_COL_LEN)
     // }
-    if (!loading && !loadingDone) {
-      loadingDone = true
-      // if (charInfo) {
-      // setSubmitButtonDisabled(false)
-      // }
-    }
+    // if (!loading && !loadingDone) {
+    //   loadingDone = true
+    //   // if (charInfo) {
+    //   // setSubmitButtonDisabled(false)
+    //   // }
+    // }
   }, [resetButtonHidden, processType, loading, tableStyle]);
 
   const BlockCountContainer = (props) => {

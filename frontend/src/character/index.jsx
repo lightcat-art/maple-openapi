@@ -11,7 +11,8 @@ import { WorldImage } from '../common/image.jsx'
 
 
 export const CharacterLayout = () => {
-    const [charInfo, setCharInfo] = React.useState(null)
+    const [charBasicInfo, setCharBasicInfo] = React.useState(null)
+    const [charUnionInfo, setCharUnionInfo] = React.useState(null)
     const [loading, setLoading] = React.useState(true)
     const { cname } = useParams();
     const param = { nickname: cname }
@@ -19,7 +20,7 @@ export const CharacterLayout = () => {
     React.useEffect(() => {
         axios.get('/api/char/banner', { params: param })
             .then(response => {
-                setCharInfo(response.data)
+                setCharBasicInfo(response.data)
                 setLoading(false)
             })
             .catch(error => console.log(error));
@@ -30,8 +31,8 @@ export const CharacterLayout = () => {
     return (
         <>
             <Menu page='not-home'></Menu>
-            <CharacterBasic charInfo={charInfo} loading={loading}></CharacterBasic>
-            <Outlet context={[charInfo, loading]} />
+            <CharacterBasic charBasicInfo={charBasicInfo} loading={loading}></CharacterBasic>
+            <Outlet context={[charUnionInfo, setCharUnionInfo, loading]} />
             <div>footer</div>
         </>
     )
@@ -63,7 +64,7 @@ export const CharMenu = ({ page }) => {
     );
 }
 
-export const CharacterBasic = ({ charInfo, loading }) => {
+export const CharacterBasic = ({ charBasicInfo, loading }) => {
     const [isDetailView, setIsDetailView] = React.useState(true)
 
     const handleDetailView = () => {
@@ -77,30 +78,30 @@ export const CharacterBasic = ({ charInfo, loading }) => {
                 {/* 캐릭터 정보 표시 */}
                 {loading ?
                     <Loading></Loading>
-                    : !charInfo ?
+                    : !charBasicInfo ?
                         <div className="row justify-content-center">검색 결과가 없습니다.</div> :
                         isDetailView ?
                             <div className="row">
                                 <div className="col-auto char-img">
-                                    <img src={charInfo.basicResponse.characterImage} alt="" />
+                                    <img src={charBasicInfo.basicResponse.characterImage} alt="" />
                                 </div>
                                 <div className="col-auto">
                                     <div className='container'>
                                         <div className='row'>
                                             <div className='col'>
-                                                <span className="char-name">{charInfo.basicResponse.characterName}</span>
-                                                <span className="char-class">&nbsp;&nbsp;&nbsp;{charInfo.basicResponse.characterClass}</span>
+                                                <span className="char-name">{charBasicInfo.basicResponse.characterName}</span>
+                                                <span className="char-class">&nbsp;&nbsp;&nbsp;{charBasicInfo.basicResponse.characterClass}</span>
                                             </div>
                                         </div>
                                         <div className='row'>
                                             <div className='col-auto'>
-                                                <WorldImage server={charInfo.basicResponse.worldName}></WorldImage> {charInfo.basicResponse.worldName}
+                                                <WorldImage server={charBasicInfo.basicResponse.worldName}></WorldImage> {charBasicInfo.basicResponse.worldName}
                                             </div>
                                             <div className='col-auto'>
-                                                {charInfo.basicResponse.characterLevel}Lv
+                                                {charBasicInfo.basicResponse.characterLevel}Lv
                                             </div>
                                             <div className='col-auto'>
-                                                {charInfo.basicResponse.characterGuildName}
+                                                {charBasicInfo.basicResponse.characterGuildName}
                                             </div>
                                         </div>
                                     </div>
@@ -111,19 +112,19 @@ export const CharacterBasic = ({ charInfo, loading }) => {
                             <>
                                 <div className='row'>
                                     <div className='col-auto char-name-fold'>
-                                        <span>{charInfo.basicResponse.characterName}</span>
+                                        <span>{charBasicInfo.basicResponse.characterName}</span>
                                     </div>
                                     <div className='col-auto char-class-fold'>
-                                        <span>&nbsp;&nbsp;&nbsp;{charInfo.basicResponse.characterClass}</span>
+                                        <span>&nbsp;&nbsp;&nbsp;{charBasicInfo.basicResponse.characterClass}</span>
                                     </div>
                                     <div className='col-auto char-world-fold'>
-                                        <span>&nbsp;<WorldImage server={charInfo.basicResponse.worldName}></WorldImage> {charInfo.basicResponse.worldName}</span>
+                                        <span>&nbsp;<WorldImage server={charBasicInfo.basicResponse.worldName}></WorldImage> {charBasicInfo.basicResponse.worldName}</span>
                                     </div>
                                     <div className='col-auto char-level-fold'>
-                                        <span> {charInfo.basicResponse.characterLevel}Lv</span>
+                                        <span> {charBasicInfo.basicResponse.characterLevel}Lv</span>
                                     </div>
                                     <div className='col-auto char-guild-fold'>
-                                        <span> {charInfo.basicResponse.characterGuildName}</span>
+                                        <span> {charBasicInfo.basicResponse.characterGuildName}</span>
                                     </div>
                                 </div>
                             </>
