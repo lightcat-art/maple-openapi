@@ -5,10 +5,13 @@ export default () => {
 
     console.log('Received message from main thread : ', e.data)
     console.log('Received union block : ', e.data.unionBlock)
+    console.log('Received union blockCount : ', e.data.blockCount)
+    console.log('Received union baseBlockPos : ', e.data.baseBlockPos)
+    console.log('Received union rotateBlockPos : ', e.data.rotateBlockPos)
     console.log('Received table : ', e.data.table)
     console.log('Received cnt : ', e.data.cnt)
 
-    execute(e.data.table, e.data.unionBlock)
+    execute(e.data.table, e.data.unionBlock, e.data.blockCount, e.data.baseBlockPos, e.data.rotateBlockPos)
   })
 
   class UnionRaiderSetting {
@@ -21,10 +24,13 @@ export default () => {
      * @param {*} setTable : 실시간 table 렌더링을 위함
      * @param {*} blockType : blockTypeInstance 활용
      */
-    constructor(requestBlocks, table, realtimeRender) {
+    constructor(requestBlocks, table, realtimeRender, blockCount, baseBlockPos, rotateBlockPos) {
       this.requestBlocks = requestBlocks // raider는 기본적으로 unionRaiderResponse의 unionBlock으로 받는것이 원칙.
       this.table = table
       this.realtimeRender = realtimeRender
+      this.blockCount = blockCount
+      this.baseBlockPos = baseBlockPos
+      this.rotateBlockPos = rotateBlockPos
       this.dominatedBlocks = []
       this.filledCount = 0
       this.processCount = 0
@@ -63,34 +69,47 @@ export default () => {
 
     parseRaider() {
       console.log('parseRaider start')
-      if (!this.requestBlocks) {
+      if (!this.blockCount) {
         console.log("raider information is null.");
         return;
       }
-      this.requestBlocks.forEach(block => {
-        const normalizedBlock = this.normalizeOriginBlock(block.blockPosition)
-        let existType = false;
+      for (let i = 0; i < this.blockCount.length; i++) {
+        if (this.blockCount[i] === 0 ){ 
+          continue
+        }
+        let rotates = []
+        // let rotateBlocks = this.rotate(this.baseBlockPos[i])
+        this.rotateBlockPos[i].forEach((block) => {
+          rotates.push(new BaseBlock(1, block.length, block, this.transToBinary(block)))
+        })
+        const block = new Block(this.blockCount[i], this.baseBlockPos[i].length, this.baseBlockPos[i], this.transToBinary(this.baseBlockPos[i]), rotates)
+        this.blocks.push(block)
+      }
 
-        for (let i = 0; i < this.blocks.length; i++) {
-          const block = this.blocks[i]
-          for (let j = 0; j < block.rotates.length; j++) {
-            const rotate = block.rotates[j]
-            if (JSON.stringify(rotate.coord) === JSON.stringify(normalizedBlock)) {
-              existType = true
-              block.count++
-            }
-          }
-        }
-        if (!existType) {
-          let rotates = []
-          let rotateBlocks = this.rotate(normalizedBlock)
-          rotateBlocks.forEach((block) => {
-            rotates.push(new BaseBlock(1, block.length, block, this.transToBinary(block)))
-          })
-          const block = new Block(1, normalizedBlock.length, normalizedBlock, this.transToBinary(normalizedBlock), rotates)
-          this.blocks.push(block)
-        }
-      })
+      // this.requestBlocks.forEach(block => {
+      //   const normalizedBlock = this.normalizeOriginBlock(block.blockPosition)
+      //   let existType = false;
+
+      //   for (let i = 0; i < this.blocks.length; i++) {
+      //     const block = this.blocks[i]
+      //     for (let j = 0; j < block.rotates.length; j++) {
+      //       const rotate = block.rotates[j]
+      //       if (JSON.stringify(rotate.coord) === JSON.stringify(normalizedBlock)) {
+      //         existType = true
+      //         block.count++
+      //       }
+      //     }
+      //   }
+      //   if (!existType) {
+      //     let rotates = []
+      //     let rotateBlocks = this.rotate(normalizedBlock)
+      //     rotateBlocks.forEach((block) => {
+      //       rotates.push(new BaseBlock(1, block.length, block, this.transToBinary(block)))
+      //     })
+      //     const block = new Block(1, normalizedBlock.length, normalizedBlock, this.transToBinary(normalizedBlock), rotates)
+      //     this.blocks.push(block)
+      //   }
+      // })
       console.log('parse blocks= ', this.blocks)
     }
 
@@ -804,7 +823,7 @@ export default () => {
     }
   }
 
-  async function execute(table, unionBlock) {
+  async function execute(table, unionBlock, blockCount, baseBlockPos, rotateBlockPos) {
     let threads = []
     let yxSym = [], origSym = [], yxOrigSym = []
     for (let i = 0; i < table[0].length; i++) {
@@ -824,10 +843,10 @@ export default () => {
     }
 
 
-    threads.push(new UnionRaiderSetting(unionBlock, table, true))
-    threads.push(new UnionRaiderSetting(unionBlock, yxSym, false))
-    threads.push(new UnionRaiderSetting(unionBlock, origSym, false))
-    threads.push(new UnionRaiderSetting(unionBlock, yxOrigSym, false))
+    threads.push(new UnionRaiderSetting(unionBlock, table, true, blockCount, baseBlockPos, rotateBlockPos))
+    threads.push(new UnionRaiderSetting(unionBlock, yxSym, false, blockCount, baseBlockPos, rotateBlockPos))
+    threads.push(new UnionRaiderSetting(unionBlock, origSym, false, blockCount, baseBlockPos, rotateBlockPos))
+    threads.push(new UnionRaiderSetting(unionBlock, yxOrigSym, false, blockCount, baseBlockPos, rotateBlockPos))
     const a = threads[0].classify()
     const b = threads[1].classify()
     const c = threads[2].classify()

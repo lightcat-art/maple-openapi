@@ -92,7 +92,7 @@ export const UnionRaider = () => {
     } else {
       //시작 버튼 동작
       unionWorker = new WebWorker().getUnionWorker(worker)
-      unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, cnt: 1 })
+      unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, blockCount: blockCount, baseBlockPos: blockManager.baseBlockType, rotateBlockPos: blockManager.allBlockType})
       setProcessType(PROCESS_ALGO)
       // setSubmitButtonDisabled(true)
       // setPauseButtonHidden(true)

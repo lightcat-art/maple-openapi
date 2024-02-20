@@ -54,21 +54,21 @@ class BlockManager {
             ['B']
         ]
         this.baseBlockDesc = [
-            [['250Lv','해적']],
-            [['250Lv','제논']],
-            [['250Lv','마법사']],
-            [['250Lv','도적']],
-            [['250Lv','궁수']],
-            [['250Lv','전사']],
-            [['200Lv','해적']],
-            [['200Lv','마법사']],
-            [['200Lv','제논', '도적']],
-            [['200Lv','궁수'], ['120Lv','모바일']],
-            [['200Lv','전사']],
-            [['140Lv','궁수', '도적', '마법사'], ['70Lv','모바일']],
-            [['140Lv','전사', '해적']],
-            [['100Lv','전직업'], ['50Lv','모바일']],
-            [['60Lv','전직업'], ['30Lv','모바일']],
+            [['250Lv', '해적']],
+            [['250Lv', '제논']],
+            [['250Lv', '마법사']],
+            [['250Lv', '도적']],
+            [['250Lv', '궁수']],
+            [['250Lv', '전사']],
+            [['200Lv', '해적']],
+            [['200Lv', '마법사']],
+            [['200Lv', '제논', '도적']],
+            [['200Lv', '궁수'], ['120Lv', '모바일']],
+            [['200Lv', '전사']],
+            [['140Lv', '궁수', '도적', '마법사'], ['70Lv', '모바일']],
+            [['140Lv', '전사', '해적']],
+            [['100Lv', '전직업'], ['50Lv', '모바일']],
+            [['60Lv', '전직업'], ['30Lv', '모바일']],
         ]
         this.blockTypeColor = blockColor // 블록타입별 색상
         this.closeTableColor = basicTableColor // 기본 테이블 색상
@@ -113,7 +113,7 @@ class BlockManager {
 
     getBlockIdx(block) {
         for (let i = 0; i < this.allBlockType.length; i++) {
-            let blockType = Array.from(this.allBlockType[i])
+            let blockType = this.allBlockType[i]
             for (let j = 0; j < blockType.length; j++) {
                 let blockRotateType = blockType[j]
                 if (JSON.stringify(block) === JSON.stringify(blockRotateType)) {
@@ -379,29 +379,42 @@ class BlockManager {
      */
     initAllBlockType() {
         for (let k = 0; k < this.baseBlockType.length; k++) {
-            this.allBlockType[k] = new Set()
-            const baseBlockElement = this.baseBlockType[k]
-            // 회전 및 뒤집기를 통해 8번 rotation을 하여 모든 타입의 블록 json으로 반환.
-            let max = Math.max(...baseBlockElement.map(v => Math.max(v[0], v[1])))
-            let rotateBlock = JSON.parse(JSON.stringify(baseBlockElement));
-            for (let i = 0; i < 4; i++) {
-                if (i > 0) {
-                    rotateBlock = rotateBlock.map(v => [max - v[1], v[0]]) // 90도 회전
-                }
-                let normalRotate = this.normalizeBlock(rotateBlock)
-
-                this.allBlockType[k].add(normalRotate)
-            }
-            // 뒤집어서 다시 4번 회전.
-            let transBlock = baseBlockElement.map(v => [v[1], v[0]])
-            for (let i = 0; i < 4; i++) {
-                if (i > 0) {
-                    transBlock = transBlock.map(v => [max - v[1], v[0]]) // 90도 회전
-                }
-                let transNormalRotate = this.normalizeBlock(transBlock)
-                this.allBlockType[k].add(transNormalRotate)
-            }
+            const rotates = this.rotate(this.baseBlockType[k])
+            this.allBlockType[k] = rotates
         }
+    }
+
+    /**
+    * 현재 블록에 대해 회전 시 블록 종류 반환.
+    * @param {*} block 
+    * @returns 
+    */
+    rotate(block) {
+        // 회전 및 뒤집기를 통해 8번 rotation을 하여 모든 타입의 블록 json으로 반환.
+        let max = Math.max(...block.map(v => Math.max(v[0], v[1])))
+        let allBlockType = new Set()
+        let rotateBlock = JSON.parse(JSON.stringify(block))
+        for (let i = 0; i < 4; i++) {
+            if (i > 0) {
+                rotateBlock = rotateBlock.map(v => [max - v[1], v[0]]) // 90도 회전
+            }
+            let normalRotate = this.normalizeBlock(rotateBlock)
+            allBlockType.add(JSON.stringify(normalRotate))
+        }
+        // 뒤집어서 다시 4번 회전.
+        let transBlock = block.map(v => [v[1], v[0]])
+        for (let i = 0; i < 4; i++) {
+            if (i > 0) {
+                transBlock = transBlock.map(v => [max - v[1], v[0]]) // 90도 회전
+            }
+            let transNormalRotate = this.normalizeBlock(transBlock)
+            allBlockType.add(JSON.stringify(transNormalRotate))
+        }
+        let result = []
+        allBlockType.forEach((v) => {
+            result.push(JSON.parse(v))
+        })
+        return Array.from(result)
     }
 
     /**
@@ -416,7 +429,7 @@ class BlockManager {
         let startArrIdx = this.baseBlockSizeIdx[len][0]
         let endArrIdx = this.baseBlockSizeIdx[len][1]
         for (let i = startArrIdx; i < endArrIdx + 1; i++) {
-            let blockType = Array.from(this.allBlockType[i])
+            let blockType = this.allBlockType[i]
             for (let j = 0; j < blockType.length; j++) {
                 let blockRotateType = blockType[j]
                 if (JSON.stringify(blockRotateType) === JSON.stringify(block)) {
