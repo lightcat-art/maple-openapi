@@ -48,10 +48,10 @@ export const Menu = ({ page }) => {
 export const ContentLayout = ({ children, className, rowClassName, colClassName }) => {
     return (
         <>
-            <div className={`container-fluid ${className? className: ''}`}>
-                <div className={`row ${rowClassName? rowClassName: ''}`}>
+            <div className={`container-fluid ${className ? className : ''}`}>
+                <div className={`row ${rowClassName ? rowClassName : ''}`}>
                     <div className="col-xl-2"></div>
-                    <div className={`col ${colClassName? colClassName: ''}`}>
+                    <div className={`col ${colClassName ? colClassName : ''}`}>
                         {children}
                     </div>
                     <div className="col-xl-2"></div>
@@ -82,16 +82,27 @@ export const NotFound = () => {
 
 export const Loading = () => {
     return (
-        <>
-            <div>
-                로딩 중입니다.
-                fwevwevkwe
-                vwevwevwev
-                wevwevwevw
-                wevwevwevwe
-                wevwevwev
+        <div className="row">
+            <div className="col-auto char-img">
+                <img className="placeholder" alt="" />
             </div>
-        </>
+            <div className="col-auto">
+                <div className='container placeholder-glow'>
+                    <div className='row'>
+                        <div className='placeholder col rounded-pill'>
+                        </div>
+                    </div>
+                    <div className='row'>
+                        <div className='placeholder rounded-pill col-auto'>
+                        </div>
+                        <div className='placeholder rounded-pill col-auto'>
+                        </div>
+                        <div className='placeholder rounded-pill col-auto'>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     )
 }
 
