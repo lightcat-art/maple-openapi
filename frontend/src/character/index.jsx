@@ -6,7 +6,7 @@ import expandMoreIcon from '../static/icons/expand_more_FILL0_wght400_GRAD0_opsz
 import expandLessIcon from '../static/icons/expand_less_FILL0_wght400_GRAD0_opsz20.png'
 import { useParams, Outlet } from 'react-router-dom'
 import axios from 'axios';
-import { Loading, ContentLayout } from '../common';
+import { ContentLayout } from '../common';
 import { WorldImage } from '../common/image.jsx'
 
 
@@ -64,6 +64,34 @@ export const CharMenu = ({ page }) => {
     );
 }
 
+export const LoadingCharMenu = () => {
+    return (
+        <div className="row">
+            <div className="col-auto char-img">
+                <img className="placeholder" src="http://via.placeholder.com/96x96" alt="" />
+            </div>
+            <div className="col-auto">
+                <div className='container placeholder-wave char-ph'>
+                    <div className='row'>
+                        <span className='char-name-ph placeholder bg-secondary col-auto rounded-pill'>
+                        </span>
+                        <span className='char-class-ph placeholder bg-secondary col-auto rounded-pill'>
+                        </span>
+                    </div>
+                    <div className='row'>
+                        <div className='placeholder bg-secondary char-world-ph rounded-pill col-auto'>
+                        </div>
+                        <div className='placeholder bg-secondary char-level-ph rounded-pill col-auto'>
+                        </div>
+                        <div className='placeholder bg-secondary char-guild-ph rounded-pill col-auto'>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 export const CharacterBasic = ({ charBasicInfo, loading }) => {
     const [isDetailView, setIsDetailView] = React.useState(true)
 
@@ -77,7 +105,7 @@ export const CharacterBasic = ({ charBasicInfo, loading }) => {
 
                 {/* 캐릭터 정보 표시 */}
                 {loading ?
-                    <Loading></Loading>
+                    <LoadingCharMenu></LoadingCharMenu>
                     : !charBasicInfo ?
                         <div className="row justify-content-center">검색 결과가 없습니다.</div> :
                         isDetailView ?

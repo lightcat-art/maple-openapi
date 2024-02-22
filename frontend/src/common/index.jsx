@@ -80,32 +80,6 @@ export const NotFound = () => {
     )
 }
 
-export const Loading = () => {
-    return (
-        <div className="row">
-            <div className="col-auto char-img">
-                <img className="placeholder" alt="" />
-            </div>
-            <div className="col-auto">
-                <div className='container placeholder-glow'>
-                    <div className='row'>
-                        <div className='placeholder col rounded-pill'>
-                        </div>
-                    </div>
-                    <div className='row'>
-                        <div className='placeholder rounded-pill col-auto'>
-                        </div>
-                        <div className='placeholder rounded-pill col-auto'>
-                        </div>
-                        <div className='placeholder rounded-pill col-auto'>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-}
-
 export const LoadingTable = ({ children, loading }) => {
     return (
         <>
