@@ -40,6 +40,7 @@ const blockColorOriginBorder = getCSSProp(document.documentElement, '--block-col
 
 export const UnionRaider = () => {
   const [charUnionInfo, setCharUnionInfo, loading] = useOutletContext();
+  console.log('charUnionInfo = ', charUnionInfo);
   const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder);
   const { cname } = useParams();
   const param = { nickname: cname }
@@ -92,7 +93,7 @@ export const UnionRaider = () => {
     } else {
       //시작 버튼 동작
       unionWorker = new WebWorker().getUnionWorker(worker)
-      unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, blockCount: blockCount, baseBlockPos: blockManager.baseBlockType, rotateBlockPos: blockManager.allBlockType})
+      unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, blockCount: blockCount, baseBlockPos: blockManager.baseBlockType, rotateBlockPos: blockManager.allBlockType })
       setProcessType(PROCESS_ALGO)
       // setSubmitButtonDisabled(true)
       // setPauseButtonHidden(true)
