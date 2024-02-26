@@ -7,7 +7,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class DateManager {
-    private static final LocalTime midNight = LocalTime.of(12, 0, 0);
+    private static final LocalTime midNight = LocalTime.of(0, 0, 0);
     private static final LocalTime oneAM = LocalTime.of(1,0,1);
     public static String getSearchDate() {
         LocalDateTime now = LocalDateTime.now();
