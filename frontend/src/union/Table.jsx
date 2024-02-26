@@ -235,30 +235,30 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
         if (isStart) {
             return
         }
-        const selectedElement = Array.from(
-            document.getElementsByClassName('block')
-        );
-        if (selectedElement.length === 0) {
-            if (regionMode) {
-                const regionCells = getRegionCells(checkRegion(row, col))
-                for (let regionCell of regionCells) {
-                    const cellDom = getCellDOM(regionCell[0], regionCell[1])
+        // const selectedElement = Array.from(
+        //     document.getElementsByClassName('block')
+        // );
+        // if (selectedElement.length === 0) {
+        if (regionMode) {
+            const regionCells = getRegionCells(checkRegion(row, col))
+            for (let regionCell of regionCells) {
+                const cellDom = getCellDOM(regionCell[0], regionCell[1])
 
-                    if (cellDom.className.includes('selected')) {
-                        cellDom.style.backgroundColor = cellSelectedHoverColor
-                    } else {
-                        cellDom.style.backgroundColor = cellNotSelectedHoverColor
-                    }
-                }
-            } else {
-                const cellDom = getCellDOM(row, col)
                 if (cellDom.className.includes('selected')) {
                     cellDom.style.backgroundColor = cellSelectedHoverColor
                 } else {
                     cellDom.style.backgroundColor = cellNotSelectedHoverColor
                 }
             }
+        } else {
+            const cellDom = getCellDOM(row, col)
+            if (cellDom.className.includes('selected')) {
+                cellDom.style.backgroundColor = cellSelectedHoverColor
+            } else {
+                cellDom.style.backgroundColor = cellNotSelectedHoverColor
+            }
         }
+        // }
 
     }
 
@@ -305,6 +305,7 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
     }
 
     // 드래그하는 도중 전체 테이블셀을 계속 스캔
+    // 클릭할때마다 전체 테이블셀에 대해 스캔
     const getClassName = (row, col) => {
         for (let i = 0; i < select.length; i++) {
             if (JSON.stringify([row, col]) === select[i]) {
