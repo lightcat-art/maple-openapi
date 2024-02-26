@@ -181,21 +181,24 @@ class BlockManager {
         return resultPosition
     }
 
-    getUserInfoStyle(rowLen, colLen, domiBlocks) {
-
-        let tableStyleValue = Array.from(Array(rowLen), () => Array(colLen).fill(0))
+    getUserInfoValue(rowLen, colLen, domiBlocks) {
+        let tableSelectValue = Array.from(Array(rowLen), () => Array(colLen).fill(0))
         for (let i = 0; i < domiBlocks.length; i++) {
             const domiBlock = domiBlocks[i]
             for (let j = 0; j < domiBlock.length; j++) {
                 let v = domiBlock[j]
                 let styleValue = 1
                 try {
-                    tableStyleValue[v[0]][v[1]] = styleValue
+                    tableSelectValue[v[0]][v[1]] = styleValue
                 } catch (error) {
                     console.log('error= ', error)
                 }
             }
         }
+        return tableSelectValue
+    }
+
+    getUserInfoStyle(rowLen, colLen, tableSelectValue) {
 
         let style = Array.from(Array(rowLen), () => Array(colLen).fill({}))
 
@@ -211,16 +214,16 @@ class BlockManager {
                     let nrow = row + direction[i][0]
                     let ncol = col + direction[i][1]
                     if (0 <= ncol && 0 <= nrow && ncol < colLen && nrow < rowLen) {
-                        if (tableStyleValue[row][col] > 0 && tableStyleValue[nrow][ncol] > 0) {
+                        if (tableSelectValue[row][col] > 0 && tableSelectValue[nrow][ncol] > 0) {
                             cellStyleInfo[this.blockDirection[directionNum[i]]] = 'none'
-                        } else if (tableStyleValue[row][col] > 0 && tableStyleValue[nrow][ncol] <= 0) {
+                        } else if (tableSelectValue[row][col] > 0 && tableSelectValue[nrow][ncol] <= 0) {
                             cellStyleInfo[this.blockDirection[directionNum[i]]] = '3px solid ' + this.blockColorOriginBd
-                        } else if (tableStyleValue[row][col] <= 0 && tableStyleValue[nrow][ncol] > 0) {
+                        } else if (tableSelectValue[row][col] <= 0 && tableSelectValue[nrow][ncol] > 0) {
                             cellStyleInfo[this.blockDirection[directionNum[i]]] = 'none'
                         }
                     }
                 }
-                if (tableStyleValue[row][col] > 0) {
+                if (tableSelectValue[row][col] > 0) {
                     cellStyleInfo['background'] = this.blockColorOriginBg
                     cellMap.className = 'block'
                 } else {

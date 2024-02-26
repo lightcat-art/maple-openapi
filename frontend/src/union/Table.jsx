@@ -61,7 +61,7 @@ function getRegionCells(region) {
 regionDef(TABLE_ROW_LEN, TABLE_COL_LEN)
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
-export function BasicTable({ tableStyle, setTableStyle, setTable, table, regionMode, processType, initSelectDisabled, isStart, isProcessFail }) {
+export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, table, regionMode, processType, initSelectDisabled, isStart, isProcessFail, ocid }) {
     const [select, setSelect] = React.useState([])
     // This variable will control if the user is dragging or not
     const [drag, setDrag] = React.useState(false)
@@ -294,6 +294,16 @@ export function BasicTable({ tableStyle, setTableStyle, setTable, table, regionM
         setTableStyle(Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill({})))
     }
 
+    const handleGetUserSelect = () => {
+        const cacheTableSelect = localStorage.getItem(`tableSelect-${ocid}`)
+        const cachePosSelect = localStorage.getItem(`positionSelect-${ocid}`)
+        setSelect(JSON.parse(cachePosSelect))
+        setTable(JSON.parse(cacheTableSelect))
+        setTableStyle(blockManager.getTableStyle(JSON.parse(cacheTableSelect)))
+        localStorage.setItem('tableSelect', cacheTableSelect)
+        localStorage.setItem('positionSelect', cachePosSelect)
+    }
+
     // 드래그하는 도중 전체 테이블셀을 계속 스캔
     const getClassName = (row, col) => {
         for (let i = 0; i < select.length; i++) {
@@ -331,14 +341,26 @@ export function BasicTable({ tableStyle, setTableStyle, setTable, table, regionM
                     </tbody>
                 </table>
             </div>
+            <div className="container">
+                <div className="row justify-content-center select-control-wrapper">
+                    <div className="col-auto init-select-wrapper text-center">
+                        <AfterImageButton className="init-select-btn ps-3"
+                            action={handleInitSelect}
+                            disabled={initSelectDisabled}
+                            title='선택 영역 초기화'>
+                        </AfterImageButton>
+                    </div>
 
-            <div className="init-select-wrapper text-center">
-                <AfterImageButton className="init-select-btn ps-3"
-                    action={handleInitSelect}
-                    disabled={initSelectDisabled}
-                    title='선택 영역 초기화'>
-                </AfterImageButton>
+                    <div className="col-auto get-user-select-wrapper text-center">
+                        <AfterImageButton className="get-user-select-btn ps-3"
+                            action={handleGetUserSelect}
+                            disabled={initSelectDisabled}
+                            title='내 현재 점령 구역 가져오기'>
+                        </AfterImageButton>
+                    </div>
+                </div>
             </div>
+
 
             <div>{isProcessFail ?
                 <div className="process-fail text-center">

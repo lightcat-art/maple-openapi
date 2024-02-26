@@ -25,6 +25,13 @@ Array.prototype.shuffle = function () {
 };
 export const getCSSProp = (element, propName) => getComputedStyle(element).getPropertyValue(propName)
 
+// 다차원 배열 중복제거
+export function removeDupND(arr) {
+    return [...new Set(arr.join("|").split("|"))]
+      .map((v) => v.split(","))
+      .map((v) => v.map((a) => +a));
+  }
+
 export class ArrayUtil {
     /** 2차원 배열 compare */
     compareObj2D(a, b) {

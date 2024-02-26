@@ -22,6 +22,7 @@
 
 .btn-1:disabled {
     border-color: #ffffff !important;
+    transition: .0s;
 }
 
 .tag-1{

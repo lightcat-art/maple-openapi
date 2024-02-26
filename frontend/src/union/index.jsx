@@ -6,7 +6,7 @@ import WebWorker from '../util/worker'
 import worker from './UnionWorker'
 import { SwitchCheckBox } from '../common/checkBox'
 import './index.css'
-import { getCSSProp } from '../util/util.jsx'
+import { getCSSProp, removeDupND } from '../util/util.jsx'
 import { useParams, useOutletContext } from 'react-router-dom'
 import { TABLE_ROW_LEN, TABLE_COL_LEN, ContentLayout } from '../common'
 import { Button, AfterImageButton, AfterImageBadgeLight } from '../common/clickable'
@@ -217,6 +217,17 @@ export const UnionRaider = () => {
       const extractMap = blockManager.getBlockCount(charUnionInfo.userUnionRaiderResponse.unionBlock)
       setBlockCount(extractMap.count)
       setBlockDesc(extractMap.desc)
+
+      let domiBlocks = []
+      charUnionInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
+        domiBlocks.push(blockManager.transformPosition(block.blockPosition, TABLE_ROW_LEN / 2, TABLE_COL_LEN / 2))
+      })
+
+      let userPosSelect = removeDupND(domiBlocks.flat()).map((v) => JSON.stringify(v))
+      // console.log('userPosSelect = ',userPosSelect)
+      const userInfoValue = blockManager.getUserInfoValue(TABLE_ROW_LEN, TABLE_COL_LEN, domiBlocks)
+      localStorage.setItem(`positionSelect-${charUnionInfo.idResponse.ocid}`, JSON.stringify(userPosSelect))
+      localStorage.setItem(`tableSelect-${charUnionInfo.idResponse.ocid}`, JSON.stringify(userInfoValue))
     }
   }, [charUnionInfo])
 
@@ -248,9 +259,8 @@ export const UnionRaider = () => {
         charUnionInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
           domiBlocks.push(blockManager.transformPosition(block.blockPosition, TABLE_ROW_LEN / 2, TABLE_COL_LEN / 2))
         })
-        // const styleValue = blockType.setTableStyleValue(table, domiBlocks)
-        // setTableStyle(blockType.getTableStyle(styleValue))
-        setTableStyle(blockManager.getUserInfoStyle(TABLE_ROW_LEN, TABLE_COL_LEN, domiBlocks));
+        const userInfoValue = blockManager.getUserInfoValue(TABLE_ROW_LEN, TABLE_COL_LEN, domiBlocks)
+        setTableStyle(blockManager.getUserInfoStyle(TABLE_ROW_LEN, TABLE_COL_LEN, userInfoValue))
 
         /**
          * 초기 processCount를 지정하지 않아도 charInfo가 변하면 loading도 변하게 되어있으므로 charInfo 종속성 처리 이후 loading 종속성 처리 rerendering됨.
@@ -427,6 +437,8 @@ export const UnionRaider = () => {
                 processType={processType}
                 initSelectDisabled={initSelectDisabled}
                 isProcessFail={isProcessFail}
+                ocid={charUnionInfo ? charUnionInfo.idResponse.ocid : ''}
+                blockManager={blockManager}
               >
               </BasicTable>
             </div>
@@ -454,7 +466,6 @@ export const UnionRaider = () => {
     </>
   )
 }
-
 
 export function getBlockTypeDOM(row) {
   return document.getElementById("union-block-type")[row]
