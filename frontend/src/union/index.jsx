@@ -94,7 +94,7 @@ export const UnionRaider = () => {
       //시작 버튼 동작
       unionWorker = new WebWorker().getUnionWorker(worker)
       unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, blockCount: blockCount, baseBlockPos: blockManager.baseBlockType, rotateBlockPos: blockManager.allBlockType })
-      setProcessType(PROCESS_ALGO)
+      // setProcessType(PROCESS_ALGO)
       // setSubmitButtonDisabled(true)
       // setPauseButtonHidden(true)
       // setContinueButtonHidden(true)
@@ -110,7 +110,7 @@ export const UnionRaider = () => {
   const handleFormSubmit = (e) => {
     unionWorker = new WebWorker().getUnionWorker(worker)
     unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, cnt: 1 })
-    setProcessType(PROCESS_ALGO)
+    // setProcessType(PROCESS_ALGO)
     setSubmitButtonDisabled(true)
     // setPauseButtonHidden(true)
     // setContinueButtonHidden(true)
@@ -196,9 +196,9 @@ export const UnionRaider = () => {
             setIsProcessFail(true)
             resetAction()
             setIsStart(false)
-            setProcessType(result.count)
+            // setProcessType(result.count)
           } else {
-            setProcessType(result.count)
+            // setProcessType(result.count)
             if (result.domiBlocks) {
               const styleValue = blockManager.setTableStyleValue(result.table, result.domiBlocks)
               const tableStyle = blockManager.getTableStyle(styleValue)
