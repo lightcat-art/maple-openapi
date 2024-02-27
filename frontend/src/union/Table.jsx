@@ -67,7 +67,6 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
     const [drag, setDrag] = React.useState(false)
     const [selectMode, setSelectMode] = React.useState(true) // 선택모드 인지, 해제모드 인지 세팅
 
-
     React.useEffect(() => {
         const selectedElement = Array.from(
             document.getElementsByClassName('selected')
@@ -241,7 +240,6 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
         // );
         // if (selectedElement.length === 0) {
         if (regionMode) {
-            
             const regionCells = getRegionCells(checkRegion(row, col))
             for (let regionCell of regionCells) {
                 const cellDom = getCellDOM(regionCell[0], regionCell[1])
@@ -268,10 +266,10 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
         if (isStart) {
             return
         }
-        // const selectedElement = Array.from(
-        //     document.getElementsByClassName('block')
-        // );
-        // if (selectedElement.length === 0) {
+        const selectedElement = Array.from(
+            document.getElementsByClassName('block')
+        );
+        if (selectedElement.length === 0) {
             if (regionMode) {
                 const regionCells = getRegionCells(checkRegion(row, col))
                 for (let regionCell of regionCells) {
@@ -280,7 +278,7 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
             } else {
                 getCellDOM(row, col).style.backgroundColor = ''
             }
-        // }
+        }
 
     }
 
