@@ -196,6 +196,7 @@ export const UnionRaider = () => {
             setIsProcessFail(true)
             resetAction()
             setIsStart(false)
+            setProcessType(result.count)
           } else {
             setProcessType(result.count)
             if (result.domiBlocks) {
@@ -432,6 +433,7 @@ export const UnionRaider = () => {
                 tableStyle={tableStyle}
                 setTableStyle={setTableStyle}
                 isStart={isStart}
+                useProcess={useProcess}
                 useProcessDisabled={useProcessDisabled}
                 regionMode={regionMode}
                 processType={processType}

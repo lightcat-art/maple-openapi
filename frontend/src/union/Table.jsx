@@ -61,7 +61,7 @@ function getRegionCells(region) {
 regionDef(TABLE_ROW_LEN, TABLE_COL_LEN)
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
-export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, table, regionMode, processType, initSelectDisabled, isStart, isProcessFail, ocid }) {
+export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, table, regionMode, processType, initSelectDisabled, isStart, useProcess, isProcessFail, ocid }) {
     const [select, setSelect] = React.useState([])
     // This variable will control if the user is dragging or not
     const [drag, setDrag] = React.useState(false)
@@ -128,7 +128,10 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
 
 
     const handleMouseDown = (e, row, col) => {
-        if (isStart) {
+        // const selectedElement = Array.from(
+        //     document.getElementsByClassName('block')
+        // );
+        if (isStart || !useProcess) {
             setDrag(false)
             return
         } else {
@@ -232,13 +235,13 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
     }
 
     const handleMouseEnter = (e, row, col) => {
-        if (isStart) {
+        if (isStart || !useProcess) {
             return
         }
-        const selectedElement = Array.from(
-            document.getElementsByClassName('block')
-        );
-        if (selectedElement.length === 0) {
+        // const selectedElement = Array.from(
+        //     document.getElementsByClassName('block')
+        // );
+        // if (selectedElement.length === 0) {
             if (regionMode) {
                 const regionCells = getRegionCells(checkRegion(row, col))
                 for (let regionCell of regionCells) {
@@ -258,18 +261,18 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
                     cellDom.style.backgroundColor = cellNotSelectedHoverColor
                 }
             }
-        }
+        // }
 
     }
 
     const handleMouseLeave = (e, row, col) => {
-        if (isStart) {
+        if (isStart || !useProcess) {
             return
         }
-        const selectedElement = Array.from(
-            document.getElementsByClassName('block')
-        );
-        if (selectedElement.length === 0) {
+        // const selectedElement = Array.from(
+        //     document.getElementsByClassName('block')
+        // );
+        // if (selectedElement.length === 0) {
             if (regionMode) {
                 const regionCells = getRegionCells(checkRegion(row, col))
                 for (let regionCell of regionCells) {
@@ -278,7 +281,7 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
             } else {
                 getCellDOM(row, col).style.backgroundColor = ''
             }
-        }
+        // }
 
     }
 
