@@ -16,6 +16,7 @@ import decreaseIcon from '../static/icons/chevron_left_FILL0_wght400_GRAD0_opsz2
 import increaseIcon from '../static/icons/chevron_right_FILL0_wght400_GRAD0_opsz20.png'
 import { Tooltip } from 'react-tooltip'
 import axios from 'axios';
+import { UnionGradeImage } from '../common/image.jsx'
 
 let unionWorker = new WebWorker().getUnionWorker(worker)
 let loadingDone = false
@@ -64,6 +65,7 @@ export const UnionRaider = () => {
   const [blockDesc, setBlockDesc] = React.useState([])
   const [initSelectDisabled, setInitSelectDisabled] = React.useState(false)
   const [isProcessFail, setIsProcessFail] = React.useState(false)
+  const [unionGrade, setUnionGrade] = React.useState('')
 
 
   const handleUseProcess = () => {
@@ -218,7 +220,7 @@ export const UnionRaider = () => {
       const extractMap = blockManager.getBlockCount(charUnionInfo.userUnionRaiderResponse.unionBlock)
       setBlockCount(extractMap.count)
       setBlockDesc(extractMap.desc)
-
+      setUnionGrade(charUnionInfo.userUnionResponse.unionGrade)
       let domiBlocks = []
       charUnionInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
         domiBlocks.push(blockManager.transformPosition(block.blockPosition, TABLE_ROW_LEN / 2, TABLE_COL_LEN / 2))
@@ -402,6 +404,14 @@ export const UnionRaider = () => {
     <>
       <CharMenu page='union'></CharMenu>
       <ContentLayout>
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-auto">
+              {/* {charUnionInfo} */}
+              <UnionGradeImage className="union-grade-img" grade={charUnionInfo && charUnionInfo.userUnionResponse ? charUnionInfo.userUnionResponse.unionGrade : ''}></UnionGradeImage>
+            </div>
+          </div>
+        </div>
         <div className='container-fluid'>
           <div className="row justify-content-center" style={{ marginTop: '30px' }}>
             <div className="col-auto use-process-btn-wrapper text-center">

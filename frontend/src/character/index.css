@@ -18,11 +18,15 @@
     padding: 10px;
 }
 
+.char-world-img, .char-guild-img {
+    padding-bottom: 2px;
+}
+
+/* placeholder */
 .char-name-ph {
 
     padding-left: 100px;
     margin-left: 10px;
-    /* padding-bottom: 30px; */
 }
 
 .char-class-ph {

@@ -230,9 +230,11 @@ public class MapleController {
             GuildIdResponse guildIdResponse = guildIdApi.get(
                     ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getBasicResponse().getCharacterGuildName(),
                     ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getBasicResponse().getWorldName());
-            GuildBasicResponse guildBasicResponse = guildBasicApi.get(guildIdResponse.getOguildId(), formattedNow);
-            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setGuildIdResponse(guildIdResponse);
-            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setGuildBasicResponse(guildBasicResponse);
+            if (guildIdResponse != null) {
+                ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setGuildIdResponse(guildIdResponse);
+                GuildBasicResponse guildBasicResponse = guildBasicApi.get(guildIdResponse.getOguildId(), formattedNow);
+                ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setGuildBasicResponse(guildBasicResponse);
+            }
         }
         return ResponseCacheManager.getInstance().getCharacterCache(request.getNickname());
     }

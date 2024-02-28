@@ -122,14 +122,14 @@ export const CharacterBasic = ({ charBasicInfo, loading }) => {
                                         </div>
                                         <div className='row'>
                                             <div className='col-auto'>
-                                                <WorldImage server={charBasicInfo.basicResponse.worldName}></WorldImage> {charBasicInfo.basicResponse.worldName}
+                                                <WorldImage className='char-world-img' server={charBasicInfo.basicResponse.worldName}></WorldImage> {charBasicInfo.basicResponse.worldName}
                                             </div>
                                             <div className='col-auto'>
                                                 {charBasicInfo.basicResponse.characterLevel}Lv
                                             </div>
                                             <div className='col-auto'>
-                                                {charBasicInfo.guildBasicResponse.guildMarkCustom ? 
-                                                <img src={`data:image/jpeg;base64, ${charBasicInfo.guildBasicResponse.guildMarkCustom}`} /> : null} {charBasicInfo.basicResponse.characterGuildName}
+                                                {charBasicInfo.guildBasicResponse && charBasicInfo.guildBasicResponse.guildMarkCustom ? 
+                                                <img className='char-guild-img' src={`data:image/jpeg;base64, ${charBasicInfo.guildBasicResponse.guildMarkCustom}`} /> : null} {charBasicInfo.basicResponse.characterGuildName}
                                             </div>
                                         </div>
                                     </div>
