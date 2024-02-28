@@ -32,9 +32,7 @@
     /* 1:dot */
     --block-color-1500: #ac0000;
     /* 유저 블록정보 색상*/
-    /* --block-color-origin: #e7e7e7; */
     --block-color-origin: linear-gradient(-45deg, #f3f5f0 55%, #dfe8eb 45%);
-    /* --block-color-origin: rgb(255, 242, 184); */
     /* 유저 블록정보 테두리 색상*/
     --block-color-origin-bd: #000000;
     --region-border-width: 3px;
@@ -47,10 +45,11 @@
 
 /** 기본적으로 table cell 테두리는 설정해놓고 필요에 따라 테두리가 없어져야 되는 블록들은 내부에서 borderBottom: 'none' 등으로 적용*/
 .union-table-cell {
+    border-color: black;
     width: 18px;
     height: 18px;
-    border-bottom: 1px solid black;
-    border-left: 1px solid black;
+    border-bottom: 1px solid ;
+    border-left: 1px solid ;
 }
 
 .union-table-wrapper {
