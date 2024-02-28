@@ -220,14 +220,19 @@ public class MapleController {
         if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getBasicResponse() == null) {
             BasicResponse basicResponse = basicApi.get(idRes.getOcid(), formattedNow);
             ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setBasicResponse(basicResponse);
-        } else {
-            logger.info("Use getBasicResponse Cache. character name = " + request.getNickname());
         }
         if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getPopularityResponse() == null) {
             PopularityResponse popularityResponse = popularityApi.get(idRes.getOcid(), formattedNow);
             ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setPopularityResponse(popularityResponse);
-        } else {
-            logger.info("Use getPopularityResponse Cache. character name = " + request.getNickname());
+        }
+        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getGuildIdResponse() == null ||
+                ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getGuildBasicResponse() == null) {
+            GuildIdResponse guildIdResponse = guildIdApi.get(
+                    ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getBasicResponse().getCharacterGuildName(),
+                    ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getBasicResponse().getWorldName());
+            GuildBasicResponse guildBasicResponse = guildBasicApi.get(guildIdResponse.getOguildId(), formattedNow);
+            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setGuildIdResponse(guildIdResponse);
+            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setGuildBasicResponse(guildBasicResponse);
         }
         return ResponseCacheManager.getInstance().getCharacterCache(request.getNickname());
     }
@@ -266,15 +271,6 @@ public class MapleController {
         if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getUserUnionRaiderResponse() == null) {
             UserUnionRaiderResponse userUnionRaiderResponse = userUnionRaiderApi.get(idRes.getOcid(), formattedNow);
             ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setUserUnionRaiderResponse(userUnionRaiderResponse);
-        }
-        if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getGuildIdResponse() == null ||
-                ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getGuildBasicResponse() == null) {
-            GuildIdResponse guildIdResponse = guildIdApi.get(
-                    ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getBasicResponse().getCharacterGuildName(),
-                    ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getBasicResponse().getWorldName());
-            GuildBasicResponse guildBasicResponse = guildBasicApi.get(guildIdResponse.getOguildId(), formattedNow);
-            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setGuildIdResponse(guildIdResponse);
-            ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setGuildBasicResponse(guildBasicResponse);
         }
         return ResponseCacheManager.getInstance().getCharacterCache(request.getNickname());
     }
