@@ -31,7 +31,7 @@ export const CharacterLayout = () => {
         <>
             <Menu page='not-home'></Menu>
             <CharacterBasic charBasicInfo={charBasicInfo} loading={loading}></CharacterBasic>
-            <Outlet context={[charUnionInfo, setCharUnionInfo, loading]} />
+            <Outlet context={[charUnionInfo, setCharUnionInfo]} />
             <div>footer</div>
         </>
     )
@@ -42,7 +42,7 @@ export const CharMenu = ({ page }) => {
     return (
         <>
             <ContentLayout>
-                <ul className="nav">
+                <ul className="nav char-menu">
                     {page === 'union' ?
                         <>
                             <AfterImageLink to={`/c/${cname}/union`} className="nav-item nav-link active" title="유니온"></AfterImageLink>
@@ -63,14 +63,14 @@ export const CharMenu = ({ page }) => {
     );
 }
 
-export const LoadingCharMenu = () => {
+export const LoadingCharBasic = () => {
     return (
         <div className="row">
             <div className="col-auto char-img">
-                <img className="placeholder" src="http://via.placeholder.com/96x96" alt="" />
+                <img className="placeholder" src="http://via.placeholder.com/96x96?text=" alt="" />
             </div>
             <div className="col-auto">
-                <div className='container placeholder-wave char-ph'>
+                <div className='container placeholder-glow char-ph'>
                     <div className='row'>
                         <span className='char-name-ph placeholder bg-secondary col-auto rounded-pill'>
                         </span>
@@ -104,7 +104,7 @@ export const CharacterBasic = ({ charBasicInfo, loading }) => {
 
                 {/* 캐릭터 정보 표시 */}
                 {loading ?
-                    <LoadingCharMenu></LoadingCharMenu>
+                    <LoadingCharBasic></LoadingCharBasic>
                     : !charBasicInfo ?
                         <div className="row justify-content-center">검색 결과가 없습니다.</div> :
                         isDetailView ?
@@ -121,13 +121,13 @@ export const CharacterBasic = ({ charBasicInfo, loading }) => {
                                             </div>
                                         </div>
                                         <div className='row'>
-                                            <div className='col-auto'>
+                                            <div className='char-world col-auto'>
                                                 <WorldImage className='char-world-img' server={charBasicInfo.basicResponse.worldName}></WorldImage> {charBasicInfo.basicResponse.worldName}
                                             </div>
-                                            <div className='col-auto'>
+                                            <div className='char-level col-auto'>
                                                 {charBasicInfo.basicResponse.characterLevel}Lv
                                             </div>
-                                            <div className='col-auto'>
+                                            <div className='char-guild col-auto'>
                                                 {charBasicInfo.guildBasicResponse && charBasicInfo.guildBasicResponse.guildMarkCustom ? 
                                                 <img className='char-guild-img' src={`data:image/jpeg;base64, ${charBasicInfo.guildBasicResponse.guildMarkCustom}`} /> : null} {charBasicInfo.basicResponse.characterGuildName}
                                             </div>

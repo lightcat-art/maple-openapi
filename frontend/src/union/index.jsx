@@ -40,7 +40,8 @@ const blockColorOrigin = getCSSProp(document.documentElement, '--block-color-ori
 const blockColorOriginBorder = getCSSProp(document.documentElement, '--block-color-origin-bd')
 
 export const UnionRaider = () => {
-  const [charUnionInfo, setCharUnionInfo, loading] = useOutletContext();
+  const [loading, setLoading] = React.useState(true)
+  const [charUnionInfo, setCharUnionInfo] = useOutletContext();
   console.log('charUnionInfo = ', charUnionInfo);
   const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder);
   const { cname } = useParams();
@@ -225,6 +226,7 @@ export const UnionRaider = () => {
       charUnionInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
         domiBlocks.push(blockManager.transformPosition(block.blockPosition, TABLE_ROW_LEN / 2, TABLE_COL_LEN / 2))
       })
+      setLoading(false)
 
       let userPosSelect = removeDupND(domiBlocks.flat()).map((v) => JSON.stringify(v))
       // console.log('userPosSelect = ',userPosSelect)
@@ -281,17 +283,10 @@ export const UnionRaider = () => {
   }, [charUnionInfo, useProcess])
 
   React.useEffect(() => {
-    // console.log('resetButtonHidden=', resetButtonHidden, ', processCount=', processCount, ', loading=', loading, ', tableStyle=', tableStyle)
     // if (processType >= PROCESS_READY) {
     drawRegion(TABLE_ROW_LEN, TABLE_COL_LEN)
     // }
-    // if (!loading && !loadingDone) {
-    //   loadingDone = true
-    //   // if (charInfo) {
-    //   // setSubmitButtonDisabled(false)
-    //   // }
-    // }
-  }, [resetButtonHidden, processType, loading, tableStyle]);
+  }, [resetButtonHidden, processType, tableStyle]);
 
   const BlockCountContainer = (props) => {
     return (
@@ -404,16 +399,32 @@ export const UnionRaider = () => {
     <>
       <CharMenu page='union'></CharMenu>
       <ContentLayout>
-        <div className="container-fluid">
-          <div className="row">
-            <div className="col-auto">
-              {/* {charUnionInfo} */}
-              <UnionGradeImage className="union-grade-img" grade={charUnionInfo && charUnionInfo.userUnionResponse ? charUnionInfo.userUnionResponse.unionGrade : ''}></UnionGradeImage>
+        {loading ?
+          <div className="union-basic container-fluid">
+            <div className="row placeholder-glow justify-content-center">
+              <div className="placeholder col-auto bg-secondary rounded-pill"/>
+              <div className="col-auto"/>
+              <div className="placeholder col-2 bg-secondary rounded-pill"></div>
             </div>
           </div>
-        </div>
+          :
+          <div className="union-basic container-fluid">
+            <div className="row justify-content-center">
+              <div className="col-auto">
+                <UnionGradeImage className="union-grade-img" grade={charUnionInfo && charUnionInfo.userUnionResponse ? charUnionInfo.userUnionResponse.unionGrade : ''}></UnionGradeImage>
+              </div>
+              <div className="col-auto">
+                {charUnionInfo && charUnionInfo.userUnionResponse ? charUnionInfo.userUnionResponse.unionGrade : ''}
+              </div>
+              <div className="col-auto">
+                Lv.{charUnionInfo && charUnionInfo.userUnionResponse ? charUnionInfo.userUnionResponse.unionLevel : ''}
+              </div>
+            </div>
+          </div>
+        }
+
         <div className='container-fluid'>
-          <div className="row justify-content-center" style={{ marginTop: '30px' }}>
+          <div className="row justify-content-center" style={{ paddingTop: '30px' }}>
             <div className="col-auto use-process-btn-wrapper text-center">
               <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
                 disabled={useProcessDisabled}

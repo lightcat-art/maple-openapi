@@ -4,7 +4,7 @@
 }
 
 .char-name {
-    font-size: 30px;
+    font-size: 24px;
     /* font-weight: bold; */
 }
 
@@ -12,8 +12,14 @@
     color: #4d4d4d;
 }
 
+.char-world,
+.char-level,
+.char-guild {
+    font-size: 14px;
+}
+
 .char-img {
-    background-color: #eeeeee;
+    background-color: #f8f8f8;
     border-radius: 15px;
     padding: 10px;
 }
@@ -40,7 +46,7 @@
 .char-level-ph,
 .char-guild-ph {
     margin-left: 10px;
-    margin-top: 15px;
+    margin-top: 10px;
     padding-left: 40px;
 }
 
@@ -58,4 +64,8 @@
 .char-guild-fold {
     color: #4d4d4d;
     padding-top: 4px;
+}
+
+.char-menu {
+    font-size: 14px;
 }

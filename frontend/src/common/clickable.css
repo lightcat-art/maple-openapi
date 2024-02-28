@@ -33,9 +33,9 @@
 
 .after-image-link{
     background-color: #ffffff;
-    /* border-radius: 20px; */
+    border-radius: 20px;
     color: var(--primary);
-    /* margin: 2px; */
+    margin: 2px;
 }
 
 .after-image-link:hover{
@@ -45,7 +45,7 @@
 }
 
 .after-image-link.active{
-    background-color: #c5c5c5;
+    background-color: rgb(223, 223, 223);
     color: var(--primary);
     font-weight: bold;
 }

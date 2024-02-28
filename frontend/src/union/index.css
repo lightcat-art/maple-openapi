@@ -47,8 +47,8 @@
 
 /** 기본적으로 table cell 테두리는 설정해놓고 필요에 따라 테두리가 없어져야 되는 블록들은 내부에서 borderBottom: 'none' 등으로 적용*/
 .union-table-cell {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border-bottom: 1px solid black;
     border-left: 1px solid black;
 }
@@ -123,6 +123,20 @@
     font-size: 16px;
     padding-top: 12px;
     /* font-weight: bold; */
+}
+
+/* .union-grade-img {
+    padding-bottom: 2px;
+} */
+
+.union-basic {
+    background-color: #f8f8f8;
+    margin-top: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 10px;
+    /* font-weight: bold; */
+    font-size: 14px;
 }
 
 /* .union-button {
