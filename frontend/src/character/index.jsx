@@ -9,7 +9,6 @@ import axios from 'axios';
 import { ContentLayout } from '../common';
 import { WorldImage } from '../common/image.jsx'
 
-
 export const CharacterLayout = () => {
     const [charBasicInfo, setCharBasicInfo] = React.useState(null)
     const [charUnionInfo, setCharUnionInfo] = React.useState(null)
@@ -129,8 +128,11 @@ export const CharacterBasic = ({ charBasicInfo, loading }) => {
                                                 {charBasicInfo.basicResponse.characterLevel}Lv
                                             </div>
                                             <div className='col-auto'>
-                                                {charBasicInfo.basicResponse.characterGuildName}
+                                                <img src={`data:image/jpeg;base64, ${charBasicInfo.guildBasicResponse.guildMarkCustom}`} /> {charBasicInfo.basicResponse.characterGuildName}
                                             </div>
+                                            {/* <div className='col-auto'>
+                                                {charBasicInfo.basicResponse.characterGuildName}
+                                            </div> */}
                                         </div>
                                     </div>
                                 </div>

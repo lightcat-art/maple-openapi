@@ -2,6 +2,8 @@ package com.nexon.maple.model.character.overall;
 
 
 import com.nexon.maple.openapi.client.character.response.*;
+import com.nexon.maple.openapi.client.guild.response.GuildBasicResponse;
+import com.nexon.maple.openapi.client.guild.response.GuildIdResponse;
 import com.nexon.maple.openapi.client.ranking.RankingTheSeedApi;
 import com.nexon.maple.openapi.client.ranking.response.*;
 import com.nexon.maple.openapi.client.union.response.UserUnionRaiderResponse;
@@ -47,6 +49,8 @@ public class CharacterOverallResponse {
     private RankingAchievementResponse rankingAchievementResponse;
     private UserUnionResponse userUnionResponse;
     private UserUnionRaiderResponse userUnionRaiderResponse;
+    private GuildBasicResponse guildBasicResponse;
+    private GuildIdResponse guildIdResponse;
 
 
 }
