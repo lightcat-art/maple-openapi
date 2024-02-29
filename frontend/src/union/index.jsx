@@ -41,7 +41,7 @@ const blockColorOriginBorder = getCSSProp(document.documentElement, '--block-col
 export const UnionRaider = () => {
   const [loading, setLoading] = React.useState(true)
   const [charUnionInfo, setCharUnionInfo] = useOutletContext();
-  console.log('charUnionInfo = ', charUnionInfo);
+  // console.log('charUnionInfo = ', charUnionInfo);
   const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder);
   const { cname } = useParams();
   const param = { nickname: cname }
@@ -65,15 +65,7 @@ export const UnionRaider = () => {
   const [blockDesc, setBlockDesc] = React.useState([])
   const [initSelectDisabled, setInitSelectDisabled] = React.useState(false)
   const [isProcessFail, setIsProcessFail] = React.useState(false)
-  const [regionLimit, setRegionLimit] = React.useState(0);
-  const [regionLimitDisabled, setRegionLimitDisabled] = React.useState([true, true]) // decrease, increase 같이 저장
-  /** [left, right, top, bottom] 순으로 범위 지정
-   * left : 해당 idx보다 작은 col은 제한
-   * right: 해당 idx보다 크거나 같은 col은 제한
-   * top: 해당 idx보다 작은 row는 제한
-   * bottom: 해당 idx보다 크거나 같은 row는 제한
-   *  */
-  const [regionLimitIdx, setRegionLimitIdx] = React.useState([0, TABLE_COL_LEN, 0, TABLE_ROW_LEN])
+
 
 
   const handleUseProcess = () => {
@@ -173,13 +165,6 @@ export const UnionRaider = () => {
     })
   }
 
-  const handleRegionLimitDecrease = () => {
-    setRegionLimit(prev => prev - 1)
-  }
-
-  const handleRegionLimitIncrease = () => {
-    setRegionLimit(prev => prev + 1)
-  }
 
 
 
@@ -260,20 +245,7 @@ export const UnionRaider = () => {
     setBlockCountDisabled(decreaseDisabled)
   }, [blockCount])
 
-  React.useEffect(() => {
-    let disabled = []
-    if (regionLimit <= 0) {
-      disabled = [true, false]
-    } else if (0 < regionLimit && regionLimit < 5) {
-      disabled = [false, false]
-    } else {
-      disabled = [false, true]
-    }
-    setRegionLimitDisabled(disabled)
 
-    // 선택과 hover 기능이 제한될 좌표 등록
-    setRegionLimitIdx([])
-  }, [regionLimit])
 
   React.useEffect(() => {
     console.log('useProcess change check. useProcess=', useProcess, ', table =', table)
@@ -315,16 +287,7 @@ export const UnionRaider = () => {
     // }
   }, [resetButtonHidden, processType, tableStyle]);
 
-  const RegionLimit = () => {
-    return (
-      <>
-        <div className="col-auto">경계선 제어</div>
-        <AfterImageButton className="col-auto region-decrease" disabled={regionLimitDisabled[0]} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
-        <div className="col-auto pt-1">{regionLimit}</div>
-        <AfterImageButton className="col-auto block-increase" disabled={regionLimitDisabled[1]} action={() => handleRegionLimitIncrease()} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
-      </>
-    )
-  }
+
 
   const BlockCountContainer = (props) => {
     return (
@@ -463,7 +426,6 @@ export const UnionRaider = () => {
 
         <div className='container-fluid'>
           <div className="row justify-content-center" style={{ paddingTop: '30px' }}>
-            <RegionLimit></RegionLimit>
             <div className="col-auto use-process-btn-wrapper text-center">
               <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
                 disabled={useProcessDisabled}
