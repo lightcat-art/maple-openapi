@@ -19,7 +19,6 @@ import axios from 'axios';
 import { UnionGradeImage } from '../common/image.jsx'
 
 let unionWorker = new WebWorker().getUnionWorker(worker)
-let loadingDone = false
 
 // hover 와 select를 비활성화 하고, 
 export const PROCESS_INIT = -2 // 초기 테이블 생성 단계
@@ -66,7 +65,15 @@ export const UnionRaider = () => {
   const [blockDesc, setBlockDesc] = React.useState([])
   const [initSelectDisabled, setInitSelectDisabled] = React.useState(false)
   const [isProcessFail, setIsProcessFail] = React.useState(false)
-  const [unionGrade, setUnionGrade] = React.useState('')
+  const [regionLimit, setRegionLimit] = React.useState(0);
+  const [regionLimitDisabled, setRegionLimitDisabled] = React.useState([true, true]) // decrease, increase 같이 저장
+  /** [left, right, top, bottom] 순으로 범위 지정
+   * left : 해당 idx보다 작은 col은 제한
+   * right: 해당 idx보다 크거나 같은 col은 제한
+   * top: 해당 idx보다 작은 row는 제한
+   * bottom: 해당 idx보다 크거나 같은 row는 제한
+   *  */
+  const [regionLimitIdx, setRegionLimitIdx] = React.useState([0, TABLE_COL_LEN, 0, TABLE_ROW_LEN])
 
 
   const handleUseProcess = () => {
@@ -152,20 +159,26 @@ export const UnionRaider = () => {
     setInitSelectDisabled(false)
   }
 
-  const handleDecrease = (idx) => {
+  const handleBlockDecrease = (idx) => {
     setBlockCount(prev => {
       prev[idx]--
-      if (prev[idx] <= 0) {
-      }
       return [...prev]
     })
   }
 
-  const handleIncrease = (idx) => {
+  const handleBlockIncrease = (idx) => {
     setBlockCount(prev => {
       prev[idx]++
       return [...prev]
     })
+  }
+
+  const handleRegionLimitDecrease = () => {
+    setRegionLimit(prev => prev - 1)
+  }
+
+  const handleRegionLimitIncrease = () => {
+    setRegionLimit(prev => prev + 1)
   }
 
 
@@ -221,7 +234,6 @@ export const UnionRaider = () => {
       const extractMap = blockManager.getBlockCount(charUnionInfo.userUnionRaiderResponse.unionBlock)
       setBlockCount(extractMap.count)
       setBlockDesc(extractMap.desc)
-      setUnionGrade(charUnionInfo.userUnionResponse.unionGrade)
       let domiBlocks = []
       charUnionInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
         domiBlocks.push(blockManager.transformPosition(block.blockPosition, TABLE_ROW_LEN / 2, TABLE_COL_LEN / 2))
@@ -247,6 +259,21 @@ export const UnionRaider = () => {
     }
     setBlockCountDisabled(decreaseDisabled)
   }, [blockCount])
+
+  React.useEffect(() => {
+    let disabled = []
+    if (regionLimit <= 0) {
+      disabled = [true, false]
+    } else if (0 < regionLimit && regionLimit < 5) {
+      disabled = [false, false]
+    } else {
+      disabled = [false, true]
+    }
+    setRegionLimitDisabled(disabled)
+
+    // 선택과 hover 기능이 제한될 좌표 등록
+    setRegionLimitIdx([])
+  }, [regionLimit])
 
   React.useEffect(() => {
     console.log('useProcess change check. useProcess=', useProcess, ', table =', table)
@@ -288,14 +315,25 @@ export const UnionRaider = () => {
     // }
   }, [resetButtonHidden, processType, tableStyle]);
 
+  const RegionLimit = () => {
+    return (
+      <>
+        <div className="col-auto">경계선 제어</div>
+        <AfterImageButton className="col-auto region-decrease" disabled={regionLimitDisabled[0]} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
+        <div className="col-auto pt-1">{regionLimit}</div>
+        <AfterImageButton className="col-auto block-increase" disabled={regionLimitDisabled[1]} action={() => handleRegionLimitIncrease()} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
+      </>
+    )
+  }
+
   const BlockCountContainer = (props) => {
     return (
       <div className={`container pt-1 block-count block-${props.idx} ${props.className ? props.className : ''}`} style={props.style} data-tooltip-id={`block-tooltip-${props.idx}`}>
         <div className="row justify-content-center">
           <div className={`col-auto ${props.blockClassName ? props.blockClassName : ''}`}>{baseBlock(props.idx)}</div>
-          <AfterImageButton style={{ marginLeft: '70px' }} className="col-auto block-decrease" disabled={blockCountDisabled[props.idx]} action={() => handleDecrease(props.idx)} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
+          <AfterImageButton style={{ marginLeft: '70px' }} className="col-auto block-decrease" disabled={blockCountDisabled[props.idx]} action={() => handleBlockDecrease(props.idx)} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
           <div className="col-auto pt-1">{blockCount[props.idx]}</div>
-          <AfterImageButton className="col-auto block-increase" action={() => handleIncrease(props.idx)} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
+          <AfterImageButton className="col-auto block-increase" action={() => handleBlockIncrease(props.idx)} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
         </div>
       </div>
     )
@@ -402,8 +440,8 @@ export const UnionRaider = () => {
         {loading ?
           <div className="union-basic container-fluid">
             <div className="row placeholder-glow justify-content-center">
-              <div className="placeholder col-auto bg-secondary rounded-pill"/>
-              <div className="col-auto"/>
+              <div className="placeholder col-auto bg-secondary rounded-pill" />
+              <div className="col-auto" />
               <div className="placeholder col-2 bg-secondary rounded-pill"></div>
             </div>
           </div>
@@ -425,6 +463,7 @@ export const UnionRaider = () => {
 
         <div className='container-fluid'>
           <div className="row justify-content-center" style={{ paddingTop: '30px' }}>
+            <RegionLimit></RegionLimit>
             <div className="col-auto use-process-btn-wrapper text-center">
               <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
                 disabled={useProcessDisabled}
