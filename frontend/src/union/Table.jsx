@@ -75,20 +75,12 @@ console.log('test')
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
 export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, table, regionMode,
-    processType, initSelectDisabled, isStart, useProcess, isProcessFail, ocid }) {
+    processType, initSelectDisabled, isStart, useProcess, isProcessFail, ocid, regionLimit, regionLimitIdx }) {
     const [select, setSelect] = React.useState([])
     // This variable will control if the user is dragging or not
     const [drag, setDrag] = React.useState(false)
     const [selectMode, setSelectMode] = React.useState(true) // 선택모드 인지, 해제모드 인지 세팅
-    const [regionLimit, setRegionLimit] = React.useState(5);
-    const [regionLimitDisabled, setRegionLimitDisabled] = React.useState([true, true]) // decrease, increase 같이 저장
-    /** [left, right, top, bottom] 순으로 범위 지정
-     * left : 해당 idx보다 작은 col은 제한
-     * right: 해당 idx보다 크거나 같은 col은 제한
-     * top: 해당 idx보다 작은 row는 제한
-     * bottom: 해당 idx보다 크거나 같은 row는 제한
-     *  */
-    const [regionLimitIdx, setRegionLimitIdx] = React.useState([0, TABLE_COL_LEN, 0, TABLE_ROW_LEN])
+
 
     React.useEffect(() => {
         const selectedElement = Array.from(
@@ -148,55 +140,22 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
 
     }, [drag]);
 
-    React.useEffect(() => {
-        let disabled = []
-        if (regionLimit <= 0) {
-            disabled = [true, false]
-        } else if (0 < regionLimit && regionLimit < 5) {
-            disabled = [false, false]
-        } else {
-            disabled = [false, true]
-        }
-        setRegionLimitDisabled(disabled)
 
-        // 선택과 hover 기능이 제한될 좌표 등록
-        setRegionLimitIdx(
-            [TABLE_ROW_LEN / 4 - regionLimit,
-            TABLE_COL_LEN - TABLE_ROW_LEN / 4 + regionLimit,
-            TABLE_ROW_LEN / 4 - regionLimit,
-            TABLE_ROW_LEN - TABLE_ROW_LEN / 4 + regionLimit]
-        )
-    }, [regionLimit])
-
-    const handleRegionLimitDecrease = () => {
-        setRegionLimit(prev => prev - 1)
-    }
-
-    const handleRegionLimitIncrease = () => {
-        setRegionLimit(prev => prev + 1)
-    }
-
-    const RegionLimit = () => {
-        return (
-            <>
-                <div className="col-auto">경계선 제어</div>
-                <AfterImageButton className="col-auto region-decrease" disabled={regionLimitDisabled[0]} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
-                <div className="col-auto pt-1">{regionLimit}</div>
-                <AfterImageButton className="col-auto region-increase" disabled={regionLimitDisabled[1]} action={() => handleRegionLimitIncrease()} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
-            </>
-        )
-    }
 
 
     const handleMouseDown = (e, row, col) => {
         // const selectedElement = Array.from(
         //     document.getElementsByClassName('block')
         // );
-        if (isStart || !useProcess || (col < regionLimitIdx[0] || col >= regionLimitIdx[1] || row < regionLimitIdx[2] || row >= regionLimitIdx[3])) {
+        if (isStart || !useProcess) {
             setDrag(false)
             return
         } else {
             setDrag(true)
+        }
+
+        if (col < regionLimitIdx[0] || col >= regionLimitIdx[1] || row < regionLimitIdx[2] || row >= regionLimitIdx[3]) {
+            return
         }
         let cellSelected = false
         let cellIdx = select.indexOf(JSON.stringify([row, col]))
@@ -408,11 +367,7 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
 
     return (
         <div className="union-table-wrapper" onMouseUp={(e) => handleMouseUp()}>
-            <div className="container">
-                <div className="row justify-content-center region-limit">
-                    <RegionLimit />
-                </div>
-            </div>
+
             <div
             // onMouseMove={(e) => preventOutsideDrag(e)}
             >
