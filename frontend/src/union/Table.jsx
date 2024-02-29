@@ -8,44 +8,54 @@ import { AfterImageButton } from '../common/clickable'
 import decreaseIcon from '../static/icons/chevron_left_FILL0_wght400_GRAD0_opsz20.png'
 import increaseIcon from '../static/icons/chevron_right_FILL0_wght400_GRAD0_opsz20.png'
 
-const regionInfo = []
+const regionInfos = []
 const cellSelectedHoverColor = getCSSProp(document.documentElement, '--cell-selected-hover-color')
 const cellNotSelectedHoverColor = getCSSProp(document.documentElement, '--cell-not-selected-hover-color')
 
 function regionDef(rowLen, colLen) {
-    const regionCount = 16
-    for (let i = 0; i < regionCount; i++) {
-        regionInfo.push([])
+    // m=0 일때는 바깥쪽 지역이 아예 사용되지 않도록
+    // m=5 일때는 바깥쪽 지역이 모두 사용되도록
+    for (let m = 0; m < 6; m++) {
+        regionInfos.push([])
     }
-    //바깥쪽 구역 구분
-    for (let i = 0; i < rowLen / 4; i++) {
-        for (let j = i; j < rowLen / 2; j++) {
-            regionInfo[0].push([j, i]) //북서 아래
-            regionInfo[1].push([i, j + 1]) //북서 위
-            regionInfo[2].push([i, rowLen - j]) //북동 위
-            regionInfo[3].push([j, rowLen + 1 - i]) //북동 아래
-            regionInfo[8].push([rowLen - 1 - j, i]) // 남서 위
-            regionInfo[9].push([rowLen - 1 - i, j + 1]) //남서 아래
-            regionInfo[10].push([rowLen - 1 - i, rowLen - j]) // 남동 아래
-            regionInfo[11].push([rowLen - 1 - j, rowLen + 1 - i]) // 남동 위
+    for (let m = 0; m < 6; m++) {
+        const regionInfo = regionInfos[m]
+        const regionCount = 16
+        for (let i = 0; i < regionCount; i++) {
+            regionInfo.push([])
+        }
+        //바깥쪽 구역 구분
+        for (let i = (rowLen / 4 - m); i < rowLen / 4; i++) {
+            for (let j = i; j < rowLen / 2; j++) {
+                regionInfo[0].push([j, i]) //북서 아래
+                regionInfo[1].push([i, j + 1]) //북서 위
+                regionInfo[2].push([i, rowLen - j]) //북동 위
+                regionInfo[3].push([j, rowLen + 1 - i]) //북동 아래
+                regionInfo[8].push([rowLen - 1 - j, i]) // 남서 위
+                regionInfo[9].push([rowLen - 1 - i, j + 1]) //남서 아래
+                regionInfo[10].push([rowLen - 1 - i, rowLen - j]) // 남동 아래
+                regionInfo[11].push([rowLen - 1 - j, rowLen + 1 - i]) // 남동 위
+            }
+        }
+        // 안쪽 구역 구분
+        for (let i = rowLen / 4; i < rowLen / 2; i++) {
+            for (let j = i; j < rowLen / 2; j++) {
+                regionInfo[4].push([j, i]) //북서 아래
+                regionInfo[5].push([i, j + 1]) //북서 위
+                regionInfo[6].push([i, rowLen - j]) //북동 위
+                regionInfo[7].push([j, rowLen + 1 - i]) //북동 아래
+                regionInfo[12].push([rowLen - 1 - j, i]) // 남서 위
+                regionInfo[13].push([rowLen - 1 - i, j + 1]) //남서 아래
+                regionInfo[14].push([rowLen - 1 - i, rowLen - j]) // 남동 아래
+                regionInfo[15].push([rowLen - 1 - j, rowLen + 1 - i]) // 남동 위
+            }
         }
     }
-    // 안쪽 구역 구분
-    for (let i = rowLen / 4; i < rowLen / 2; i++) {
-        for (let j = i; j < rowLen / 2; j++) {
-            regionInfo[4].push([j, i]) //북서 아래
-            regionInfo[5].push([i, j + 1]) //북서 위
-            regionInfo[6].push([i, rowLen - j]) //북동 위
-            regionInfo[7].push([j, rowLen + 1 - i]) //북동 아래
-            regionInfo[12].push([rowLen - 1 - j, i]) // 남서 위
-            regionInfo[13].push([rowLen - 1 - i, j + 1]) //남서 아래
-            regionInfo[14].push([rowLen - 1 - i, rowLen - j]) // 남동 아래
-            regionInfo[15].push([rowLen - 1 - j, rowLen + 1 - i]) // 남동 위
-        }
-    }
+
 }
 
-function checkRegion(row, col) {
+function checkRegion(row, col, regionLimit) {
+    const regionInfo = regionInfos[regionLimit]
     for (let i = 0; i < regionInfo.length; i++) {
         for (let j = 0; j < regionInfo[i].length; j++) {
             if (row === regionInfo[i][j][0] && col === regionInfo[i][j][1]) {
@@ -56,11 +66,12 @@ function checkRegion(row, col) {
     return null
 }
 
-function getRegionCells(region) {
-    return regionInfo[region]
+function getRegionCells(region, regionLimit) {
+    return regionInfos[regionLimit][region]
 }
 
 regionDef(TABLE_ROW_LEN, TABLE_COL_LEN)
+console.log('test')
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
 export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, table, regionMode,
@@ -194,7 +205,7 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
         }
 
         if (regionMode) {
-            const regionCells = getRegionCells(checkRegion(row, col))
+            const regionCells = getRegionCells(checkRegion(row, col, regionLimit), regionLimit)
             let regionSelected = true
             for (const regionCell of regionCells) {
                 const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
@@ -205,10 +216,10 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
             if (!regionSelected && !cellSelected) {
                 setSelectMode(true)
                 for (const regionCell of regionCells) {
-                    if (regionCell[1] < regionLimitIdx[0] || regionCell[1] >= regionLimitIdx[1] ||
-                        regionCell[0] < regionLimitIdx[2] || regionCell[0] >= regionLimitIdx[3]) {
-                        continue
-                    }
+                    // if (regionCell[1] < regionLimitIdx[0] || regionCell[1] >= regionLimitIdx[1] ||
+                    //     regionCell[0] < regionLimitIdx[2] || regionCell[0] >= regionLimitIdx[3]) {
+                    //     continue
+                    // }
                     const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
                     if (regionCellIdx < 0) {
                         select.push(JSON.stringify(regionCell))
@@ -218,10 +229,10 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
             } else {
                 setSelectMode(false)
                 for (const regionCell of regionCells) {
-                    if (regionCell[1] < regionLimitIdx[0] || regionCell[1] >= regionLimitIdx[1] ||
-                        regionCell[0] < regionLimitIdx[2] || regionCell[0] >= regionLimitIdx[3]) {
-                        continue
-                    }
+                    // if (regionCell[1] < regionLimitIdx[0] || regionCell[1] >= regionLimitIdx[1] ||
+                    //     regionCell[0] < regionLimitIdx[2] || regionCell[0] >= regionLimitIdx[3]) {
+                    //     continue
+                    // }
                     const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
                     if (regionCellIdx >= 0) {
                         select.splice(regionCellIdx, 1)
@@ -260,14 +271,14 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
             }
 
             if (regionMode) {
-                const regionCells = getRegionCells(checkRegion(row, col))
+                const regionCells = getRegionCells(checkRegion(row, col, regionLimit), regionLimit)
                 if (selectMode) {
                     setSelectMode(true)
                     for (const regionCell of regionCells) {
-                        if (regionCell[1] < regionLimitIdx[0] || regionCell[1] >= regionLimitIdx[1] ||
-                            regionCell[0] < regionLimitIdx[2] || regionCell[0] >= regionLimitIdx[3]) {
-                            continue
-                        }
+                        // if (regionCell[1] < regionLimitIdx[0] || regionCell[1] >= regionLimitIdx[1] ||
+                        //     regionCell[0] < regionLimitIdx[2] || regionCell[0] >= regionLimitIdx[3]) {
+                        //     continue
+                        // }
                         const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
                         if (regionCellIdx < 0) {
                             select.push(JSON.stringify(regionCell))
@@ -277,10 +288,10 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
                 } else {
                     setSelectMode(false)
                     for (const regionCell of regionCells) {
-                        if (regionCell[1] < regionLimitIdx[0] || regionCell[1] >= regionLimitIdx[1] ||
-                            regionCell[0] < regionLimitIdx[2] || regionCell[0] >= regionLimitIdx[3]) {
-                            continue
-                        }
+                        // if (regionCell[1] < regionLimitIdx[0] || regionCell[1] >= regionLimitIdx[1] ||
+                        //     regionCell[0] < regionLimitIdx[2] || regionCell[0] >= regionLimitIdx[3]) {
+                        //     continue
+                        // }
                         const regionCellIdx = select.indexOf(JSON.stringify(regionCell))
                         if (regionCellIdx >= 0) {
                             select.splice(regionCellIdx, 1)
@@ -312,12 +323,12 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
         // );
         // if (selectedElement.length === 0) {
         if (regionMode) {
-            const regionCells = getRegionCells(checkRegion(row, col))
+            const regionCells = getRegionCells(checkRegion(row, col, regionLimit), regionLimit)
             for (let regionCell of regionCells) {
-                if (regionCell[1] < regionLimitIdx[0] || regionCell[1] >= regionLimitIdx[1] ||
-                    regionCell[0] < regionLimitIdx[2] || regionCell[0] >= regionLimitIdx[3]) {
-                    continue
-                }
+                // if (regionCell[1] < regionLimitIdx[0] || regionCell[1] >= regionLimitIdx[1] ||
+                //     regionCell[0] < regionLimitIdx[2] || regionCell[0] >= regionLimitIdx[3]) {
+                //     continue
+                // }
                 const cellDom = getCellDOM(regionCell[0], regionCell[1])
 
                 if (cellDom.className.includes('selected')) {
@@ -348,12 +359,12 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
         // );
         // if (selectedElement.length === 0) {
         if (regionMode) {
-            const regionCells = getRegionCells(checkRegion(row, col))
+            const regionCells = getRegionCells(checkRegion(row, col, regionLimit), regionLimit)
             for (let regionCell of regionCells) {
-                if (regionCell[1] < regionLimitIdx[0] || regionCell[1] >= regionLimitIdx[1] ||
-                    regionCell[0] < regionLimitIdx[2] || regionCell[0] >= regionLimitIdx[3]) {
-                    continue
-                }
+                // if (regionCell[1] < regionLimitIdx[0] || regionCell[1] >= regionLimitIdx[1] ||
+                //     regionCell[0] < regionLimitIdx[2] || regionCell[0] >= regionLimitIdx[3]) {
+                //     continue
+                // }
                 getCellDOM(regionCell[0], regionCell[1]).style.backgroundColor = ''
             }
         } else {
