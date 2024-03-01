@@ -66,14 +66,15 @@ export const UnionRaider = () => {
   const [initSelectDisabled, setInitSelectDisabled] = React.useState(false)
   const [isProcessFail, setIsProcessFail] = React.useState(false)
   const [regionLimit, setRegionLimit] = React.useState(5);
+  const [prevRegionLimit, setPrevRegionLimit] = React.useState(5);
   const [regionLimitDisabled, setRegionLimitDisabled] = React.useState([true, true]) // decrease, increase 같이 저장
-  /** [left, right, top, bottom] 순으로 범위 지정
+  /** [top, bottom, left, right] 순으로 범위 지정
    * left : 해당 idx보다 작은 col은 제한
    * right: 해당 idx보다 크거나 같은 col은 제한
    * top: 해당 idx보다 작은 row는 제한
    * bottom: 해당 idx보다 크거나 같은 row는 제한
    *  */
-  const [regionLimitIdx, setRegionLimitIdx] = React.useState([0, TABLE_COL_LEN, 0, TABLE_ROW_LEN])
+  const [regionLimitIdx, setRegionLimitIdx] = React.useState([0, TABLE_ROW_LEN, 0, TABLE_COL_LEN])
 
 
 
@@ -268,18 +269,25 @@ export const UnionRaider = () => {
     // 선택과 hover 기능이 제한될 좌표 등록
     setRegionLimitIdx(
       [TABLE_ROW_LEN / 4 - regionLimit,
-      TABLE_COL_LEN - TABLE_ROW_LEN / 4 + regionLimit,
+      TABLE_ROW_LEN - TABLE_ROW_LEN / 4 + regionLimit,
       TABLE_ROW_LEN / 4 - regionLimit,
-      TABLE_ROW_LEN - TABLE_ROW_LEN / 4 + regionLimit]
+      TABLE_COL_LEN - TABLE_ROW_LEN / 4 + regionLimit]
     )
+    console.log('regionLimit changes=', regionLimit)
   }, [regionLimit])
 
   const handleRegionLimitDecrease = () => {
-    setRegionLimit(prev => prev - 1)
+    setRegionLimit(prev => {
+      setPrevRegionLimit(prev)
+      return prev - 1
+    })
   }
 
   const handleRegionLimitIncrease = () => {
-    setRegionLimit(prev => prev + 1)
+    setRegionLimit(prev => {
+      setPrevRegionLimit(prev)
+      return prev + 1
+    })
   }
 
   const RegionLimit = () => {
@@ -512,6 +520,7 @@ export const UnionRaider = () => {
                 ocid={charUnionInfo ? charUnionInfo.idResponse.ocid : ''}
                 blockManager={blockManager}
                 regionLimit={regionLimit}
+                prevRegionLimit={prevRegionLimit}
                 regionLimitIdx={regionLimitIdx}
               >
               </BasicTable>

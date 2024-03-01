@@ -2,15 +2,17 @@ import * as React from 'react';
 import { getCellDOM } from './index'
 import './index.css'
 import { getCSSProp } from '../util/util.jsx'
-import { PROCESS_INIT } from './index';
+import { PROCESS_INIT, PROCESS_READY } from './index';
 import { TABLE_ROW_LEN, TABLE_COL_LEN } from '../common'
 import { AfterImageButton } from '../common/clickable'
 import decreaseIcon from '../static/icons/chevron_left_FILL0_wght400_GRAD0_opsz20.png'
 import increaseIcon from '../static/icons/chevron_right_FILL0_wght400_GRAD0_opsz20.png'
+import BlockManager from './BlockManager.jsx';
 
 const regionInfos = []
 const cellSelectedHoverColor = getCSSProp(document.documentElement, '--cell-selected-hover-color')
 const cellNotSelectedHoverColor = getCSSProp(document.documentElement, '--cell-not-selected-hover-color')
+const regionLimitBorderStyle = getCSSProp(document.documentElement, '--region-limit-border')
 
 function regionDef(rowLen, colLen) {
     // m=0 일때는 바깥쪽 지역이 아예 사용되지 않도록
@@ -70,12 +72,47 @@ function getRegionCells(region, regionLimit) {
     return regionInfos[regionLimit][region]
 }
 
+function setRegionLimitBorder(regionLimitIdx) {
+    for (let i = 0; i < TABLE_ROW_LEN; i++) {
+        for (let j = 0; j < TABLE_COL_LEN; j++) {
+            let cellDOM = getCellDOM(i, j)
+            
+            if (i === regionLimitIdx[0] && j === regionLimitIdx[2]) { // 왼쪽위 모서리
+                cellDOM.style.borderLeft = regionLimitBorderStyle;
+                cellDOM.style.borderTop = regionLimitBorderStyle;
+
+            } else if (i === regionLimitIdx[1] - 1 && j === regionLimitIdx[2]) { // 왼쪽아래 모서리
+                cellDOM.style.borderLeft = regionLimitBorderStyle;
+                cellDOM.style.borderBottom = regionLimitBorderStyle;
+            } else if (i === regionLimitIdx[0] && j === regionLimitIdx[3] - 1) { // 오른쪽위 모서리
+                cellDOM.style.borderRight = regionLimitBorderStyle;
+                cellDOM.style.borderTop = regionLimitBorderStyle;
+            } else if (i === regionLimitIdx[1] - 1 && j === regionLimitIdx[3] - 1) { // 오른쪽아래 모서리
+                cellDOM.style.borderRight = regionLimitBorderStyle;
+                cellDOM.style.borderBottom = regionLimitBorderStyle;
+            } else if (i === regionLimitIdx[0] && j >= regionLimitIdx[2] && j < regionLimitIdx[3]) { // 위쪽 변
+                cellDOM.style.borderTop = regionLimitBorderStyle;
+            } else if (i === regionLimitIdx[1] - 1 && j >= regionLimitIdx[2] && j < regionLimitIdx[3]) { // 아래쪽 변
+                cellDOM.style.borderBottom = regionLimitBorderStyle;
+            } else if (j === regionLimitIdx[2] && i >= regionLimitIdx[0] && i < regionLimitIdx[1]) { // 왼쪽 변
+                cellDOM.style.borderLeft = regionLimitBorderStyle;
+            } else if (j === regionLimitIdx[3] - 1 && i >= regionLimitIdx[0] && i < regionLimitIdx[1]) { // 오른쪽 변
+                cellDOM.style.borderRight = regionLimitBorderStyle;
+            }
+
+            else {
+                cellDOM.style.border = ''
+            }
+        }
+    }
+}
+
 regionDef(TABLE_ROW_LEN, TABLE_COL_LEN)
 console.log('test')
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
 export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, table, regionMode,
-    processType, initSelectDisabled, isStart, useProcess, isProcessFail, ocid, regionLimit, regionLimitIdx }) {
+    processType, initSelectDisabled, isStart, useProcess, isProcessFail, ocid, regionLimit, prevRegionLimit, regionLimitIdx }) {
     const [select, setSelect] = React.useState([])
     // This variable will control if the user is dragging or not
     const [drag, setDrag] = React.useState(false)
@@ -83,6 +120,7 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
 
 
     React.useEffect(() => {
+        // 이걸 selected className 말고 select로 바로 조회해도 이상없는지 체크해보기
         const selectedElement = Array.from(
             document.getElementsByClassName('selected')
         );
@@ -140,7 +178,33 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
 
     }, [drag]);
 
-
+    React.useEffect(() => {
+        // console.log('prevRegionLimit=',prevRegionLimit,', regionLimit=',regionLimit)
+        // if (regionLimit < prevRegionLimit) {
+        let newTable = Array.from(new Array(TABLE_ROW_LEN), () => new Array(TABLE_COL_LEN).fill(0))
+        let newSelect = []
+        let cachePosSelect = []
+        if (localStorage.getItem("positionSelect")) {
+            cachePosSelect = JSON.parse(localStorage.getItem("positionSelect"))
+        }
+        for (let i = 0; i < cachePosSelect.length; i++) {
+            const selectPos = JSON.parse(cachePosSelect[i])
+            if (selectPos[0] >= regionLimitIdx[0] && selectPos[0] < regionLimitIdx[1] && selectPos[1] >= regionLimitIdx[2] && selectPos[1] < regionLimitIdx[3]) {// 남겨져도 되는 블럭들 체크
+                newTable[selectPos[0]][selectPos[1]] = 1
+                newSelect.push(cachePosSelect[i])
+            }
+        }
+        setSelect(newSelect)
+        setTable(newTable)
+        localStorage.setItem('tableSelect', JSON.stringify(newTable))
+        localStorage.setItem('positionSelect', JSON.stringify(newSelect))
+        // 딱히 다른 작업은 없지만 테이블을 강제로 렌더링 시키기 위한 장치로 사용되는듯 한데..? 
+        const style = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill({}))
+        // const style = blockManager.getRegionLimitBorderStyle(regionLimitIdx)
+        setTableStyle(style)
+        // setRegionLimitBorder(regionLimitIdx) // 임시적으로 경계선 디자인은 빼기 (추후 기본세팅을 가져올때도 경계선 제어기능을 추가하면 그때 넣기.)
+        // }
+    }, [regionLimitIdx])
 
 
     const handleMouseDown = (e, row, col) => {
@@ -154,7 +218,7 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
             setDrag(true)
         }
 
-        if (col < regionLimitIdx[0] || col >= regionLimitIdx[1] || row < regionLimitIdx[2] || row >= regionLimitIdx[3]) {
+        if (row < regionLimitIdx[0] || row >= regionLimitIdx[1] || col < regionLimitIdx[2] || col >= regionLimitIdx[3]) {
             return
         }
         let cellSelected = false
@@ -220,7 +284,7 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
     const handleMultipleSel = (e, row, col) => {
         e.preventDefault();
         if (drag) {
-            if (col < regionLimitIdx[0] || col >= regionLimitIdx[1] || row < regionLimitIdx[2] || row >= regionLimitIdx[3]) {
+            if (row < regionLimitIdx[0] || row >= regionLimitIdx[1] || col < regionLimitIdx[2] || col >= regionLimitIdx[3]) {
                 return
             }
             let cellSelected = false
@@ -274,7 +338,7 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
     }
 
     const handleMouseEnter = (e, row, col) => {
-        if (isStart || !useProcess || (col < regionLimitIdx[0] || col >= regionLimitIdx[1] || row < regionLimitIdx[2] || row >= regionLimitIdx[3])) {
+        if (isStart || !useProcess || (row < regionLimitIdx[0] || row >= regionLimitIdx[1] || col < regionLimitIdx[2] || col >= regionLimitIdx[3])) {
             return
         }
         // const selectedElement = Array.from(
@@ -309,8 +373,8 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
     }
 
     const handleMouseLeave = (e, row, col) => {
-        if (isStart || !useProcess || (col < regionLimitIdx[0] || col >= regionLimitIdx[1] ||
-            row < regionLimitIdx[2] || row >= regionLimitIdx[3])) {
+        if (isStart || !useProcess || (row < regionLimitIdx[0] || row >= regionLimitIdx[1] ||
+            col < regionLimitIdx[2] || col >= regionLimitIdx[3])) {
             return
         }
         // const selectedElement = Array.from(
@@ -350,9 +414,10 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
         const cachePosSelect = localStorage.getItem(`positionSelect-${ocid}`)
         setSelect(JSON.parse(cachePosSelect))
         setTable(JSON.parse(cacheTableSelect))
-        setTableStyle(blockManager.getTableStyle(JSON.parse(cacheTableSelect)))
         localStorage.setItem('tableSelect', cacheTableSelect)
         localStorage.setItem('positionSelect', cachePosSelect)
+        setTableStyle(blockManager.getTableStyle(JSON.parse(cacheTableSelect)))
+
     }
 
     // 드래그하는 도중 전체 테이블셀을 계속 스캔
@@ -366,7 +431,7 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
     }
 
     return (
-        <div className="union-table-wrapper" onMouseUp={(e) => handleMouseUp()}>
+        <div className="union-table-wrapper" onMouseUp={(e) => handleMouseUp()} >
 
             <div
             // onMouseMove={(e) => preventOutsideDrag(e)}
