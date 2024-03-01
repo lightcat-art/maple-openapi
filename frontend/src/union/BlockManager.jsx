@@ -53,22 +53,23 @@ class BlockManager {
             ['A'],
             ['B']
         ]
+        this.baseLevel = [[250, 200, 140, 100, 60], [120, 70, 50, 30]]
         this.baseBlockDesc = [
-            [['250Lv', '해적']],
-            [['250Lv', '제논']],
-            [['250Lv', '마법사']],
-            [['250Lv', '도적']],
-            [['250Lv', '궁수']],
-            [['250Lv', '전사']],
-            [['200Lv', '해적']],
-            [['200Lv', '마법사']],
-            [['200Lv', '제논', '도적']],
-            [['200Lv', '궁수'], ['120Lv', '모바일 캐릭터']],
-            [['200Lv', '전사']],
-            [['140Lv', '궁수', '도적', '마법사'], ['70Lv', '모바일 캐릭터']],
-            [['140Lv', '전사', '해적']],
-            [['100Lv', '전직업'], ['50Lv', '모바일 캐릭터']],
-            [['60Lv', '전직업'], ['30Lv', '모바일 캐릭터']],
+            [[`${this.baseLevel[0][0]}Lv`, '해적']],
+            [[`${this.baseLevel[0][0]}Lv`, '제논']],
+            [[`${this.baseLevel[0][0]}Lv`, '마법사']],
+            [[`${this.baseLevel[0][0]}Lv`, '도적']],
+            [[`${this.baseLevel[0][0]}Lv`, '궁수']],
+            [[`${this.baseLevel[0][0]}Lv`, '전사']],
+            [[`${this.baseLevel[0][1]}Lv`, '해적']],
+            [[`${this.baseLevel[0][1]}Lv`, '마법사']],
+            [[`${this.baseLevel[0][1]}Lv`, '제논', '도적']],
+            [[`${this.baseLevel[0][1]}Lv`, '궁수'], [`${this.baseLevel[1][0]}Lv`, '메이플 M 캐릭터']],
+            [[`${this.baseLevel[0][1]}Lv`, '전사']],
+            [[`${this.baseLevel[0][2]}Lv`, '궁수', '도적', '마법사'], [`${this.baseLevel[1][1]}Lv`, '메이플 M 캐릭터']],
+            [[`${this.baseLevel[0][2]}Lv`, '전사', '해적']],
+            [[`${this.baseLevel[0][3]}Lv`, '전직업'], [`${this.baseLevel[1][2]}Lv`, '메이플 M 캐릭터']],
+            [[`${this.baseLevel[0][4]}Lv`, '전직업'], [`${this.baseLevel[1][3]}Lv`, '메이플 M 캐릭터']],
         ]
         this.blockTypeColor = blockColor // 블록타입별 색상
         this.closeTableColor = basicTableColor // 기본 테이블 색상
@@ -103,12 +104,57 @@ class BlockManager {
         let resultCount = Array.from(Array(this.baseBlockType.length).fill(0))
         requestBlocks.forEach(block => {
             const normalizedBlock = this.normalizeOriginBlock(block.blockPosition)
-            const idx = this.getBlockIdx(normalizedBlock)
+            let idx = this.getBlockIdx(normalizedBlock)
+            if (!idx) {
+                // 블록이 배치판을 넘어간 이슈로 인해 좌표가 제대로 넘어오지 않은 경우 예외처리
+                const normLevel = this.normalizeLevel(Number(block.blockLevel), block.blockType)
+                idx = this.getBlockIdxByType(normLevel, block.blockType)
+            }
             resultCount[idx]++
-
             blockDescList[idx].domiDesc.push(new BlockDomiTooltip(block.blockLevel, block.blockClass, block.blockType))
+
         })
         return { count: resultCount, desc: blockDescList }
+    }
+
+    normalizeLevel(level, classType) {
+        let resultLevel = 0
+        if (classType === '메이플 M 캐릭터') {
+            if (level >= this.baseLevel[1][0]) {
+                resultLevel = this.baseLevel[1][0]
+            } else if (level >= this.baseLevel[1][1]) {
+                resultLevel = this.baseLevel[1][1]
+            } else if (level >= this.baseLevel[1][2]) {
+                resultLevel = this.baseLevel[1][2]
+            } else if (level >= this.baseLevel[1][3]) {
+                resultLevel = this.baseLevel[1][3]
+            }
+        } else {
+            if (level >= this.baseLevel[0][0]) {
+                resultLevel = this.baseLevel[0][0]
+            } else if (level >= this.baseLevel[0][1]) {
+                resultLevel = this.baseLevel[0][1]
+            } else if (level >= this.baseLevel[0][2]) {
+                resultLevel = this.baseLevel[0][2]
+            } else if (level >= this.baseLevel[0][3]) {
+                resultLevel = this.baseLevel[0][3]
+            }
+        }
+        return resultLevel
+    }
+
+    getBlockIdxByType(level, classType) {
+        const levelStr = `${level}Lv`
+        let resultIdx = -1
+        // level과 classType 모두 존재하면 해당 idx 갖고오기
+        for (let i = 0; i < this.baseBlockDesc.length; i++) {
+            for (let j = 0; j < this.baseBlockDesc[i].length; j++) {
+                const desc = this.baseBlockDesc[i][j]
+                if (desc.indexOf(levelStr) >= 0 && (desc.indexOf(classType) >= 0 || desc.indexOf('전직업') >= 0)) {
+                    return i
+                }
+            }
+        }
     }
 
     getBlockIdx(block) {

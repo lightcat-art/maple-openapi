@@ -499,7 +499,7 @@ export const UnionRaider = () => {
             {/* <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox>
           <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
           <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div> */}
-            <div className="col-auto">
+            <div className="col-auto region-checkbox">
               <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
             </div>
           </div>

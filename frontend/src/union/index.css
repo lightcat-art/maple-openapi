@@ -143,6 +143,11 @@
     font-size: 14px;
     position: absolute;
 }
+
+.region-checkbox{
+    font-size: 14px;
+}
+
 /* .union-button {
     position: relative;
     margin-left: auto;
