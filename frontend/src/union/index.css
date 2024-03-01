@@ -139,6 +139,10 @@
     font-size: 14px;
 }
 
+.region-limit-desc{
+    font-size: 14px;
+    position: absolute;
+}
 /* .union-button {
     position: relative;
     margin-left: auto;

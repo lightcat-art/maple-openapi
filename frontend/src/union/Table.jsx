@@ -5,9 +5,6 @@ import { getCSSProp } from '../util/util.jsx'
 import { PROCESS_INIT, PROCESS_READY } from './index';
 import { TABLE_ROW_LEN, TABLE_COL_LEN } from '../common'
 import { AfterImageButton } from '../common/clickable'
-import decreaseIcon from '../static/icons/chevron_left_FILL0_wght400_GRAD0_opsz20.png'
-import increaseIcon from '../static/icons/chevron_right_FILL0_wght400_GRAD0_opsz20.png'
-import BlockManager from './BlockManager.jsx';
 
 const regionInfos = []
 const cellSelectedHoverColor = getCSSProp(document.documentElement, '--cell-selected-hover-color')

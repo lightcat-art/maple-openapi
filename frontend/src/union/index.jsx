@@ -41,7 +41,7 @@ const blockColorOriginBorder = getCSSProp(document.documentElement, '--block-col
 export const UnionRaider = () => {
   const [loading, setLoading] = React.useState(true)
   const [charUnionInfo, setCharUnionInfo] = useOutletContext();
-  // console.log('charUnionInfo = ', charUnionInfo);
+  console.log('charUnionInfo = ', charUnionInfo);
   const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder);
   const { cname } = useParams();
   const param = { nickname: cname }
@@ -292,12 +292,14 @@ export const UnionRaider = () => {
 
   const RegionLimit = () => {
     return (
-      <>
-        <div className="col-auto">경계선 제어</div>
-        <AfterImageButton className="col-auto region-decrease" disabled={regionLimitDisabled[0]} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
-        <div className="col-auto pt-1">{regionLimit}</div>
-        <AfterImageButton className="col-auto region-increase" disabled={regionLimitDisabled[1]} action={() => handleRegionLimitIncrease()} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
-      </>
+      <div className="container">
+        <div className="row">
+          <div className="col-auto region-limit-desc pt-1">외부지역 해금</div>
+          <AfterImageButton className="col-auto region-decrease" style={{ marginLeft: '94px' }} disabled={regionLimitDisabled[0]} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
+          <div className="col-auto pt-1">{regionLimit}단계</div>
+          <AfterImageButton className="col-auto region-increase" disabled={regionLimitDisabled[1]} action={() => handleRegionLimitIncrease()} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
+        </div>
+      </div>
     )
   }
 
@@ -481,7 +483,7 @@ export const UnionRaider = () => {
 
         <div className='container-fluid'>
           <div className="row justify-content-center" style={{ paddingTop: '30px' }}>
-            <RegionLimit />
+
             <div className="col-auto use-process-btn-wrapper text-center">
               <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
                 disabled={useProcessDisabled}
@@ -527,6 +529,7 @@ export const UnionRaider = () => {
             </div>
             <div className="col-auto block-counts">
               <BlockTooltip></BlockTooltip>
+              <RegionLimit />
               <BlockCountContainer blockClassName="pt-1" idx={0} />
               <BlockCountContainer idx={1} />
               <BlockCountContainer idx={2} />
