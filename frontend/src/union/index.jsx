@@ -37,12 +37,13 @@ const cellSelectedColor = getCSSProp(document.documentElement, '--cell-selected-
 const cellNotSelectedColor = getCSSProp(document.documentElement, '--cell-not-selected-color')
 const blockColorOrigin = getCSSProp(document.documentElement, '--block-color-origin')
 const blockColorOriginBorder = getCSSProp(document.documentElement, '--block-color-origin-bd')
+const regionLimitBorder = getCSSProp(document.documentElement, '--region-limit-border')
 
 export const UnionRaider = () => {
   const [loading, setLoading] = React.useState(true)
   const [charUnionInfo, setCharUnionInfo] = useOutletContext();
   console.log('charUnionInfo = ', charUnionInfo);
-  const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder);
+  const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder, regionLimitBorder);
   const { cname } = useParams();
   const param = { nickname: cname }
   const defaultTable = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill(0))
@@ -90,7 +91,8 @@ export const UnionRaider = () => {
   const resetAction = () => {
     new WebWorker().clearUnionWorker()
     unionWorker = new WebWorker().getUnionWorker(worker)
-    setTableStyle(defaultTableStyle)
+    const style = blockManager.getRegionLimitBorder(TABLE_ROW_LEN, TABLE_COL_LEN, regionLimitIdx)
+    setTableStyle(style)
     // setSubmitButtonDisabled(false)
     // setPauseButtonHidden(true)
     // setContinueButtonHidden(true)
@@ -114,6 +116,9 @@ export const UnionRaider = () => {
       setUseProcessDisabled(true)
       setInitSelectDisabled(true)
       setIsProcessFail(false)
+      // 외부지역 해금선 관련 등의 스타일을 바로 없애기 위해 tableStyle 초기화
+      setTableStyle(defaultTableStyle)
+
       e.preventDefault() // event의 클릭 기본동작 방지
     }
     setIsStart(!isStart)
@@ -207,9 +212,7 @@ export const UnionRaider = () => {
             setIsProcessFail(true)
             resetAction()
             setIsStart(false)
-            // setProcessType(result.count)
           } else {
-            // setProcessType(result.count)
             if (result.domiBlocks) {
               const styleValue = blockManager.setTableStyleValue(result.table, result.domiBlocks)
               const tableStyle = blockManager.getTableStyle(styleValue)
@@ -236,7 +239,6 @@ export const UnionRaider = () => {
       setLoading(false)
 
       let userPosSelect = removeDupND(domiBlocks.flat()).map((v) => JSON.stringify(v))
-      // console.log('userPosSelect = ',userPosSelect)
       const userInfoValue = blockManager.getUserInfoValue(TABLE_ROW_LEN, TABLE_COL_LEN, domiBlocks)
       localStorage.setItem(`positionSelect-${charUnionInfo.idResponse.ocid}`, JSON.stringify(userPosSelect))
       localStorage.setItem(`tableSelect-${charUnionInfo.idResponse.ocid}`, JSON.stringify(userInfoValue))
@@ -295,9 +297,9 @@ export const UnionRaider = () => {
       <div className="container">
         <div className="row">
           <div className="col-auto region-limit-desc pt-1">외부지역 해금</div>
-          <AfterImageButton className="col-auto region-decrease" style={{ marginLeft: '94px' }} disabled={regionLimitDisabled[0]} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
+          <AfterImageButton className="col-auto region-decrease" style={{ marginLeft: '94px' }} disabled={regionLimitDisabled[0] || !useProcess} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
           <div className="col-auto pt-1">{regionLimit}단계</div>
-          <AfterImageButton className="col-auto region-increase" disabled={regionLimitDisabled[1]} action={() => handleRegionLimitIncrease()} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
+          <AfterImageButton className="col-auto region-increase" disabled={regionLimitDisabled[1] || !useProcess} action={() => handleRegionLimitIncrease()} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
         </div>
       </div>
     )
@@ -307,13 +309,9 @@ export const UnionRaider = () => {
   React.useEffect(() => {
     console.log('useProcess change check. useProcess=', useProcess, ', table =', table)
     if (useProcess) {
-      if (localStorage.getItem('tableSelect')) {
-        setTableStyle(blockManager.getTableStyle(JSON.parse(localStorage.getItem('tableSelect'))))
-      } else {
-        setTableStyle(defaultTableStyle)
-      }
+      const style = blockManager.getRegionLimitBorder(TABLE_ROW_LEN, TABLE_COL_LEN, regionLimitIdx)
+      setTableStyle(style)
       setSubmitButtonDisabled(false)
-      // setResetButtonHidden(true)
     } else {
       if (charUnionInfo) {
         let domiBlocks = []
@@ -322,26 +320,20 @@ export const UnionRaider = () => {
         })
         const userInfoValue = blockManager.getUserInfoValue(TABLE_ROW_LEN, TABLE_COL_LEN, domiBlocks)
         setTableStyle(blockManager.getUserInfoStyle(TABLE_ROW_LEN, TABLE_COL_LEN, userInfoValue))
-
         /**
          * 초기 processCount를 지정하지 않아도 charInfo가 변하면 loading도 변하게 되어있으므로 charInfo 종속성 처리 이후 loading 종속성 처리 rerendering됨.
          * 따라서 처음 프로세스 카운트는 지정하지 않는다.
          */
         // setProcessCount(USER_PROCESS_COUNT) // 초기 구역경계선 스타일 설정을 위해 프로세스 카운트 설정 (따로 변수를 만들수도 있는데 기존 변수를 이용)
-      } else {
-        // console.log('charinfo not exist')
       }
       setSubmitButtonDisabled(true)
-      // setResetButtonHidden(true)
     }
     localStorage.setItem("useProcess", JSON.stringify(useProcess))
     setProcessType(PROCESS_READY)
   }, [charUnionInfo, useProcess])
 
   React.useEffect(() => {
-    // if (processType >= PROCESS_READY) {
     drawRegion(TABLE_ROW_LEN, TABLE_COL_LEN)
-    // }
   }, [resetButtonHidden, processType, tableStyle]);
 
 

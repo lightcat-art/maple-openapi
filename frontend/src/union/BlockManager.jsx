@@ -17,7 +17,7 @@ class BlockManager {
     // React component에서 선언하는 경우 다시 새로고침하면 인스턴스 날아감.
     // 현재 가지고 있는 블록 정보를 기반으로 화면에 표시할수 있도록 도와주는 클래스
     static instance;
-    constructor(blockColor, selectedTableColor, basicTableColor, blockColorOriginBg, blockColorOriginBd) {
+    constructor(blockColor, selectedTableColor, basicTableColor, blockColorOriginBg, blockColorOriginBd, regionLimitBorder) {
         if (BlockManager.instance) return BlockManager.instance;
         this.baseBlockType = [ // 블록타입별 좌표
             [[0, 0], [0, 1], [1, 1], [1, 2], [1, 3]], // z-asym
@@ -76,6 +76,7 @@ class BlockManager {
         this.selectedTableColor = selectedTableColor // 선택시 테이블 색상
         this.blockColorOriginBg = blockColorOriginBg // 유저 유니온 정보 블록 배경 색
         this.blockColorOriginBd = blockColorOriginBd // 유저 유니온 정보 블록 테두리 색
+        this.regionLimitBorder = regionLimitBorder // 외부지역 해금 테두리
         this.baseBlockSizeIdx = { 5: [0, 5], 4: [6, 10], 3: [11, 12], 2: [13, 13], 1: [14, 14] }
         this.blockDirection = { 1: 'borderTop', 2: 'borderLeft', 4: 'borderRight', 8: 'borderBottom' }
         // [i][j] => i: 블록타입 종류,  j: 블록의 회전에 따른 종류
@@ -169,15 +170,38 @@ class BlockManager {
         }
     }
 
-    getDefaultTableStyle(table) {
-        let style = Array.from(Array(table.length), () => Array(table[0].length).fill({}))
-
-        for (let i = 0; i < table.length; i++) {
-            for (let j = 0; j < table[0].length; j++) {
-                let cellStyleMap = {}
-                cellStyleMap.direction = []
-                cellStyleMap['background'] = this.default
-                style[i][j] = cellStyleMap
+    getRegionLimitBorder(rowLen, colLen, regionLimitIdx) {
+        let style = Array.from(Array(rowLen), () => Array(colLen).fill({}))
+        for (let i = 0; i < rowLen; i++) {
+            for (let j = 0; j < colLen; j++) {
+                let cellMap = {}
+                let cellStyleInfo = {}
+                if (i === regionLimitIdx[0] && j === regionLimitIdx[2]) { // 왼쪽위 모서리
+                    cellStyleInfo['borderLeft'] = this.regionLimitBorder;
+                    cellStyleInfo['borderTop'] = this.regionLimitBorder;
+                } else if (i === regionLimitIdx[1] - 1 && j === regionLimitIdx[2]) { // 왼쪽아래 모서리
+                    cellStyleInfo['borderLeft'] = this.regionLimitBorder;
+                    cellStyleInfo['borderBottom'] = this.regionLimitBorder;
+                } else if (i === regionLimitIdx[0] && j === regionLimitIdx[3] - 1) { // 오른쪽위 모서리
+                    cellStyleInfo['borderRight'] = this.regionLimitBorder;
+                    cellStyleInfo['borderTop'] = this.regionLimitBorder;
+                } else if (i === regionLimitIdx[1] - 1 && j === regionLimitIdx[3] - 1) { // 오른쪽아래 모서리
+                    cellStyleInfo['borderRight'] = this.regionLimitBorder;
+                    cellStyleInfo['borderBottom'] = this.regionLimitBorder;
+                } else if (i === regionLimitIdx[0] && j >= regionLimitIdx[2] && j < regionLimitIdx[3]) { // 위쪽 변
+                    cellStyleInfo['borderTop'] = this.regionLimitBorder;
+                } else if (i === regionLimitIdx[1] - 1 && j >= regionLimitIdx[2] && j < regionLimitIdx[3]) { // 아래쪽 변
+                    cellStyleInfo['borderBottom'] = this.regionLimitBorder;
+                } else if (j === regionLimitIdx[2] && i >= regionLimitIdx[0] && i < regionLimitIdx[1]) { // 왼쪽 변
+                    cellStyleInfo['borderLeft'] = this.regionLimitBorder;
+                } else if (j === regionLimitIdx[3] - 1 && i >= regionLimitIdx[0] && i < regionLimitIdx[1]) { // 오른쪽 변
+                    cellStyleInfo['borderRight'] = this.regionLimitBorder;
+                } else if (i === regionLimitIdx[1] && j >= regionLimitIdx[2] && j < regionLimitIdx[3]) { 
+                    // 아래쪽변은 drawRegion에 덮어씌워지므로 셀 양쪽에서 모두 변경
+                    cellStyleInfo['borderTop'] = this.regionLimitBorder;
+                }
+                cellMap.style = cellStyleInfo
+                style[i][j] = cellMap
             }
         }
         return style

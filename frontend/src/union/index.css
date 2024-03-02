@@ -41,7 +41,8 @@
     --cell-not-selected-hover-color: #cfcfcf;
     --cell-selected-color: rgb(179, 179, 179);
     --cell-not-selected-color: rgb(255, 255, 255);
-    --region-limit-border: 3px solid;
+    --region-limit-border: 3px dashed rgb(0, 0, 0);
+    /* --region-limit-border: 3px solid transparent; */
 }
 
 /** 기본적으로 table cell 테두리는 설정해놓고 필요에 따라 테두리가 없어져야 되는 블록들은 내부에서 borderBottom: 'none' 등으로 적용*/
