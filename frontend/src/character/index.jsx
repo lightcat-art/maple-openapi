@@ -2,8 +2,8 @@ import { Menu } from '../common'
 import './index.css'
 import * as React from 'react'
 import { AfterImageButton, AfterImageLink } from '../common/clickable'
-import expandMoreIcon from '../static/icons/expand_more_FILL0_wght400_GRAD0_opsz20.png'
-import expandLessIcon from '../static/icons/expand_less_FILL0_wght400_GRAD0_opsz20.png'
+import expandMoreIcon from '../static/icons/expand_more_FILL0_wght400_GRAD0_opsz20.svg'
+import expandLessIcon from '../static/icons/expand_less_FILL0_wght400_GRAD0_opsz20.svg'
 import { useParams, Outlet } from 'react-router-dom'
 import axios from 'axios';
 import { ContentLayout } from '../common';

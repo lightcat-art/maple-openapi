@@ -196,10 +196,17 @@ class BlockManager {
                     cellStyleInfo['borderLeft'] = this.regionLimitBorder;
                 } else if (j === regionLimitIdx[3] - 1 && i >= regionLimitIdx[0] && i < regionLimitIdx[1]) { // 오른쪽 변
                     cellStyleInfo['borderRight'] = this.regionLimitBorder;
-                } else if (i === regionLimitIdx[1] && j >= regionLimitIdx[2] && j < regionLimitIdx[3]) { 
-                    // 아래쪽변은 drawRegion에 덮어씌워지므로 셀 양쪽에서 모두 변경
+                } 
+                // drawRegion에 덮어씌워지므로 셀 양쪽에서 모두 변경
+                  else if (i === regionLimitIdx[1] && j >= regionLimitIdx[2] && j < regionLimitIdx[3]) { //아래쪽변
                     cellStyleInfo['borderTop'] = this.regionLimitBorder;
-                }
+                } else if (i === regionLimitIdx[0] - 1 && j >= regionLimitIdx[2] && j < regionLimitIdx[3]) { // 위쪽 변
+                    cellStyleInfo['borderBottom'] = this.regionLimitBorder;
+                } else if (j === regionLimitIdx[2] - 1 && i >= regionLimitIdx[0] && i < regionLimitIdx[1]) { // 왼쪽 변
+                    cellStyleInfo['borderRight'] = this.regionLimitBorder;
+                } else if (j === regionLimitIdx[3] && i >= regionLimitIdx[0] && i < regionLimitIdx[1]) { // 오른쪽 변
+                    cellStyleInfo['borderLeft'] = this.regionLimitBorder;
+                } 
                 cellMap.style = cellStyleInfo
                 style[i][j] = cellMap
             }

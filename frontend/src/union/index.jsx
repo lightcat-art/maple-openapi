@@ -12,8 +12,9 @@ import { TABLE_ROW_LEN, TABLE_COL_LEN, ContentLayout } from '../common'
 import { Button, AfterImageButton, AfterImageBadgeLight } from '../common/clickable'
 import { Divider } from '../common/divider.jsx'
 import { CharMenu } from '../character';
-import decreaseIcon from '../static/icons/chevron_left_FILL0_wght400_GRAD0_opsz20.png'
-import increaseIcon from '../static/icons/chevron_right_FILL0_wght400_GRAD0_opsz20.png'
+import decreaseIcon from '../static/icons/chevron_left_FILL0_wght400_GRAD0_opsz20.svg'
+import increaseIcon from '../static/icons/chevron_right_FILL0_wght400_GRAD0_opsz20.svg'
+import info from '../static/icons/info_FILL0_wght700_GRAD0_opsz20.svg'
 import { Tooltip } from 'react-tooltip'
 import axios from 'axios';
 import { UnionGradeImage } from '../common/image.jsx'
@@ -96,7 +97,7 @@ export const UnionRaider = () => {
   const resetAction = () => {
     new WebWorker().clearUnionWorker()
     unionWorker = new WebWorker().getUnionWorker(worker)
-    console.log('resetAction =',regionLimitIdx)
+    console.log('resetAction =', regionLimitIdx)
     const style = blockManager.getRegionLimitBorder(TABLE_ROW_LEN, TABLE_COL_LEN, regionLimitIdx)
     setTableStyle(style)
     // setSubmitButtonDisabled(false)
@@ -243,7 +244,7 @@ export const UnionRaider = () => {
     if (isProcessFail) {
       resetAction()
     }
-  },[isProcessFail])
+  }, [isProcessFail])
 
   React.useEffect(() => {
     if (charUnionInfo) {
@@ -255,7 +256,7 @@ export const UnionRaider = () => {
       charUnionInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
         domiBlocks.push(blockManager.transformPosition(block.blockPosition, TABLE_ROW_LEN / 2, TABLE_COL_LEN / 2))
       })
-      
+
 
       let userPosSelect = removeDupND(domiBlocks.flat()).map((v) => JSON.stringify(v))
       const userInfoValue = blockManager.getUserInfoValue(TABLE_ROW_LEN, TABLE_COL_LEN, domiBlocks)
@@ -323,10 +324,14 @@ export const UnionRaider = () => {
     return (
       <div className="container">
         <div className="row">
-          <div className="col-auto region-limit-desc pt-1">외부지역 해금 단계</div>
+          <div className="col-auto region-limit-desc">외부지역 해금 단계</div>
+
           <AfterImageButton className="col-auto region-decrease" style={{ marginLeft: '120px' }} disabled={regionLimitDisabled[0] || !useProcess} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
           <div className="col-auto pt-1">{regionLimit}단계</div>
           <AfterImageButton className="col-auto region-increase" disabled={regionLimitDisabled[1] || !useProcess} action={() => handleRegionLimitIncrease()} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
+          <div className="col-auto pt-1" data-tooltip-id='region-limit-tooltip'>
+            <img className="region-limit-help" src={info} alt=""></img>
+          </div>
         </div>
       </div>
     )
@@ -374,7 +379,39 @@ export const UnionRaider = () => {
     drawRegion(TABLE_ROW_LEN, TABLE_COL_LEN)
   }, [resetButtonHidden, processType, tableStyle]);
 
+  const RegionLimitTooltip = () => {
+    return (
+      <Tooltip id='region-limit-tooltip' className='region-limit-tooltip' events={['hover']}>
+        <div className='region-limit-tooltip-elem'>
+          <AfterImageBadgeLight title='0단계'></AfterImageBadgeLight>
+          <span classname='col-auto'> Lv.1 ~</span>
+        </div>
+        <div className='region-limit-tooltip-elem'>
+          <AfterImageBadgeLight title='1단계'></AfterImageBadgeLight>
+          <span classname='col-auto'> Lv.2000 ~</span>
+        </div>
+        <div className='region-limit-tooltip-elem'>
+          <AfterImageBadgeLight title='2단계'></AfterImageBadgeLight>
+          <span classname='col-auto'> Lv.3000 ~</span>
+        </div>
+        <div className='region-limit-tooltip-elem'>
+          <AfterImageBadgeLight title='3단계'></AfterImageBadgeLight>
+          <span classname='col-auto'> Lv.4000 ~</span>
+        </div>
+        <div className='region-limit-tooltip-elem'>
+          <AfterImageBadgeLight title='4단계'></AfterImageBadgeLight>
+          <span classname='col-auto'> Lv.5000 ~</span>
+        </div>
+        <div>
+          <AfterImageBadgeLight title='5단계'></AfterImageBadgeLight>
+          <span classname='col-auto'> Lv.6000 ~</span>
+        </div>
 
+
+      </Tooltip>
+    )
+
+  }
 
   const BlockCountContainer = (props) => {
     return (
@@ -418,6 +455,7 @@ export const UnionRaider = () => {
       </div>
     )
   };
+
 
   const BlockTooltip = () => {
     if (!blockDesc) {
@@ -568,8 +606,9 @@ export const UnionRaider = () => {
               </BasicTable>
             </div>
             <div className="col-auto block-counts">
-              <BlockTooltip></BlockTooltip>
+              <RegionLimitTooltip></RegionLimitTooltip>
               <RegionLimit />
+              <BlockTooltip></BlockTooltip>
               <BlockCountContainer blockClassName="pt-1" idx={0} />
               <BlockCountContainer idx={1} />
               <BlockCountContainer idx={2} />

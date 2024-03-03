@@ -41,7 +41,7 @@
     --cell-not-selected-hover-color: #cfcfcf;
     --cell-selected-color: rgb(179, 179, 179);
     --cell-not-selected-color: rgb(255, 255, 255);
-    --region-limit-border: 3px dashed rgb(0, 0, 0);
+    --region-limit-border: 4px dashed rgb(68, 68, 68);
     /* --region-limit-border: 3px solid transparent; */
 }
 
@@ -147,6 +147,13 @@
 
 .region-checkbox{
     font-size: 14px;
+}
+
+.region-limit-desc {
+    padding-top: 6px;
+}
+.region-limit-tooltip-elem {
+    padding-bottom: 6px;
 }
 
 /* .union-button {
