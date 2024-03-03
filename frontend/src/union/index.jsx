@@ -202,7 +202,7 @@ export const UnionRaider = () => {
     }
     if (localStorage.getItem('regionLimit')) {
       setRegionLimit(Number(localStorage.getItem('regionLimit')))
-    } 
+    }
   }, [])
 
   React.useEffect(() => {
@@ -245,6 +245,12 @@ export const UnionRaider = () => {
       const userInfoValue = blockManager.getUserInfoValue(TABLE_ROW_LEN, TABLE_COL_LEN, domiBlocks)
       localStorage.setItem(`positionSelect-${charUnionInfo.idResponse.ocid}`, JSON.stringify(userPosSelect))
       localStorage.setItem(`tableSelect-${charUnionInfo.idResponse.ocid}`, JSON.stringify(userInfoValue))
+      // if (useProcess) {
+      //   const initRegionLimit = getRegionLimit(charUnionInfo.userUnionResponse.unionLevel)
+      //   localStorage.setItem('regionLimit', initRegionLimit)
+      //   setRegionLimit(initRegionLimit)
+      // }
+
     }
   }, [charUnionInfo])
 
@@ -278,7 +284,10 @@ export const UnionRaider = () => {
       TABLE_ROW_LEN / 4 - regionLimit,
       TABLE_COL_LEN - TABLE_ROW_LEN / 4 + regionLimit]
     )
-    localStorage.setItem('regionLimit', regionLimit)
+    if (regionLimit !== prevRegionLimit) {
+      // 초기화 상태일때
+      localStorage.setItem('regionLimit', regionLimit)
+    }
     console.log('regionLimit changes=', regionLimit)
   }, [regionLimit])
 
@@ -317,15 +326,12 @@ export const UnionRaider = () => {
       const style = blockManager.getRegionLimitBorder(TABLE_ROW_LEN, TABLE_COL_LEN, regionLimitIdx)
       setTableStyle(style)
       setSubmitButtonDisabled(false)
-      if (charUnionInfo) {
-        console.log('charUnionInfo exist')
-        if (localStorage.getItem('regionLimit')) {
-          setRegionLimit(Number(localStorage.getItem('regionLimit')))
-        } else {
-          console.log('set user unionLevel')
-          setRegionLimit(getRegionLimit(charUnionInfo.userUnionResponse.unionLevel))
-        }
+      if (charUnionInfo && !localStorage.getItem('regionLimit')) {
+        const initRegionLimit = getRegionLimit(charUnionInfo.userUnionResponse.unionLevel)
+        localStorage.setItem('regionLimit', initRegionLimit)
+        setRegionLimit(initRegionLimit)
       }
+
     } else {
       if (charUnionInfo) {
         let domiBlocks = []
