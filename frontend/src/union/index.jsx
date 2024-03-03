@@ -200,9 +200,9 @@ export const UnionRaider = () => {
     } else {
       setInitSelectDisabled(true)
     }
-    if (localStorage.getItem('regionLimit')) {
-      setRegionLimit(Number(localStorage.getItem('regionLimit')))
-    }
+    // if (localStorage.getItem('regionLimit')) {
+    //   setRegionLimit(Number(localStorage.getItem('regionLimit')))
+    // }
   }, [])
 
   React.useEffect(() => {
@@ -250,7 +250,9 @@ export const UnionRaider = () => {
       //   localStorage.setItem('regionLimit', initRegionLimit)
       //   setRegionLimit(initRegionLimit)
       // }
-
+      if (localStorage.getItem(`regionLimit-${charUnionInfo.idResponse.ocid}`)) {
+        setRegionLimit(Number(localStorage.getItem(`regionLimit-${charUnionInfo.idResponse.ocid}`)))
+      }
     }
   }, [charUnionInfo])
 
@@ -284,9 +286,9 @@ export const UnionRaider = () => {
       TABLE_ROW_LEN / 4 - regionLimit,
       TABLE_COL_LEN - TABLE_ROW_LEN / 4 + regionLimit]
     )
-    if (regionLimit !== prevRegionLimit) {
-      // 초기화 상태일때
-      localStorage.setItem('regionLimit', regionLimit)
+    if (regionLimit !== prevRegionLimit && charUnionInfo) {
+      // 초기화 상태가 아닐때만 세팅
+      localStorage.setItem(`regionLimit-${charUnionInfo.idResponse.ocid}`, regionLimit)
     }
     console.log('regionLimit changes=', regionLimit)
   }, [regionLimit])
@@ -326,9 +328,9 @@ export const UnionRaider = () => {
       const style = blockManager.getRegionLimitBorder(TABLE_ROW_LEN, TABLE_COL_LEN, regionLimitIdx)
       setTableStyle(style)
       setSubmitButtonDisabled(false)
-      if (charUnionInfo && !localStorage.getItem('regionLimit')) {
+      if (charUnionInfo && !localStorage.getItem(`regionLimit-${charUnionInfo.idResponse.ocid}`)) {
         const initRegionLimit = getRegionLimit(charUnionInfo.userUnionResponse.unionLevel)
-        localStorage.setItem('regionLimit', initRegionLimit)
+        localStorage.setItem(`regionLimit-${charUnionInfo.idResponse.ocid}`, initRegionLimit)
         setRegionLimit(initRegionLimit)
       }
 
@@ -480,15 +482,24 @@ export const UnionRaider = () => {
           :
           <div className="union-basic container-fluid">
             <div className="row justify-content-center">
-              <div className="col-auto">
-                <UnionGradeImage className="union-grade-img" grade={charUnionInfo && charUnionInfo.userUnionResponse ? charUnionInfo.userUnionResponse.unionGrade : ''}></UnionGradeImage>
-              </div>
-              <div className="col-auto">
-                {charUnionInfo && charUnionInfo.userUnionResponse ? charUnionInfo.userUnionResponse.unionGrade : ''}
-              </div>
-              <div className="col-auto">
-                Lv.{charUnionInfo && charUnionInfo.userUnionResponse ? charUnionInfo.userUnionResponse.unionLevel : ''}
-              </div>
+              {charUnionInfo && charUnionInfo.userUnionResponse && charUnionInfo.userUnionResponse.unionGrade ?
+                <>
+                  <div className="col-auto">
+                    <UnionGradeImage className="union-grade-img" grade={charUnionInfo && charUnionInfo.userUnionResponse ? charUnionInfo.userUnionResponse.unionGrade : ''}></UnionGradeImage>
+                  </div>
+                  <div className="col-auto">
+                    {charUnionInfo && charUnionInfo.userUnionResponse ? charUnionInfo.userUnionResponse.unionGrade : ''}
+                  </div>
+                  <div className="col-auto">
+                    Lv.{charUnionInfo && charUnionInfo.userUnionResponse ? charUnionInfo.userUnionResponse.unionLevel : ''}
+                  </div>
+                </>
+                :
+                <div className="col-auto">
+                  유니온 등급 및 레벨 정보가 없습니다.
+                </div>
+              }
+
             </div>
           </div>
         }
