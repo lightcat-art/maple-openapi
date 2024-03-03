@@ -190,6 +190,7 @@ export const UnionRaider = () => {
       axios.get('/api/char/union-all', { params: param })
         .then(response => {
           setCharUnionInfo(response.data)
+
         })
         .catch(error => console.log(error));
 
@@ -199,7 +200,9 @@ export const UnionRaider = () => {
     } else {
       setInitSelectDisabled(true)
     }
-
+    if (localStorage.getItem('regionLimit')) {
+      setRegionLimit(Number(localStorage.getItem('regionLimit')))
+    } 
   }, [])
 
   React.useEffect(() => {
@@ -275,6 +278,7 @@ export const UnionRaider = () => {
       TABLE_ROW_LEN / 4 - regionLimit,
       TABLE_COL_LEN - TABLE_ROW_LEN / 4 + regionLimit]
     )
+    localStorage.setItem('regionLimit', regionLimit)
     console.log('regionLimit changes=', regionLimit)
   }, [regionLimit])
 
@@ -307,11 +311,21 @@ export const UnionRaider = () => {
 
 
   React.useEffect(() => {
-    console.log('useProcess change check. useProcess=', useProcess, ', table =', table)
+    console.log('useProcess change check. useProcess=', useProcess, ', processType = ', processType, ', regionLimit=', regionLimit)
+
     if (useProcess) {
       const style = blockManager.getRegionLimitBorder(TABLE_ROW_LEN, TABLE_COL_LEN, regionLimitIdx)
       setTableStyle(style)
       setSubmitButtonDisabled(false)
+      if (charUnionInfo) {
+        console.log('charUnionInfo exist')
+        if (localStorage.getItem('regionLimit')) {
+          setRegionLimit(Number(localStorage.getItem('regionLimit')))
+        } else {
+          console.log('set user unionLevel')
+          setRegionLimit(getRegionLimit(charUnionInfo.userUnionResponse.unionLevel))
+        }
+      }
     } else {
       if (charUnionInfo) {
         let domiBlocks = []
@@ -694,4 +708,25 @@ function checkBlockExist(rowLen, colLen) {
     }
   }
   return false
+}
+
+function getRegionLimit(unionLevel) {
+  let regionLimit = 5
+  if (unionLevel) {
+
+    if (unionLevel >= 6000) {
+      // 바로 리턴
+    } else if (unionLevel >= 5000) {
+      regionLimit = 4
+    } else if (unionLevel >= 4000) {
+      regionLimit = 3
+    } else if (unionLevel >= 3000) {
+      regionLimit = 2
+    } else if (unionLevel >= 2000) {
+      regionLimit = 1
+    } else {
+      regionLimit = 0
+    }
+  }
+  return regionLimit
 }

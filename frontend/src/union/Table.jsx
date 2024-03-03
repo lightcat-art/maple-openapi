@@ -436,13 +436,13 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
                         </AfterImageButton>
                     </div>
 
-                    <div className="col-auto get-user-select-wrapper text-center">
+                    {/* <div className="col-auto get-user-select-wrapper text-center">
                         <AfterImageButton className="get-user-select-btn ps-3"
                             action={handleGetUserSelect}
                             disabled={initSelectDisabled}
                             title='내 현재 점령 구역 가져오기'>
                         </AfterImageButton>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
