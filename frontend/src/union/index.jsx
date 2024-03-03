@@ -313,8 +313,8 @@ export const UnionRaider = () => {
     return (
       <div className="container">
         <div className="row">
-          <div className="col-auto region-limit-desc pt-1">외부지역 해금</div>
-          <AfterImageButton className="col-auto region-decrease" style={{ marginLeft: '94px' }} disabled={regionLimitDisabled[0] || !useProcess} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
+          <div className="col-auto region-limit-desc pt-1">외부지역 해금 단계</div>
+          <AfterImageButton className="col-auto region-decrease" style={{ marginLeft: '120px' }} disabled={regionLimitDisabled[0] || !useProcess} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
           <div className="col-auto pt-1">{regionLimit}단계</div>
           <AfterImageButton className="col-auto region-increase" disabled={regionLimitDisabled[1] || !useProcess} action={() => handleRegionLimitIncrease()} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
         </div>
@@ -543,14 +543,15 @@ export const UnionRaider = () => {
                 setTableStyle={setTableStyle}
                 isStart={isStart}
                 useProcess={useProcess}
-                useProcessDisabled={useProcessDisabled}
                 regionMode={regionMode}
                 processType={processType}
                 initSelectDisabled={initSelectDisabled}
                 isProcessFail={isProcessFail}
                 ocid={charUnionInfo ? charUnionInfo.idResponse.ocid : ''}
+                unionLevel={charUnionInfo ? charUnionInfo.userUnionResponse.unionLevel : 0}
                 blockManager={blockManager}
                 regionLimit={regionLimit}
+                setRegionLimit={setRegionLimit}
                 prevRegionLimit={prevRegionLimit}
                 regionLimitIdx={regionLimitIdx}
               >
@@ -733,7 +734,7 @@ function checkBlockExist(rowLen, colLen) {
   return false
 }
 
-function getRegionLimit(unionLevel) {
+export function getRegionLimit(unionLevel) {
   let regionLimit = 5
   if (unionLevel) {
 

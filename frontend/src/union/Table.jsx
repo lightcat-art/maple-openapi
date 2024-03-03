@@ -2,7 +2,7 @@ import * as React from 'react';
 import { getCellDOM } from './index'
 import './index.css'
 import { getCSSProp } from '../util/util.jsx'
-import { PROCESS_INIT, PROCESS_READY, setRegionLimitBorder, removeRegionLimitBorder } from './index';
+import { PROCESS_INIT, PROCESS_READY, setRegionLimitBorder, removeRegionLimitBorder, getRegionLimit } from './index';
 import { TABLE_ROW_LEN, TABLE_COL_LEN } from '../common'
 import { AfterImageButton } from '../common/clickable'
 
@@ -77,7 +77,7 @@ console.log('test')
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
 export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, table, regionMode,
-    processType, initSelectDisabled, isStart, useProcess, isProcessFail, ocid, regionLimit, prevRegionLimit, regionLimitIdx }) {
+    processType, initSelectDisabled, isStart, useProcess, isProcessFail, ocid, unionLevel, regionLimit, setRegionLimit, prevRegionLimit, regionLimitIdx }) {
     const [select, setSelect] = React.useState([])
     // This variable will control if the user is dragging or not
     const [drag, setDrag] = React.useState(false)
@@ -377,6 +377,13 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
         setTableStyle(style)
     }
 
+    const handleInitRegionLimit = () => {
+        if(unionLevel) {
+            setRegionLimit(getRegionLimit(unionLevel))
+            localStorage.removeItem(`regionLimit-${ocid}`)
+        }
+    }
+
     const handleGetUserSelect = () => {
         const cacheTableSelect = localStorage.getItem(`tableSelect-${ocid}`)
         const cachePosSelect = localStorage.getItem(`positionSelect-${ocid}`)
@@ -433,6 +440,13 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
                             action={handleInitSelect}
                             disabled={initSelectDisabled}
                             title='선택 영역 초기화'>
+                        </AfterImageButton>
+                    </div>
+                    <div className='col-auto init-region-limit-wrapper'>
+                        <AfterImageButton className="init-region-limit-btn ps-3"
+                            action={handleInitRegionLimit}
+                            disabled={initSelectDisabled}
+                            title='외부지역 해금선 초기화'>
                         </AfterImageButton>
                     </div>
 
