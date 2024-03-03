@@ -463,7 +463,7 @@ export function BasicTable({ blockManager, tableStyle, setTableStyle, setTable, 
 
             <div>{isProcessFail ?
                 <div className="process-fail text-center">
-                    점령될 블록 인접 칸에 빈 공간을 채울수 있는 경우가 없습니다.<br/>
+                    점령 예약된 블록 인접 칸에 빈 공간을 채울수 있는 경우가 없습니다.<br/>
                     구역을 다시 설정해 주세요.
                 </div> : <></>}
             </div>
