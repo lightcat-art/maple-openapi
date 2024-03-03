@@ -91,6 +91,7 @@ export const UnionRaider = () => {
   const resetAction = () => {
     new WebWorker().clearUnionWorker()
     unionWorker = new WebWorker().getUnionWorker(worker)
+    console.log('resetAction =',regionLimitIdx)
     const style = blockManager.getRegionLimitBorder(TABLE_ROW_LEN, TABLE_COL_LEN, regionLimitIdx)
     setTableStyle(style)
     // setSubmitButtonDisabled(false)
@@ -213,7 +214,6 @@ export const UnionRaider = () => {
         if (result.count) {
           if (result.count === PROCESS_FAIL) {
             setIsProcessFail(true)
-            resetAction()
             setIsStart(false)
           } else {
             if (result.domiBlocks) {
@@ -227,6 +227,12 @@ export const UnionRaider = () => {
     });
 
   }, [unionWorker]);
+
+  React.useEffect(() => {
+    if (isProcessFail) {
+      resetAction()
+    }
+  },[isProcessFail])
 
   React.useEffect(() => {
     console.log('block count setting')
@@ -245,12 +251,8 @@ export const UnionRaider = () => {
       const userInfoValue = blockManager.getUserInfoValue(TABLE_ROW_LEN, TABLE_COL_LEN, domiBlocks)
       localStorage.setItem(`positionSelect-${charUnionInfo.idResponse.ocid}`, JSON.stringify(userPosSelect))
       localStorage.setItem(`tableSelect-${charUnionInfo.idResponse.ocid}`, JSON.stringify(userInfoValue))
-      // if (useProcess) {
-      //   const initRegionLimit = getRegionLimit(charUnionInfo.userUnionResponse.unionLevel)
-      //   localStorage.setItem('regionLimit', initRegionLimit)
-      //   setRegionLimit(initRegionLimit)
-      // }
-      if (localStorage.getItem(`regionLimit-${charUnionInfo.idResponse.ocid}`)) {
+
+      if (localStorage.getItem(`regionLimit-${charUnionInfo.idResponse.ocid}`) && useProcess) {
         setRegionLimit(Number(localStorage.getItem(`regionLimit-${charUnionInfo.idResponse.ocid}`)))
       }
     }
@@ -328,10 +330,14 @@ export const UnionRaider = () => {
       const style = blockManager.getRegionLimitBorder(TABLE_ROW_LEN, TABLE_COL_LEN, regionLimitIdx)
       setTableStyle(style)
       setSubmitButtonDisabled(false)
-      if (charUnionInfo && !localStorage.getItem(`regionLimit-${charUnionInfo.idResponse.ocid}`)) {
-        const initRegionLimit = getRegionLimit(charUnionInfo.userUnionResponse.unionLevel)
-        localStorage.setItem(`regionLimit-${charUnionInfo.idResponse.ocid}`, initRegionLimit)
-        setRegionLimit(initRegionLimit)
+      if (charUnionInfo) {
+        if (!localStorage.getItem(`regionLimit-${charUnionInfo.idResponse.ocid}`)) {
+          const initRegionLimit = getRegionLimit(charUnionInfo.userUnionResponse.unionLevel)
+          localStorage.setItem(`regionLimit-${charUnionInfo.idResponse.ocid}`, initRegionLimit)
+          setRegionLimit(initRegionLimit)
+        } else {
+          setRegionLimit(Number(localStorage.getItem(`regionLimit-${charUnionInfo.idResponse.ocid}`)))
+        }
       }
 
     } else {
