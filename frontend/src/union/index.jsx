@@ -88,6 +88,11 @@ export const UnionRaider = () => {
     setUseProcess(!useProcess)
   }
 
+  const handleUseProcessForce = (useProcess) => {
+    setUseProcess(useProcess)
+    setInitSelectDisabled(!useProcess)
+  }
+
   const resetAction = () => {
     new WebWorker().clearUnionWorker()
     unionWorker = new WebWorker().getUnionWorker(worker)
@@ -191,6 +196,12 @@ export const UnionRaider = () => {
       axios.get('/api/char/union-all', { params: param })
         .then(response => {
           setCharUnionInfo(response.data)
+          setLoading(false)
+
+          if (!response.data) {
+            // 강제로 알고리즘 배치 모드로 전환
+            handleUseProcessForce(true)
+          }
 
         })
         .catch(error => console.log(error));
@@ -235,7 +246,6 @@ export const UnionRaider = () => {
   },[isProcessFail])
 
   React.useEffect(() => {
-    console.log('block count setting')
     if (charUnionInfo) {
       setResponseUnionBlock(charUnionInfo.userUnionRaiderResponse.unionBlock) // blockCount가 알고리즘 입력으로 들어갈 준비가 되면 제거할 코드
       const extractMap = blockManager.getBlockCount(charUnionInfo.userUnionRaiderResponse.unionBlock)
@@ -245,7 +255,7 @@ export const UnionRaider = () => {
       charUnionInfo.userUnionRaiderResponse.unionBlock.forEach((block) => {
         domiBlocks.push(blockManager.transformPosition(block.blockPosition, TABLE_ROW_LEN / 2, TABLE_COL_LEN / 2))
       })
-      setLoading(false)
+      
 
       let userPosSelect = removeDupND(domiBlocks.flat()).map((v) => JSON.stringify(v))
       const userInfoValue = blockManager.getUserInfoValue(TABLE_ROW_LEN, TABLE_COL_LEN, domiBlocks)
