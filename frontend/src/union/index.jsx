@@ -383,27 +383,27 @@ export const UnionRaider = () => {
       <Tooltip id='region-limit-tooltip' className='region-limit-tooltip' events={['hover']}>
         <div className='region-limit-tooltip-elem'>
           <AfterImageBadgeLight title='0단계'></AfterImageBadgeLight>
-          <span classname='col-auto'> Lv.1 ~</span>
+          <span className='col-auto'> Lv.1 ~</span>
         </div>
         <div className='region-limit-tooltip-elem'>
           <AfterImageBadgeLight title='1단계'></AfterImageBadgeLight>
-          <span classname='col-auto'> Lv.2000 ~</span>
+          <span className='col-auto'> Lv.2000 ~</span>
         </div>
         <div className='region-limit-tooltip-elem'>
           <AfterImageBadgeLight title='2단계'></AfterImageBadgeLight>
-          <span classname='col-auto'> Lv.3000 ~</span>
+          <span className='col-auto'> Lv.3000 ~</span>
         </div>
         <div className='region-limit-tooltip-elem'>
           <AfterImageBadgeLight title='3단계'></AfterImageBadgeLight>
-          <span classname='col-auto'> Lv.4000 ~</span>
+          <span className='col-auto'> Lv.4000 ~</span>
         </div>
         <div className='region-limit-tooltip-elem'>
           <AfterImageBadgeLight title='4단계'></AfterImageBadgeLight>
-          <span classname='col-auto'> Lv.5000 ~</span>
+          <span className='col-auto'> Lv.5000 ~</span>
         </div>
         <div>
           <AfterImageBadgeLight title='5단계'></AfterImageBadgeLight>
-          <span classname='col-auto'> Lv.6000 ~</span>
+          <span className='col-auto'> Lv.6000 ~</span>
         </div>
 
 
