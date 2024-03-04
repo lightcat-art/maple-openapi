@@ -1,6 +1,5 @@
 import * as React from 'react';
 import './index.css'
-import searchLogo from '../static/icons/search_FILL0_wght600_GRAD0_opsz24.svg';
 import { useNavigate } from "react-router-dom";
 import { Menu } from '../common'
 
@@ -54,7 +53,8 @@ function HomeLayout() {
                             <input className="search-bar form-control border-0 rounded-pill py-3 ps-4 pe-5" type="text" placeholder="닉네임 입력"
                                 value={input} onChange={(e) => handleChange(e.target.value)} />
                             <button type="submit" className="btn rounded-pill py-2 px-4 position-absolute top-0 end-0 me-2" style={{ marginTop: '7px' }}>
-                                <img src={searchLogo} alt=""></img>
+                                {/* <img src={searchLogo} alt=""></img> */}
+                                <span className="material-symbols-outlined fill-thick-icon icon-darkgray">search</span>
                             </button>
                         </form>
                     </div>

@@ -12,7 +12,9 @@ import { WorldImage } from '../common/image.jsx'
 export const CharacterLayout = () => {
     const [charBasicInfo, setCharBasicInfo] = React.useState(null)
     const [charUnionInfo, setCharUnionInfo] = React.useState(null)
+
     const [loading, setLoading] = React.useState(true)
+    const [unionLoading, setUnionLoading] = React.useState(true)
     const { cname } = useParams();
     const param = { nickname: cname }
     // getCharInfo(param, setCharInfo)
@@ -31,7 +33,7 @@ export const CharacterLayout = () => {
         <>
             <Menu page='not-home'></Menu>
             <CharacterBasic charBasicInfo={charBasicInfo} loading={loading}></CharacterBasic>
-            <Outlet context={[charUnionInfo, setCharUnionInfo]} />
+            <Outlet context={[charUnionInfo, setCharUnionInfo, unionLoading, setUnionLoading]} />
             <div>footer</div>
         </>
     )

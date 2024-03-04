@@ -14,7 +14,6 @@ import { Divider } from '../common/divider.jsx'
 import { CharMenu } from '../character';
 import decreaseIcon from '../static/icons/chevron_left_FILL0_wght400_GRAD0_opsz20.svg'
 import increaseIcon from '../static/icons/chevron_right_FILL0_wght400_GRAD0_opsz20.svg'
-import info from '../static/icons/info_FILL0_wght700_GRAD0_opsz20.svg'
 import { Tooltip } from 'react-tooltip'
 import axios from 'axios';
 import { UnionGradeImage } from '../common/image.jsx'
@@ -42,7 +41,7 @@ const regionLimitBorder = getCSSProp(document.documentElement, '--region-limit-b
 
 export const UnionRaider = () => {
   const [loading, setLoading] = React.useState(true)
-  const [charUnionInfo, setCharUnionInfo] = useOutletContext();
+  const [charUnionInfo, setCharUnionInfo, unionLoading, setUnionLoading] = useOutletContext();
   console.log('charUnionInfo = ', charUnionInfo);
   const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder, regionLimitBorder);
   const { cname } = useParams();
@@ -197,7 +196,7 @@ export const UnionRaider = () => {
       axios.get('/api/char/union-all', { params: param })
         .then(response => {
           setCharUnionInfo(response.data)
-          setLoading(false)
+          setUnionLoading(false)
 
           if (!response.data) {
             // 강제로 알고리즘 배치 모드로 전환
@@ -326,11 +325,11 @@ export const UnionRaider = () => {
         <div className="row">
           <div className="col-auto region-limit-desc">외부지역 해금 단계</div>
 
-          <AfterImageButton className="col-auto region-decrease" style={{ marginLeft: '120px' }} disabled={regionLimitDisabled[0] || !useProcess} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
+          <AfterImageButton className="col-auto region-decrease" style={{ marginLeft: '130px' }} disabled={regionLimitDisabled[0] || !useProcess} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
           <div className="col-auto pt-1">{regionLimit}단계</div>
           <AfterImageButton className="col-auto region-increase" disabled={regionLimitDisabled[1] || !useProcess} action={() => handleRegionLimitIncrease()} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
           <div className="col-auto pt-1" data-tooltip-id='region-limit-tooltip'>
-            <img className="region-limit-help" src={info} alt=""></img>
+            <span className="material-symbols-outlined fill-thick-icon icon-gray">help</span>
           </div>
         </div>
       </div>
@@ -525,7 +524,7 @@ export const UnionRaider = () => {
     <>
       <CharMenu page='union'></CharMenu>
       <ContentLayout>
-        {loading ?
+        {unionLoading ?
           <div className="union-basic container-fluid">
             <div className="row placeholder-glow justify-content-center">
               <div className="placeholder col-auto bg-secondary rounded-pill" />

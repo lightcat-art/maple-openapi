@@ -54,10 +54,28 @@
 }
 
 body {
-    width:100vw; 
-    height:100vh;
-    font-family: 
-    'dovemayo';
+    width: 100vw;
+    height: 100vh;
+    font-family:
+        'dovemayo';
     /* 'trebuc'; */
     /* 'noto-sans-kr'; */
+}
+
+.fill-thick-icon {
+    font-variation-settings:
+        'FILL' 1,
+        'wght' 700,
+        'GRAD' -50,
+        'opsz' 20
+        ;
+    
+}
+
+.icon-gray {
+    color: #bebebe;
+}
+
+.icon-darkgray {
+    color: #818181;
 }
