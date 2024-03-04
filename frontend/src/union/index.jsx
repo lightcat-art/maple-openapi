@@ -325,9 +325,9 @@ export const UnionRaider = () => {
         <div className="row">
           <div className="col-auto region-limit-desc">외부지역 해금 단계</div>
 
-          <AfterImageButton className="col-auto region-decrease" style={{ marginLeft: '130px' }} disabled={regionLimitDisabled[0] || !useProcess} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
+          <AfterImageButton className="col-auto region-decrease" style={{ marginLeft: '130px' }} disabled={regionLimitDisabled[0] || !useProcess || isStart} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
           <div className="col-auto pt-1">{regionLimit}단계</div>
-          <AfterImageButton className="col-auto region-increase" disabled={regionLimitDisabled[1] || !useProcess} action={() => handleRegionLimitIncrease()} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
+          <AfterImageButton className="col-auto region-increase" disabled={regionLimitDisabled[1] || !useProcess || isStart} action={() => handleRegionLimitIncrease()} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
           <div className="col-auto pt-1" data-tooltip-id='region-limit-tooltip'>
             <span className="material-symbols-outlined fill-thick-icon icon-gray">help</span>
           </div>
