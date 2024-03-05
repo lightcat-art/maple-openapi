@@ -2,15 +2,19 @@ import * as React from 'react';
 import { getCellDOM } from './index'
 import './index.css'
 import { getCSSProp } from '../util/util.jsx'
-import { PROCESS_INIT, PROCESS_READY, setRegionLimitBorder, removeRegionLimitBorder, getRegionLimit } from './index';
+import { PROCESS_INIT, PROCESS_READY, PROCESS_FAIL, setRegionLimitBorder, removeRegionLimitBorder, getRegionLimit } from './index';
 import { TABLE_ROW_LEN, TABLE_COL_LEN } from '../common'
 import { AfterImageButton } from '../common/clickable'
+import WebWorker from '../util/worker'
+import worker from './UnionWorker'
+import { SwitchCheckBox } from '../common/checkBox'
 
 
 const regionInfos = []
 const cellSelectedHoverColor = getCSSProp(document.documentElement, '--cell-selected-hover-color')
 const cellNotSelectedHoverColor = getCSSProp(document.documentElement, '--cell-not-selected-hover-color')
 
+let unionWorker = new WebWorker().getUnionWorker(worker)
 
 function regionDef(rowLen, colLen) {
     // m=0 일때는 바깥쪽 지역이 아예 사용되지 않도록
@@ -70,19 +74,38 @@ function getRegionCells(region, regionLimit) {
     return regionInfos[regionLimit][region]
 }
 
-
+const defaultTable = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill(0))
 
 regionDef(TABLE_ROW_LEN, TABLE_COL_LEN)
 console.log('test')
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
-export const BasicTable = ({ blockManager, tableStyle, setTableStyle, setTable, table, regionMode,
-    processType, initSelectDisabled, isStart, useProcess, isProcessFail, ocid, unionLevel, regionLimit, setRegionLimit, prevRegionLimit, regionLimitIdx }) => {
+export const BasicTable = ({                 
+    // table, setTable,
+    tableStyle, setTableStyle,
+    isStart, setIsStart,
+    useProcess,
+    useProcessDisabled, setUseProcessDisabled,
+    handleUseProcess,
+    submitButtonDisabled,
+    regionMode, setRegionMode,
+    processType,
+    initSelectDisabled, setInitSelectDisabled,
+    isProcessFail, setIsProcessFail,
+    ocid,
+    unionLevel,
+    blockManager,
+    regionLimit, setRegionLimit,
+    prevRegionLimit,
+    regionLimitIdx,
+    responseUnionBlock,
+    blockCount, }) => {
     const [select, setSelect] = React.useState([])
     // This variable will control if the user is dragging or not
     const [drag, setDrag] = React.useState(false)
     const [selectMode, setSelectMode] = React.useState(true) // 선택모드 인지, 해제모드 인지 세팅
 
+    const [table, setTable] = React.useState(defaultTable)
 
     React.useEffect(() => {
         // 이걸 selected className 말고 select로 바로 조회해도 이상없는지 체크해보기
@@ -173,6 +196,71 @@ export const BasicTable = ({ blockManager, tableStyle, setTableStyle, setTable, 
         }
     }, [regionLimitIdx])
 
+
+    React.useEffect(() => {
+
+        unionWorker.addEventListener('message', (event) => {
+            const result = event.data;
+            if (result) {
+                if (result.count) {
+                    if (result.count === PROCESS_FAIL) {
+                        setIsProcessFail(true)
+                        setIsStart(false)
+                    } else {
+                        if (result.domiBlocks) {
+                            const styleValue = blockManager.setTableStyleValue(result.table, result.domiBlocks)
+                            const tableStyle = blockManager.getTableStyle(styleValue)
+                            setTableStyle(tableStyle);
+                        }
+                    }
+                }
+            }
+        });
+
+    }, [unionWorker]);
+
+    React.useEffect(() => {
+        if (isProcessFail) {
+          resetAction()
+        }
+      }, [isProcessFail])
+
+    const resetAction = () => {
+        new WebWorker().clearUnionWorker()
+        unionWorker = new WebWorker().getUnionWorker(worker)
+        console.log('resetAction =', regionLimitIdx)
+        const style = blockManager.getRegionLimitBorder(TABLE_ROW_LEN, TABLE_COL_LEN, regionLimitIdx)
+        setTableStyle(style)
+        // setSubmitButtonDisabled(false)
+        // setPauseButtonHidden(true)
+        // setContinueButtonHidden(true)
+        // setResetButtonHidden(true)
+        setUseProcessDisabled(false)
+        setInitSelectDisabled(false)
+    }
+    const handleStart = (e) => {
+        if (isStart) {
+            //리셋 버튼 동작
+            resetAction()
+        } else {
+            //시작 버튼 동작
+            unionWorker = new WebWorker().getUnionWorker(worker)
+            unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, blockCount: blockCount, baseBlockPos: blockManager.baseBlockType, rotateBlockPos: blockManager.allBlockType })
+            // setProcessType(PROCESS_ALGO)
+            // setSubmitButtonDisabled(true)
+            // setPauseButtonHidden(true)
+            // setContinueButtonHidden(true)
+            // setResetButtonHidden(false)
+            setUseProcessDisabled(true)
+            setInitSelectDisabled(true)
+            setIsProcessFail(false)
+            // 외부지역 해금선 관련 등의 스타일을 바로 없애기 위해 tableStyle 초기화
+            setTableStyle(Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill({})))
+
+            e.preventDefault() // event의 클릭 기본동작 방지
+        }
+        setIsStart(!isStart)
+    }
 
     const handleMouseDown = (e, row, col) => {
         // const selectedElement = Array.from(
@@ -378,7 +466,7 @@ export const BasicTable = ({ blockManager, tableStyle, setTableStyle, setTable, 
     }
 
     const handleInitRegionLimit = () => {
-        if(unionLevel) {
+        if (unionLevel) {
             setRegionLimit(getRegionLimit(unionLevel))
             localStorage.removeItem(`regionLimit-${ocid}`)
         }
@@ -407,7 +495,26 @@ export const BasicTable = ({ blockManager, tableStyle, setTableStyle, setTable, 
 
     return (
         <div className="union-table-wrapper" onMouseUp={(e) => handleMouseUp()} >
+            <div className='container-fluid'>
+                <div className="row justify-content-center" style={{ paddingTop: '30px' }}>
 
+                    <div className="col-auto use-process-btn-wrapper text-center">
+                        <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
+                            disabled={useProcessDisabled}
+                            title={useProcess ? '내 정보 보기' : '자동 배치 모드'}>
+                        </AfterImageButton>
+                    </div>
+                    <div className="col-auto start-wrapper text-center">
+                        <AfterImageButton className="start-btn ps-3" action={handleStart}
+                            disabled={submitButtonDisabled}
+                            title={isStart ? '리셋' : '시작'}>
+                        </AfterImageButton>
+                    </div>
+                    <div className="col-auto region-checkbox">
+                        <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
+                    </div>
+                </div>
+            </div>
             <div
             // onMouseMove={(e) => preventOutsideDrag(e)}
             >
@@ -463,7 +570,7 @@ export const BasicTable = ({ blockManager, tableStyle, setTableStyle, setTable, 
 
             <div>{isProcessFail ?
                 <div className="process-fail text-center">
-                    점령 예약된 블록 인접 칸에 빈 공간을 채울수 있는 경우가 없습니다.<br/>
+                    점령 예약된 블록 인접 칸에 빈 공간을 채울수 있는 경우가 없습니다.<br />
                     구역을 다시 설정해 주세요.
                 </div> : <></>}
             </div>
