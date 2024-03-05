@@ -2,9 +2,8 @@ import './index.css'
 import * as React from 'react';
 import BlockManager from './BlockManager';
 import { BasicTable } from './Table';
-import WebWorker from '../util/worker'
-import worker from './UnionWorker'
-import { SwitchCheckBox } from '../common/checkBox'
+
+
 import './index.css'
 import { getCSSProp, removeDupND } from '../util/util.jsx'
 import { useParams, useOutletContext } from 'react-router-dom'
@@ -18,7 +17,7 @@ import { Tooltip } from 'react-tooltip'
 import axios from 'axios';
 import { UnionGradeImage } from '../common/image.jsx'
 
-let unionWorker = new WebWorker().getUnionWorker(worker)
+
 
 // hover 와 select를 비활성화 하고, 
 export const PROCESS_INIT = -2 // 초기 테이블 생성 단계
@@ -41,13 +40,12 @@ const regionLimitBorder = getCSSProp(document.documentElement, '--region-limit-b
 
 export const UnionRaider = () => {
   const [loading, setLoading] = React.useState(true)
-  const [charUnionInfo, setCharUnionInfo, unionLoading, setUnionLoading] = useOutletContext();
+  const [charUnionInfo, setCharUnionInfo, unionLoading, setUnionLoading, drag, setDrag] = useOutletContext();
   console.log('charUnionInfo = ', charUnionInfo);
   const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder, regionLimitBorder);
   const { cname } = useParams();
   const param = { nickname: cname }
-  const defaultTable = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill(0))
-  const [table, setTable] = React.useState(defaultTable)
+
   const defaultTableStyle = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill({}))
   const [tableStyle, setTableStyle] = React.useState(defaultTableStyle)
   const [submitButtonDisabled, setSubmitButtonDisabled] = React.useState(true)
@@ -93,84 +91,7 @@ export const UnionRaider = () => {
     setInitSelectDisabled(!useProcess)
   }
 
-  const resetAction = () => {
-    new WebWorker().clearUnionWorker()
-    unionWorker = new WebWorker().getUnionWorker(worker)
-    console.log('resetAction =', regionLimitIdx)
-    const style = blockManager.getRegionLimitBorder(TABLE_ROW_LEN, TABLE_COL_LEN, regionLimitIdx)
-    setTableStyle(style)
-    // setSubmitButtonDisabled(false)
-    // setPauseButtonHidden(true)
-    // setContinueButtonHidden(true)
-    // setResetButtonHidden(true)
-    setUseProcessDisabled(false)
-    setInitSelectDisabled(false)
-  }
-  const handleStart = (e) => {
-    if (isStart) {
-      //리셋 버튼 동작
-      resetAction()
-    } else {
-      //시작 버튼 동작
-      unionWorker = new WebWorker().getUnionWorker(worker)
-      unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, blockCount: blockCount, baseBlockPos: blockManager.baseBlockType, rotateBlockPos: blockManager.allBlockType })
-      // setProcessType(PROCESS_ALGO)
-      // setSubmitButtonDisabled(true)
-      // setPauseButtonHidden(true)
-      // setContinueButtonHidden(true)
-      // setResetButtonHidden(false)
-      setUseProcessDisabled(true)
-      setInitSelectDisabled(true)
-      setIsProcessFail(false)
-      // 외부지역 해금선 관련 등의 스타일을 바로 없애기 위해 tableStyle 초기화
-      setTableStyle(defaultTableStyle)
 
-      e.preventDefault() // event의 클릭 기본동작 방지
-    }
-    setIsStart(!isStart)
-  }
-
-  const handleFormSubmit = (e) => {
-    unionWorker = new WebWorker().getUnionWorker(worker)
-    unionWorker.postMessage({ unionBlock: responseUnionBlock, table: table, cnt: 1 })
-    // setProcessType(PROCESS_ALGO)
-    setSubmitButtonDisabled(true)
-    // setPauseButtonHidden(true)
-    // setContinueButtonHidden(true)
-    setResetButtonHidden(false)
-    setUseProcessDisabled(true)
-    setInitSelectDisabled(true)
-    e.preventDefault() // event의 클릭 기본동작 방지
-    // 유니온 배치 작업이 완료되었는지 체크후 에러로 보이는 상황이라면 버튼락 풀기
-    // setButtonDisabled(false)
-    // window.scrollTo(0, 0) // 창 맨위로 이동
-  }
-
-  // const handleFormPause = (e) => {
-  //   setSubmitButtonDisabled(true)
-  //   setPauseButtonHidden(true)
-  //   setContinueButtonHidden(false)
-  //   setResetButtonHidden(false)
-  // }
-
-  // const handleFormContinue = (e) => {
-  //   setSubmitButtonDisabled(true)
-  //   setPauseButtonHidden(false)
-  //   setContinueButtonHidden(true)
-  //   setResetButtonHidden(true)
-  // }
-
-  const handleFormReset = (e) => {
-    new WebWorker().clearUnionWorker()
-    unionWorker = new WebWorker().getUnionWorker(worker)
-    setTableStyle(defaultTableStyle)
-    setSubmitButtonDisabled(false)
-    // setPauseButtonHidden(true)
-    // setContinueButtonHidden(true)
-    setResetButtonHidden(true)
-    setUseProcessDisabled(false)
-    setInitSelectDisabled(false)
-  }
 
   const handleBlockDecrease = (idx) => {
     setBlockCount(prev => {
@@ -217,33 +138,9 @@ export const UnionRaider = () => {
     // }
   }, [])
 
-  React.useEffect(() => {
 
-    unionWorker.addEventListener('message', (event) => {
-      const result = event.data;
-      if (result) {
-        if (result.count) {
-          if (result.count === PROCESS_FAIL) {
-            setIsProcessFail(true)
-            setIsStart(false)
-          } else {
-            if (result.domiBlocks) {
-              const styleValue = blockManager.setTableStyleValue(result.table, result.domiBlocks)
-              const tableStyle = blockManager.getTableStyle(styleValue)
-              setTableStyle(tableStyle);
-            }
-          }
-        }
-      }
-    });
 
-  }, [unionWorker]);
 
-  React.useEffect(() => {
-    if (isProcessFail) {
-      resetAction()
-    }
-  }, [isProcessFail])
 
   React.useEffect(() => {
     if (charUnionInfo) {
@@ -557,43 +454,26 @@ export const UnionRaider = () => {
           </div>
         }
 
-        <div className='container-fluid'>
-          <div className="row justify-content-center" style={{ paddingTop: '30px' }}>
-
-            <div className="col-auto use-process-btn-wrapper text-center">
-              <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
-                disabled={useProcessDisabled}
-                title={useProcess ? '내 정보 보기' : '자동 배치 모드'}>
-              </AfterImageButton>
-            </div>
-            <div className="col-auto start-wrapper text-center">
-              <AfterImageButton className="start-btn ps-3" action={handleStart}
-                disabled={submitButtonDisabled}
-                title={isStart ? '리셋' : '시작'}>
-              </AfterImageButton>
-            </div>
-            {/* <SwitchCheckBox checked={realTimeRender} onChange={setRealTimeRender}>과정 보기</SwitchCheckBox>
-          <div><Button action={handleFormPause} disabled={pauseButtonHidden} title="pause"></Button></div>
-          <div><Button action={handleFormContinue} disabled={continueButtonHidden} title="continue"></Button></div> */}
-            <div className="col-auto region-checkbox">
-              <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
-            </div>
-          </div>
-        </div>
         <div className="container-fluid">
           <div className="row justify-content-center">
             <div className="col-auto">
               <BasicTable
-                table={table}
-                setTable={setTable}
+                // table={table}
+                // setTable={setTable}
+                drag={drag} setDrag={setDrag}
                 tableStyle={tableStyle}
                 setTableStyle={setTableStyle}
                 isStart={isStart}
+                setIsStart={setIsStart}
                 useProcess={useProcess}
+                useProcessDisabled={useProcessDisabled} setUseProcessDisabled={setUseProcessDisabled}
+                handleUseProcess={handleUseProcess}
+                submitButtonDisabled={submitButtonDisabled}
                 regionMode={regionMode}
+                setRegionMode={setRegionMode}
                 processType={processType}
-                initSelectDisabled={initSelectDisabled}
-                isProcessFail={isProcessFail}
+                initSelectDisabled={initSelectDisabled} setInitSelectDisabled={setInitSelectDisabled}
+                isProcessFail={isProcessFail} setIsProcessFail={setIsProcessFail}
                 ocid={charUnionInfo ? charUnionInfo.idResponse.ocid : ''}
                 unionLevel={charUnionInfo ? charUnionInfo.userUnionResponse.unionLevel : 0}
                 blockManager={blockManager}
@@ -601,6 +481,8 @@ export const UnionRaider = () => {
                 setRegionLimit={setRegionLimit}
                 prevRegionLimit={prevRegionLimit}
                 regionLimitIdx={regionLimitIdx}
+                responseUnionBlock={responseUnionBlock}
+                blockCount={blockCount}
               >
               </BasicTable>
             </div>

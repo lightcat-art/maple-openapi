@@ -16,6 +16,7 @@ export const CharacterLayout = () => {
     const [loading, setLoading] = React.useState(true)
     const [unionLoading, setUnionLoading] = React.useState(true)
     const { cname } = useParams();
+    const [drag, setDrag] = React.useState(false)
     const param = { nickname: cname }
     // getCharInfo(param, setCharInfo)
     React.useEffect(() => {
@@ -30,12 +31,12 @@ export const CharacterLayout = () => {
 
     const test = 1;
     return (
-        <>
+        <div onMouseDown={(e)=> e.preventDefault()} onMouseUp={(e)=> setDrag(false)}>
             <Menu page='not-home'></Menu>
             <CharacterBasic charBasicInfo={charBasicInfo} loading={loading}></CharacterBasic>
-            <Outlet context={[charUnionInfo, setCharUnionInfo, unionLoading, setUnionLoading]} />
+            <Outlet context={[charUnionInfo, setCharUnionInfo, unionLoading, setUnionLoading, drag, setDrag]} />
             <div>footer</div>
-        </>
+        </div>
     )
 }
 
