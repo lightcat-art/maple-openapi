@@ -82,6 +82,7 @@ console.log('test')
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
 export const BasicTable = ({                 
     // table, setTable,
+    drag, setDrag,
     tableStyle, setTableStyle,
     isStart, setIsStart,
     useProcess,
@@ -102,7 +103,7 @@ export const BasicTable = ({
     blockCount, }) => {
     const [select, setSelect] = React.useState([])
     // This variable will control if the user is dragging or not
-    const [drag, setDrag] = React.useState(false)
+
     const [selectMode, setSelectMode] = React.useState(true) // 선택모드 인지, 해제모드 인지 세팅
 
     const [table, setTable] = React.useState(defaultTable)

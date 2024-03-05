@@ -40,7 +40,7 @@ const regionLimitBorder = getCSSProp(document.documentElement, '--region-limit-b
 
 export const UnionRaider = () => {
   const [loading, setLoading] = React.useState(true)
-  const [charUnionInfo, setCharUnionInfo, unionLoading, setUnionLoading] = useOutletContext();
+  const [charUnionInfo, setCharUnionInfo, unionLoading, setUnionLoading, drag, setDrag] = useOutletContext();
   console.log('charUnionInfo = ', charUnionInfo);
   const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder, regionLimitBorder);
   const { cname } = useParams();
@@ -460,6 +460,7 @@ export const UnionRaider = () => {
               <BasicTable
                 // table={table}
                 // setTable={setTable}
+                drag={drag} setDrag={setDrag}
                 tableStyle={tableStyle}
                 setTableStyle={setTableStyle}
                 isStart={isStart}
