@@ -31,7 +31,7 @@ export const CharacterLayout = () => {
 
     const test = 1;
     return (
-        <div onMouseDown={(e)=> e.preventDefault()} onMouseUp={(e)=> setDrag(false)}>
+        <div onMouseUp={(e)=> setDrag(false)}>
             <Menu page='not-home'></Menu>
             <CharacterBasic charBasicInfo={charBasicInfo} loading={loading}></CharacterBasic>
             <Outlet context={[charUnionInfo, setCharUnionInfo, unionLoading, setUnionLoading, drag, setDrag]} />

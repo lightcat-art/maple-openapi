@@ -495,9 +495,9 @@ export const BasicTable = ({
     }
 
     return (
-        <div className="union-table-wrapper" onMouseUp={(e) => handleMouseUp()} >
+        <div className="union-table-wrapper" onMouseDown={(e)=> e.preventDefault()} >
             <div className='container-fluid'>
-                <div className="row justify-content-center" style={{ paddingTop: '30px' }}>
+                <div className="row justify-content-center pt-1 pb-3">
 
                     <div className="col-auto use-process-btn-wrapper text-center">
                         <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
