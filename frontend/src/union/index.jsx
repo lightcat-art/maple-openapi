@@ -218,12 +218,12 @@ export const UnionRaider = () => {
 
   const RegionLimit = () => {
     return (
-      <div className="container">
+      <div className="container region-limit">
         <div className="row">
-          <div className="col-auto region-limit-desc">외부지역 해금 단계</div>
+          <div className="col-auto region-limit-desc pt-2">외부지역 해금 단계</div>
 
           <AfterImageButton className="col-auto region-decrease" style={{ marginLeft: '130px' }} disabled={regionLimitDisabled[0] || !useProcess || isStart} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
-          <div className="col-auto pt-1">{regionLimit}단계</div>
+          <div className="col-auto region-limit-step">{regionLimit}단계</div>
           <AfterImageButton className="col-auto region-increase" disabled={regionLimitDisabled[1] || !useProcess || isStart} action={() => handleRegionLimitIncrease()} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
           <div className="col-auto pt-1" data-tooltip-id='region-limit-tooltip'>
             <span className="material-symbols-outlined fill-thick-icon icon-gray">help</span>
@@ -280,27 +280,27 @@ export const UnionRaider = () => {
       <Tooltip id='region-limit-tooltip' className='region-limit-tooltip' events={['hover']}>
         <div className='region-limit-tooltip-elem'>
           <AfterImageBadgeLight title='0단계'></AfterImageBadgeLight>
-          <span className='col-auto'> Lv.1 ~</span>
+          <span className='col-auto level'> Lv.1 ~</span>
         </div>
         <div className='region-limit-tooltip-elem'>
           <AfterImageBadgeLight title='1단계'></AfterImageBadgeLight>
-          <span className='col-auto'> Lv.2000 ~</span>
+          <span className='col-auto level'> Lv.2000 ~</span>
         </div>
         <div className='region-limit-tooltip-elem'>
           <AfterImageBadgeLight title='2단계'></AfterImageBadgeLight>
-          <span className='col-auto'> Lv.3000 ~</span>
+          <span className='col-auto level'> Lv.3000 ~</span>
         </div>
         <div className='region-limit-tooltip-elem'>
           <AfterImageBadgeLight title='3단계'></AfterImageBadgeLight>
-          <span className='col-auto'> Lv.4000 ~</span>
+          <span className='col-auto level'> Lv.4000 ~</span>
         </div>
         <div className='region-limit-tooltip-elem'>
           <AfterImageBadgeLight title='4단계'></AfterImageBadgeLight>
-          <span className='col-auto'> Lv.5000 ~</span>
+          <span className='col-auto level'> Lv.5000 ~</span>
         </div>
-        <div>
+        <div className='region-limit-tooltip-elem'>
           <AfterImageBadgeLight title='5단계'></AfterImageBadgeLight>
-          <span className='col-auto'> Lv.6000 ~</span>
+          <span className='col-auto level'> Lv.6000 ~</span>
         </div>
 
 
@@ -315,7 +315,7 @@ export const UnionRaider = () => {
         <div className="row justify-content-center">
           <div className={`col-auto ${props.blockClassName ? props.blockClassName : ''}`}>{baseBlock(props.idx)}</div>
           <AfterImageButton style={{ marginLeft: '70px' }} className="col-auto block-decrease" disabled={blockCountDisabled[props.idx]} action={() => handleBlockDecrease(props.idx)} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
-          <div className="col-auto pt-1">{blockCount[props.idx]}</div>
+          <div className="col-auto block-count-value">{blockCount[props.idx]}</div>
           <AfterImageButton className="col-auto block-increase" action={() => handleBlockIncrease(props.idx)} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
         </div>
       </div>
@@ -400,11 +400,13 @@ export const UnionRaider = () => {
                 </div>
               ))}
             </div>
-            {classDescDoms.length !== 0 ?
-              <><Divider></Divider><div>소유 캐릭터 정보</div></>
-              : <></>}
+            <div className='class-desc-wrapper'>
+              {classDescDoms.length !== 0 ?
+                <><Divider></Divider><div>소유 캐릭터 정보</div></>
+                : <></>}
 
-            <div className='class-desc-wrapper'>{classDescDoms}</div>
+              <div>{classDescDoms}</div>
+            </div>
           </Tooltip>
         )
       }

@@ -57,9 +57,10 @@ body {
     width: 100vw;
     height: 100vh;
     font-family:
-        'dovemayo';
-    /* 'trebuc'; */
+        /* 'dovemayo'; */
+    'trebuc';
     /* 'noto-sans-kr'; */
+    color: black;
 }
 
 .fill-thick-icon {

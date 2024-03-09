@@ -63,7 +63,7 @@
 
 
 .select-control-wrapper {
-    margin-top: 10px;
+    margin-top: 14px;
 }
 
 .block-counts {
@@ -76,14 +76,23 @@
     /* max-width: 500px; */
 }
 
+.block-count-value {
+    font-size: 14px;
+    padding-top: 6px;
+}
+
 .block-desc,
-.block-level-desc,
 .block-grade {
     border-color: '#ffffff';
-    font-weight: bold;
+    /* font-weight: bold; */
     margin-left: 5px;
     margin-top: 3px;
     margin-bottom: 3px;
+}
+
+.class-desc-wrapper {
+    font-size: 13px;
+    padding-left: 4px;
 }
 
 .base-block-cell {
@@ -138,25 +147,37 @@
     padding-bottom: 10px;
     border-radius: 10px;
     /* font-weight: bold; */
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .region-limit-desc{
-    font-size: 14px;
     position: absolute;
+    font-size: 12px;
 }
 
+
 .region-checkbox{
+    font-size: 12px;
+    padding-top: 4px;
+}
+
+.region-limit-step{
     font-size: 14px;
+    padding-top: 7px;
 }
 
 .region-limit-desc {
     padding-top: 6px;
 }
+
 .region-limit-tooltip-elem {
     padding-bottom: 6px;
 }
 
+.region-limit-tooltip-elem .level {
+    font-size: 13px;
+    margin-left: 3px;
+}
 /* .union-button {
     position: relative;
     margin-left: auto;

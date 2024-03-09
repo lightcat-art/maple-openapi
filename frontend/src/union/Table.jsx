@@ -512,7 +512,7 @@ export const BasicTable = ({
                         </AfterImageButton>
                     </div>
                     <div className="col-auto region-checkbox">
-                        <SwitchCheckBox checked={regionMode} onChange={setRegionMode}>구역 선택</SwitchCheckBox>
+                        <SwitchCheckBox checked={regionMode} onChange={setRegionMode}> 구역 선택</SwitchCheckBox>
                     </div>
                 </div>
             </div>

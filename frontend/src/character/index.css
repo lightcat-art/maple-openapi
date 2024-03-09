@@ -4,18 +4,21 @@
 }
 
 .char-name {
-    font-size: 24px;
-    /* font-weight: bold; */
+    font-size: 25px;
+    font-weight: bold;
+    color: black;
 }
 
 .char-class {
     color: #4d4d4d;
+    font-size: 12px;
 }
 
 .char-world,
 .char-level,
 .char-guild {
-    font-size: 14px;
+    font-size: 12px;
+    padding-top: 8px;
 }
 
 .char-img {
@@ -25,7 +28,7 @@
 }
 
 .char-world-img, .char-guild-img {
-    padding-bottom: 2px;
+    padding-bottom: 4px;
 }
 
 /* placeholder */
@@ -55,6 +58,7 @@
 .char-name-fold {
     font-size: 20px;
     padding-left: 30px;
+    font-weight: bold;
 }
 
 .char-class-fold,

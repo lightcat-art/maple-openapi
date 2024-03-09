@@ -1,5 +1,5 @@
 .btn-1, .btn-1:focus {
-    font-size: 12px;
+    font-size: 11px;
     /* color: rgb(82, 82, 82);  */
     color: rgb(0, 0, 0); 
     background-color: #ffffff;
@@ -27,7 +27,10 @@
 
 .tag-1{
     padding-top: 5px;
-    font-size: 13px;
+    padding-bottom: 6px;
+    font-size: 12px;
+    /* font-weight: bold; */
+    /* margin-bottom: 10px; */
 }
 
 
