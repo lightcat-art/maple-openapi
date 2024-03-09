@@ -41,7 +41,7 @@ const regionLimitBorder = getCSSProp(document.documentElement, '--region-limit-b
 export const UnionRaider = () => {
   const [loading, setLoading] = React.useState(true)
   const [charUnionInfo, setCharUnionInfo, unionLoading, setUnionLoading, drag, setDrag] = useOutletContext();
-  console.log('charUnionInfo = ', charUnionInfo);
+  // console.log('charUnionInfo = ', charUnionInfo);
   const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder, regionLimitBorder);
   const { cname } = useParams();
   const param = { nickname: cname }
@@ -113,7 +113,7 @@ export const UnionRaider = () => {
   React.useEffect(() => {
     if (!charUnionInfo) {
       // charUnionInfo 존재여부 체크를 안해주어도 api call이 안되는데...? 흠... 일단 안전하게 존재여부 체크는 하자.
-      console.log('get union-all api')
+      // console.log('get union-all api')
       axios.get('/api/char/union-all', { params: param })
         .then(response => {
           setCharUnionInfo(response.data)
@@ -199,7 +199,7 @@ export const UnionRaider = () => {
       // 초기화 상태가 아닐때만 세팅
       localStorage.setItem(`regionLimit-${charUnionInfo.idResponse.ocid}`, regionLimit)
     }
-    console.log('regionLimit changes=', regionLimit)
+    // console.log('regionLimit changes=', regionLimit)
   }, [regionLimit])
 
   const handleRegionLimitDecrease = () => {
@@ -240,7 +240,7 @@ export const UnionRaider = () => {
 
 
   React.useEffect(() => {
-    console.log('useProcess change check. useProcess=', useProcess, ', processType = ', processType, ', regionLimit=', regionLimit)
+    // console.log('useProcess change check. useProcess=', useProcess, ', processType = ', processType, ', regionLimit=', regionLimit)
 
     if (useProcess) {
       const style = blockManager.getRegionLimitBorder(TABLE_ROW_LEN, TABLE_COL_LEN, regionLimitIdx)

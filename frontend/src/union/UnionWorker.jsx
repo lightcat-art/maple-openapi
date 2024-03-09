@@ -3,13 +3,13 @@ export default () => {
   self.addEventListener('message', e => { // eslint-disable-line no-restricted-globals
     if (!e) return;
 
-    console.log('Received message from main thread : ', e.data)
-    console.log('Received union block : ', e.data.unionBlock)
-    console.log('Received union blockCount : ', e.data.blockCount)
-    console.log('Received union baseBlockPos : ', e.data.baseBlockPos)
-    console.log('Received union rotateBlockPos : ', e.data.rotateBlockPos)
-    console.log('Received table : ', e.data.table)
-    console.log('Received cnt : ', e.data.cnt)
+    // console.log('Received message from main thread : ', e.data)
+    // console.log('Received union block : ', e.data.unionBlock)
+    // console.log('Received union blockCount : ', e.data.blockCount)
+    // console.log('Received union baseBlockPos : ', e.data.baseBlockPos)
+    // console.log('Received union rotateBlockPos : ', e.data.rotateBlockPos)
+    // console.log('Received table : ', e.data.table)
+    // console.log('Received cnt : ', e.data.cnt)
 
     execute(e.data.table, e.data.unionBlock, e.data.blockCount, e.data.baseBlockPos, e.data.rotateBlockPos)
   })
@@ -68,7 +68,7 @@ export default () => {
     }
 
     parseRaider() {
-      console.log('parseRaider start')
+      // console.log('parseRaider start')
       if (!this.blockCount) {
         console.log("raider information is null.");
         return;
@@ -110,7 +110,7 @@ export default () => {
       //     this.blocks.push(block)
       //   }
       // })
-      console.log('parse blocks= ', this.blocks)
+      // console.log('parse blocks= ', this.blocks)
     }
 
     /**
@@ -403,9 +403,6 @@ export default () => {
         //   this.resultRecordTF = true
         // }
         if (origin) {
-          if (this.realtimeRender) {
-            console.log('test')
-          }
           this.complete = true
           this.resultBlocks = savePointBlocks
           this.resultDomiBlocks = savePointDomiBlocks
@@ -855,11 +852,11 @@ export default () => {
     // let o = await Promise.race([a])
     // console.log('race o = ', o)
     for (let thread of threads) {
-      console.log('stop request')
+      // console.log('stop request')
       thread.stopRequest()
     }
 
-    console.log('origin success : ', threads[0].complete, ', 1 : ', threads[1].complete, ', 2: ', threads[2].complete, ', 3: ', threads[3].complete)
+    // console.log('origin success : ', threads[0].complete, ', 1 : ', threads[1].complete, ', 2: ', threads[2].complete, ', 3: ', threads[3].complete)
     if (threads[0].complete || threads[1].complete || threads[2].complete || threads[3].complete) {
       let domiBlocks = null
       let processCount = null

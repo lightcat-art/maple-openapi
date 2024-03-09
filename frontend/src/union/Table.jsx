@@ -77,7 +77,6 @@ function getRegionCells(region, regionLimit) {
 const defaultTable = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN).fill(0))
 
 regionDef(TABLE_ROW_LEN, TABLE_COL_LEN)
-console.log('test')
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
 export const BasicTable = ({                 
@@ -229,7 +228,6 @@ export const BasicTable = ({
     const resetAction = () => {
         new WebWorker().clearUnionWorker()
         unionWorker = new WebWorker().getUnionWorker(worker)
-        console.log('resetAction =', regionLimitIdx)
         const style = blockManager.getRegionLimitBorder(TABLE_ROW_LEN, TABLE_COL_LEN, regionLimitIdx)
         setTableStyle(style)
         // setSubmitButtonDisabled(false)

@@ -15,7 +15,7 @@ function App() {
         <Route exact path='/' element={<Home />} />
         <Route element={<CharacterLayout />}>
           <Route path='/c/:cname/union' element={<UnionRaider />}/>
-          <Route path='/c/:cname/equip' element={<CharacterEquip />} />
+          {/* <Route path='/c/:cname/equip' element={<CharacterEquip />} /> */}
         </Route>
         {/* <Route component={NotFound} /> */}
       </Routes>
