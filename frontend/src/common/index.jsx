@@ -45,6 +45,18 @@ export const Menu = ({ page }) => {
     );
 }
 
+export const Footer = () => {
+    return (
+        <div className="container-fluid footer">
+            <div className="row justify-content-center">
+                <div className="col-auto">
+                    Copyright © MP.GG 2024.
+                </div>
+            </div>
+        </div>
+    )
+}
+
 export const ContentLayout = ({ children, className, rowClassName, colClassName }) => {
     return (
         <>

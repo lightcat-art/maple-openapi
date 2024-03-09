@@ -1,4 +1,4 @@
-import { Menu } from '../common'
+import { Menu, Footer } from '../common'
 import './index.css'
 import * as React from 'react'
 import { AfterImageButton, AfterImageLink } from '../common/clickable'
@@ -31,11 +31,13 @@ export const CharacterLayout = () => {
 
     const test = 1;
     return (
-        <div onMouseUp={(e)=> setDrag(false)}>
-            <Menu page='not-home'></Menu>
-            <CharacterBasic charBasicInfo={charBasicInfo} loading={loading}></CharacterBasic>
-            <Outlet context={[charUnionInfo, setCharUnionInfo, unionLoading, setUnionLoading, drag, setDrag]} />
-            <div>footer</div>
+        <div className="page-layout" onMouseUp={(e) => setDrag(false)}>
+            <div className="wrapper">
+                <Menu page='not-home'></Menu>
+                <CharacterBasic charBasicInfo={charBasicInfo} loading={loading}></CharacterBasic>
+                <Outlet context={[charUnionInfo, setCharUnionInfo, unionLoading, setUnionLoading, drag, setDrag]} />
+            </div>
+            <Footer/>
         </div>
     )
 }
@@ -131,8 +133,8 @@ export const CharacterBasic = ({ charBasicInfo, loading }) => {
                                                 {charBasicInfo.basicResponse.characterLevel}Lv
                                             </div>
                                             <div className='char-guild col-auto'>
-                                                {charBasicInfo.guildBasicResponse && charBasicInfo.guildBasicResponse.guildMarkCustom ? 
-                                                <img className='char-guild-img' src={`data:image/jpeg;base64, ${charBasicInfo.guildBasicResponse.guildMarkCustom}`} /> : null} {charBasicInfo.basicResponse.characterGuildName}
+                                                {charBasicInfo.guildBasicResponse && charBasicInfo.guildBasicResponse.guildMarkCustom ?
+                                                    <img className='char-guild-img' src={`data:image/jpeg;base64, ${charBasicInfo.guildBasicResponse.guildMarkCustom}`} /> : null} {charBasicInfo.basicResponse.characterGuildName}
                                             </div>
                                         </div>
                                     </div>

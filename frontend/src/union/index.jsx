@@ -220,9 +220,14 @@ export const UnionRaider = () => {
     return (
       <div className="container region-limit">
         <div className="row">
-          <div className="col-auto region-limit-desc pt-2">외부지역 해금 단계</div>
-
-          <AfterImageButton className="col-auto region-decrease" style={{ marginLeft: '130px' }} disabled={regionLimitDisabled[0] || !useProcess || isStart} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
+          <div className="col-auto pt-1">
+            <div className="region-limit-desc">
+              외부지역
+              <br />
+              해금단계
+            </div>
+          </div>
+          <AfterImageButton className="col-auto region-decrease" disabled={regionLimitDisabled[0] || !useProcess || isStart} action={() => handleRegionLimitDecrease()} imgsrc={<img className="decrease" src={decreaseIcon} alt=""></img>}></AfterImageButton>
           <div className="col-auto region-limit-step">{regionLimit}단계</div>
           <AfterImageButton className="col-auto region-increase" disabled={regionLimitDisabled[1] || !useProcess || isStart} action={() => handleRegionLimitIncrease()} imgsrc={<img className="increase" src={increaseIcon} alt=""></img>} />
           <div className="col-auto pt-1" data-tooltip-id='region-limit-tooltip'>
@@ -379,7 +384,7 @@ export const UnionRaider = () => {
         for (let j = 0; j < blockDesc[i].domiDesc.length; j++) {
           let classDesc = blockDesc[i].domiDesc[j]
           classDescDoms.push(
-            <div key={`domi-${i}-${j}`}>ㆍLv.{classDesc.level} {classDesc.className}</div>
+            <div key={`domi-${i}-${j}`} className="domi-class">ㆍLv.{classDesc.level} {classDesc.className}</div>
           )
         }
 

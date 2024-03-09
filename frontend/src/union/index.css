@@ -91,8 +91,12 @@
 }
 
 .class-desc-wrapper {
-    font-size: 13px;
+    font-size: 12px;
     padding-left: 4px;
+}
+
+.class-desc-wrapper .domi-class {
+    padding-top: 2px;
 }
 
 .base-block-cell {
@@ -131,9 +135,10 @@
 }
 
 .process-fail {
-    font-size: 16px;
+    font-size: 11px;
     padding-top: 12px;
-    /* font-weight: bold; */
+    font-weight: bold;
+    color: #970000;
 }
 
 /* .union-grade-img {
@@ -152,22 +157,28 @@
 
 .region-limit-desc{
     position: absolute;
-    font-size: 12px;
+    font-size: 11px;
+    margin-left: 55px;
+}
+
+.region-decrease {
+    margin-left: 115px;
 }
 
 
 .region-checkbox{
-    font-size: 12px;
+    font-size: 11px;
     padding-top: 4px;
 }
+
+.region-limit {
+    padding-bottom: 15px;
+}
+
 
 .region-limit-step{
     font-size: 14px;
     padding-top: 7px;
-}
-
-.region-limit-desc {
-    padding-top: 6px;
 }
 
 .region-limit-tooltip-elem {

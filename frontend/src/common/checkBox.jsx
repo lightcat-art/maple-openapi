@@ -1,3 +1,5 @@
+import './checkBox.css'
+
 export const CheckBox = ({ children, disabled, checked, onChange }) => {
     return (
         <label>
