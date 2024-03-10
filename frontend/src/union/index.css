@@ -54,6 +54,22 @@
     border-left: 1px solid ;
 }
 
+.table-back {
+    z-index: -999;
+}
+
+.union-table {
+    border: 4px solid black;
+    /* fixed table size anywhere*/
+    display: table;
+    table-layout: fixed;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+
+    /* margin-top: 4vh; */
+}
+
 .union-table-wrapper {
     padding-top: 30px;
     padding-bottom: 30px;
@@ -61,6 +77,9 @@
     padding-right: 10px;
 }
 
+.use-process-btn-wrapper, .start-wrapper {
+    margin-right: 20px;
+}
 
 .select-control-wrapper {
     margin-top: 14px;
@@ -95,8 +114,9 @@
     padding-left: 4px;
 }
 
-.class-desc-wrapper .domi-class {
-    padding-top: 2px;
+.domi-class {
+    padding-top: 1px;
+    font-size: 11px;
 }
 
 .base-block-cell {
@@ -109,18 +129,6 @@
     margin-top: 5px;
     position: absolute;
     z-index: -999;
-}
-
-.union-table {
-    border: 4px solid black;
-    /* fixed table size anywhere*/
-    display: table;
-    table-layout: fixed;
-    position: relative;
-    margin-left: auto;
-    margin-right: auto;
-
-    /* margin-top: 4vh; */
 }
 
 .selected {
@@ -159,6 +167,7 @@
     position: absolute;
     font-size: 11px;
     margin-left: 55px;
+    z-index: -999;
 }
 
 .region-decrease {
@@ -189,6 +198,64 @@
     font-size: 13px;
     margin-left: 3px;
 }
+
+.help-tooltip{
+    z-index: 999;
+    max-width:450px;
+}
+
+.help-emp {
+    font-weight: bold;
+    color: #a2c7ff;
+}
+
+.help-tooltip-elem {
+    font-size: 12px;
+    margin-top: 9px;
+}
+
+.help-tooltip-desc {
+    margin-top: 5px;
+    margin-bottom: 6px;
+}
+
+.union-help-desc {
+    font-size: 14px;
+    padding-top: 5px;
+    font-weight: bold;
+}
+
+.union-help {
+    padding-top: 15px;
+}
+
+.union-help-icon {
+    padding-top: 4px;
+}
+
+.btn-union-help, .btn-union-help:focus {
+    font-size: 11px;
+    /* color: rgb(82, 82, 82);  */
+    color: rgb(0, 0, 0); 
+    background-color: #ffffff;
+    /* border-color: #e9e9e9; */
+    /* border-color: #e0e0e0; */
+    border: 1px dashed #e0e0e0;
+    transition: .3s;
+    box-shadow: none;
+}
+
+.btn-union-help:hover {
+    color: rgb(5, 5, 5) !important;
+    background-color: #e0e0e0 !important;
+    border-color: #e0e0e0 !important;
+}
+
+.btn-union-help:active {
+    background-color: #b6b6b6 !important;
+    border-color: #b6b6b6 !important;
+}
+
 /* .union-button {
     position: relative;
     margin-left: auto;

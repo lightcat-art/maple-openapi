@@ -74,8 +74,70 @@ export const UnionRaider = () => {
    * bottom: 해당 idx보다 크거나 같은 row는 제한
    *  */
   const [regionLimitIdx, setRegionLimitIdx] = React.useState([0, TABLE_ROW_LEN, 0, TABLE_COL_LEN])
+  // const [help, setHelp] = React.useState(false)
+  // const tooltipRefMode = React.useRef(null)
+  // const tooltipRefStart = React.useRef(null)
+  // const tooltipRefRegionSelect = React.useRef(null)
+  // const tooltipRefInitSelect = React.useRef(null)
+  // const tooltipRefInitRegionLimit = React.useRef(null)
+  // const tooltipRefControlRegionLimit = React.useRef(null)
 
 
+  // const handleHelp = () => {
+  //   if (help) {
+  //     // 도움말 열린 상태이니, 닫힌 상태로 바꾸기
+  //     tooltipRefMode.current?.close()
+  //     tooltipRefStart.current?.close()
+  //     tooltipRefRegionSelect.current?.close()
+  //     tooltipRefInitSelect.current?.close()
+  //     tooltipRefInitRegionLimit.current?.close()
+  //   } else {
+
+  //     // 도움말 닫힌상태이니, 도움말 열린 상태로 바꾸기
+  //     tooltipRefMode.current?.open({
+  //       anchorSelect: '.use-process-btn-wrapper',
+  //       content:
+  //         <div className='help-tooltip-elem'>
+  //           내 정보 보기 : 내 유니온 점령정보를 확인할수 있습니다<br />
+  //           자동 배치 모드 : 유니온을 쉽게 배치해주는 모드로 진입합니다
+  //         </div>,
+  //       place: 'top-end'
+
+  //     })
+  //     tooltipRefStart.current?.open({
+  //       anchorSelect: '.start-wrapper',
+  //       content:
+  //         <div className='help-tooltip-elem'>
+  //           현재 세팅된 정보를 바탕으로 자동 배치 모드를 시작합니다
+  //         </div>,
+  //       place: 'top-start'
+  //     })
+  //     tooltipRefRegionSelect.current?.open({
+  //       anchorSelect: '.region-checkbox',
+  //       content:
+  //         <div className='help-tooltip-elem'>
+  //           영역을 구역 단위로 지정할지, 셀 단위로 지정할지 설정합니다
+  //         </div>,
+  //       place: 'right'
+  //     })
+  //     tooltipRefInitSelect.current?.open({
+  //       anchorSelect: '.init-select-wrapper',
+  //       content:
+  //         <div className='help-tooltip-elem'>
+  //           현재 선택된 영역을 초기화합니다
+  //         </div>,
+  //     })
+  //     tooltipRefInitRegionLimit.current?.open({
+  //       anchorSelect: '.init-region-limit-wrapper',
+  //       content:
+  //         <div className='help-tooltip-elem'>
+  //           외부지역 해금선을 현재 내 유니온 등급에 맞게 다시 초기화합니다
+  //           ※ 점선이 테이블에 보이지 않으면 해금선은 5단계입니다
+  //         </div>,
+  //     })
+  //   }
+  //   setHelp(!help)
+  // }
 
   const handleUseProcess = () => {
     if (useProcess) {
@@ -311,7 +373,69 @@ export const UnionRaider = () => {
 
       </Tooltip>
     )
+  }
 
+  const HelpTooltip = () => {
+    return (
+      <Tooltip id='help-tooltip' className='help-tooltip' data-tooltip-place='bottom'>
+        <div className='help-tooltip-elem'>
+          <AfterImageBadgeLight title='이용 방법'></AfterImageBadgeLight>
+          <div className='help-tooltip-desc'>
+            <span>ㆍ점령하고 싶은 구역을 </span>
+            <span className='help-emp'>우선순위가 가장 높은 지역부터 선택</span>
+            <span>해주세요</span><br />
+          </div>
+          <div className='help-tooltip-desc'>
+            <span>ㆍ자동 배치가 오래 걸리거나 가능한 경우가 없거나, 원하는 지역이 점령되지 않을 경우 </span>
+            <span className='help-emp'>우선순위가 낮은 구역을 조절하여 다시 시도</span>
+            <span>해보세요</span><br />
+          </div>
+          <div className='help-tooltip-desc'>
+            <span>※ </span><span className='help-emp'>점선이 테이블에 보이지 않으면 해금선은 5단계입니다</span>
+          </div>
+        </div>
+        <Divider></Divider>
+        <div className='help-tooltip-elem'>
+          <AfterImageBadgeLight title='내 정보 보기 / 자동 배치 모드'></AfterImageBadgeLight>
+          <div className='help-tooltip-desc'>
+            ㆍ내 정보 보기 : 내 유니온 점령정보를 확인할수 있습니다<br />
+            ㆍ자동 배치 모드 : 유니온을 쉽게 배치해주는 모드로 진입합니다
+          </div>
+        </div>
+        {/* <Divider /> */}
+        <div className='help-tooltip-elem'>
+          <AfterImageBadgeLight title='시작'></AfterImageBadgeLight>
+          <div className='help-tooltip-desc'>
+            ㆍ현재 세팅된 정보를 바탕으로 자동 배치 모드를 시작합니다
+          </div>
+        </div>
+        {/* <Divider /> */}
+        <div className='help-tooltip-elem'>
+          <AfterImageBadgeLight title='구역 선택'></AfterImageBadgeLight>
+          <div className='help-tooltip-desc'>
+            ㆍ영역을 구역 단위로 지정할지, 셀 단위로 지정할지 설정합니다
+          </div>
+        </div>
+        <div className='help-tooltip-elem'>
+          <AfterImageBadgeLight title='선택 영역 초기화'></AfterImageBadgeLight>
+          <div className='help-tooltip-desc'>
+            ㆍ현재 선택된 영역을 초기화합니다
+          </div>
+        </div>
+        <div className='help-tooltip-elem'>
+          <AfterImageBadgeLight title='외부지역 해금선 초기화'></AfterImageBadgeLight>
+          <div className='help-tooltip-desc'>
+            ㆍ외부지역 해금선을 현재 내 유니온 등급에 맞게 다시 초기화합니다<br />
+          </div>
+        </div>
+        <div className='help-tooltip-elem'>
+          <AfterImageBadgeLight title='외부지역 해금단계 조정'></AfterImageBadgeLight>
+          <div className='help-tooltip-desc'>
+            ㆍ외부지역 해금선을 원하는 등급에 맞게 단계를 조정합니다
+          </div>
+        </div>
+      </Tooltip>
+    )
   }
 
   const BlockCountContainer = (props) => {
@@ -410,8 +534,8 @@ export const UnionRaider = () => {
                 <><Divider></Divider><div>소유 캐릭터 정보</div></>
                 : <></>}
 
-              <div>{classDescDoms}</div>
             </div>
+            <div>{classDescDoms}</div>
           </Tooltip>
         )
       }
@@ -460,6 +584,46 @@ export const UnionRaider = () => {
             </div>
           </div>
         }
+
+        {/* <Tooltip ref={tooltipRefMode} />
+        <Tooltip ref={tooltipRefStart} />
+        <Tooltip ref={tooltipRefRegionSelect} />
+        <Tooltip ref={tooltipRefInitSelect} />
+        <Tooltip ref={tooltipRefInitRegionLimit} /> */}
+        {/* <div className="col-auto text-center">
+              <AfterImageButton className="union-help-btn ps-3" action={handleHelp}
+                // disabled={useProcessDisabled}
+                title={help ? '도움말 닫기' : '도움말 열기'}>
+              </AfterImageButton>
+        </div> */}
+
+        <HelpTooltip></HelpTooltip>
+        <div className="container-fluid union-help">
+          <div className="row justify-content-center">
+            <div className="col-5"></div>
+            {/* <div className="col-auto">
+
+            </div> */}
+            <div
+              className='btn-union-help col-auto btn rounded-pill ' data-tooltip-id='help-tooltip'
+            >
+              <div className="container-fluid">
+                <div className="row">
+                  <div className="col-auto">
+                    <div className="union-help-desc">사용 설명</div>
+                  </div>
+                  <div className="col-auto">
+                    <div className="union-help-icon material-symbols-outlined fill-thick-icon icon-darkgray">question_mark</div>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+
+          </div>
+        </div>
+
 
         <div className="container-fluid">
           <div className="row justify-content-center">
@@ -530,7 +694,7 @@ export function getCellDOM(row, col) {
 
 function drawRegion(rowLen, colLen) {
 
-  // tabe style이 들어오는거 인식하네..? tablestyle과 lastResult state는 같은 단계에서 설정되므로 
+  // tabe style이 들어오는거 인식하네..? tablestyle과 lastResult state는 같은 단계에서 설정되므로
   // 그다음 lastResult state 변경을 감지할땐 tablestyle도 같이 렌더링된 이후이다. 따라서 인식이 되는것.
   // 이걸로 블록 테두리 관리하자.
   if (!checkBlockExist(rowLen, colLen)) {
@@ -601,14 +765,14 @@ function drawRegion(rowLen, colLen) {
 /**
    * 1. 자기도 블록이고 주변에 블록이 있으면 1px
    *    - top/bottom/left/right 의 테두리를 변경하는 경우 위/아래/왼/오른쪽에 block이 있으면 1px
-   * 
+   *
    * 2. 자기는 블록이 아니지만 주변에 블록이 있거나, 자기는 블록이지만 주변에 블록이 아닐경우 : 3px 로 할지 1px로 할지 두개 다 테스트 해보기.
    * 3. 자기도 블록이 아니고 주변에 블록이 없다면 3px
  * @param {*} table
- * @param {*} row 
- * @param {*} col 
- * @param {*} direction
- */
+        * @param {*} row
+        * @param {*} col
+        * @param {*} direction
+        */
 function drawRegionByBlock(rowLen, colLen, row, col, direction) {
   let cellDOM = getCellDOM(row, col)
   let nearCellDOM = null

@@ -62,7 +62,7 @@
     left: 0;
     /* menu bottom line */
     border-bottom: 1px solid rgb(243, 243, 243);
-    z-index: 999;
+    /* z-index: 999; */
 }
 
 /* .navbar-wrapper {

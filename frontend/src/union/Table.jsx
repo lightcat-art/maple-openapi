@@ -99,7 +99,9 @@ export const BasicTable = ({
     prevRegionLimit,
     regionLimitIdx,
     responseUnionBlock,
-    blockCount, }) => {
+    blockCount,
+    help, 
+    }) => {
     const [select, setSelect] = React.useState([])
     // This variable will control if the user is dragging or not
 
@@ -492,6 +494,14 @@ export const BasicTable = ({
         return 'remained'
     }
 
+    // const getTableZPos = () => {
+    //     if (help) {
+    //         return 'table-back'
+    //     } else {
+    //         return 'table-front'
+    //     }
+    // }
+
     return (
         <div className="union-table-wrapper" onMouseDown={(e)=> e.preventDefault()} >
             <div className='container-fluid'>
@@ -517,6 +527,7 @@ export const BasicTable = ({
             <div
             // onMouseMove={(e) => preventOutsideDrag(e)}
             >
+                {/* <table id='union-table' className={`union-table ${getTableZPos()}`} */}
                 <table id='union-table' className='union-table'
                 >
                     <tbody className='union-table-body'>
