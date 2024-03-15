@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 export const TABLE_ROW_LEN = 20
 export const TABLE_COL_LEN = 22
 
+const homepageUrl = process.env.REACT_APP_HOMEPAGE_URL || ''
+
 export const Menu = ({ page }) => {
 
     return (
@@ -25,15 +27,15 @@ export const Menu = ({ page }) => {
                 <nav className="navbar navbar-expand navbar-group">
                     <div className="row">
                         <div className="col col-2"></div>
-                        <div className="col-auto">
+                        <div className="col col-auto">
                             <div className="navbar-nav">
                                 {page === 'home' ?
-                                    <>
+                                    <div>
                                         <Link to="/" className="nav-item nav-link active">홈</Link>
-                                    </> :
-                                    <>
+                                    </div> :
+                                    <div>
                                         <Link to="/" className="nav-item nav-link">홈</Link>
-                                    </>
+                                    </div>
                                 }
                             </div>
                         </div>
