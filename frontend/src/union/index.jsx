@@ -17,7 +17,7 @@ import { Tooltip } from 'react-tooltip'
 import axios from 'axios';
 import { UnionGradeImage } from '../common/image.jsx'
 
-
+const backDomain = process.env.REACT_APP_BACK_URL || ''
 
 // hover 와 select를 비활성화 하고, 
 export const PROCESS_INIT = -2 // 초기 테이블 생성 단계
@@ -41,7 +41,7 @@ const regionLimitBorder = getCSSProp(document.documentElement, '--region-limit-b
 export const UnionRaider = () => {
   const [loading, setLoading] = React.useState(true)
   const [charUnionInfo, setCharUnionInfo, unionLoading, setUnionLoading, drag, setDrag] = useOutletContext();
-  // console.log('charUnionInfo = ', charUnionInfo);
+  console.log('charUnionInfo = ', charUnionInfo);
   const blockManager = new BlockManager(blockColor, cellSelectedColor, cellNotSelectedColor, blockColorOrigin, blockColorOriginBorder, regionLimitBorder);
   const { cname } = useParams();
   const param = { nickname: cname }
@@ -176,7 +176,8 @@ export const UnionRaider = () => {
     if (!charUnionInfo) {
       // charUnionInfo 존재여부 체크를 안해주어도 api call이 안되는데...? 흠... 일단 안전하게 존재여부 체크는 하자.
       // console.log('get union-all api')
-      axios.get('/api/char/union-all', { params: param })
+      // axios.get('/api/char/union-all', { params: param })
+      axios.get(`${backDomain}/api/char/union-all`, { params: param })
         .then(response => {
           setCharUnionInfo(response.data)
           setUnionLoading(false)

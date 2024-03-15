@@ -9,6 +9,8 @@ import axios from 'axios';
 import { ContentLayout } from '../common';
 import { WorldImage } from '../common/image.jsx'
 
+const backDomain = process.env.REACT_APP_BACK_URL || ''
+
 export const CharacterLayout = () => {
     const [charBasicInfo, setCharBasicInfo] = React.useState(null)
     const [charUnionInfo, setCharUnionInfo] = React.useState(null)
@@ -20,7 +22,7 @@ export const CharacterLayout = () => {
     const param = { nickname: cname }
     // getCharInfo(param, setCharInfo)
     React.useEffect(() => {
-        axios.get('/api/char/banner', { params: param })
+        axios.get(`${backDomain}/api/char/banner`, { params: param })
             .then(response => {
                 setCharBasicInfo(response.data)
                 setLoading(false)
