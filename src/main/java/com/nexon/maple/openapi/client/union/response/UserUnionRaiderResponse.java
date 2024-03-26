@@ -1,6 +1,7 @@
 package com.nexon.maple.openapi.client.union.response;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nexon.maple.openapi.client.union.response.raider.UnionBlock;
 import com.nexon.maple.openapi.client.union.response.raider.UnionInnerStat;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserUnionRaiderResponse {
     private String date;
     private List<String> unionRaiderStat;
