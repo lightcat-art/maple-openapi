@@ -1,6 +1,5 @@
-
 export default () => {
-  self.addEventListener('message', e => { // eslint-disable-line no-restricted-globals
+  self.addEventListener('message', e => { 
     if (!e) return;
 
     // console.log('Received message from main thread : ', e.data)
@@ -70,7 +69,7 @@ export default () => {
     parseRaider() {
       // console.log('parseRaider start')
       if (!this.blockCount) {
-        console.log("raider information is null.");
+        // console.log("raider information is null.");
         return;
       }
       for (let i = 0; i < this.blockCount.length; i++) {
@@ -234,11 +233,11 @@ export default () => {
       //   console.log('other thread test')
       // }
       if (this.stop) {
-        if (this.realtimeRender) {
-          console.log('origin stop')
-        } else {
-          console.log('other stop')
-        }
+        // if (this.realtimeRender) {
+        //   console.log('origin stop')
+        // } else {
+        //   console.log('other stop')
+        // }
         return null
       }
 
@@ -533,7 +532,7 @@ export default () => {
      */
     compareBinary(region, block) {
       if (region.length !== block.length) {
-        console.log('error : block and region length didnt same')
+        // console.log('error : block and region length didnt same')
         return false
       }
       let resultBinary = []
@@ -617,7 +616,7 @@ export default () => {
      * @returns 
      */
     checkFittableTest(numMap, targetSum) {
-      console.log('checkFittableTest start')
+      // console.log('checkFittableTest start')
       // 모든 블록 길이의 합이 더미사이즈 보다 작거나 같다면 가능한것으로 판단할것
       let sum = 0
       let keyList = Object.keys(numMap)
@@ -626,12 +625,12 @@ export default () => {
         sum += key * numMap[key]
       }
       if (sum <= targetSum) {
-        console.log('table space is enough')
+        // console.log('table space is enough')
         return true
       }
       let impossibleCache = new Map()
       const result = this.dpImprove(targetSum, numMap, impossibleCache)
-      console.log('dp result = ', result);
+      // console.log('dp result = ', result);
       if (result) {
         return true
       } else {
@@ -744,7 +743,7 @@ export default () => {
 
     // cache :  6 : [1,2,3] 과 같이 map으로 활용
     dp(targetSum, numMap, cacheMap) {
-      console.log('targetSum=', targetSum, ', numMap=', numMap, ', cacheMap=', cacheMap)
+      // console.log('targetSum=', targetSum, ', numMap=', numMap, ', cacheMap=', cacheMap)
       // if (Object.keys(cacheMap).length > 0) {
       //   console.log('cacheMap=',cacheMap)
       // }

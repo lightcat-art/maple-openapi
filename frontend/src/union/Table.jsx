@@ -6,7 +6,7 @@ import { PROCESS_INIT, PROCESS_READY, PROCESS_FAIL, setRegionLimitBorder, remove
 import { TABLE_ROW_LEN, TABLE_COL_LEN } from '../common'
 import { AfterImageButton } from '../common/clickable'
 import WebWorker from '../util/worker'
-import worker from './UnionWorker'
+import worker from './UnionWorker.min'
 import { SwitchCheckBox } from '../common/checkBox'
 
 
