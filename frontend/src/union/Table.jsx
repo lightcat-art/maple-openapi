@@ -79,7 +79,7 @@ const defaultTable = Array.from(Array(TABLE_ROW_LEN), () => Array(TABLE_COL_LEN)
 regionDef(TABLE_ROW_LEN, TABLE_COL_LEN)
 
 // 상위 컴포넌트의 props를 props key 별로 받으려면 {}를 작성해줘야함. 그렇지 않으면 모든 props 가 한번에 map형태로 오게된다.
-export const BasicTable = ({                 
+export const BasicTable = ({
     // table, setTable,
     drag, setDrag,
     tableStyle, setTableStyle,
@@ -100,8 +100,8 @@ export const BasicTable = ({
     regionLimitIdx,
     responseUnionBlock,
     blockCount,
-    help, 
-    }) => {
+    help,
+}) => {
     const [select, setSelect] = React.useState([])
     // This variable will control if the user is dragging or not
 
@@ -223,9 +223,9 @@ export const BasicTable = ({
 
     React.useEffect(() => {
         if (isProcessFail) {
-          resetAction()
+            resetAction()
         }
-      }, [isProcessFail])
+    }, [isProcessFail])
 
     const resetAction = () => {
         new WebWorker().clearUnionWorker()
@@ -503,7 +503,7 @@ export const BasicTable = ({
     // }
 
     return (
-        <div className="union-table-wrapper" onMouseDown={(e)=> e.preventDefault()} >
+        <div className="union-table-wrapper" onMouseDown={(e) => e.preventDefault()} >
             <div className='container-fluid'>
                 <div className="row justify-content-center pt-1 pb-3">
 
@@ -580,7 +580,7 @@ export const BasicTable = ({
 
             <div>{isProcessFail ?
                 <div className="process-fail text-center">
-                    점령 예약된 블록 인접 칸에 빈 공간을 채울수 있는 경우가 없습니다.<br />
+                    모든 경우의 수에서 점령된 블록 사이에 빈공간이 존재하므로 작업이 취소됩니다.<br />
                     구역을 다시 설정해 주세요.
                 </div> : <></>}
             </div>
