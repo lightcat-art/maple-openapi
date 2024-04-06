@@ -33,10 +33,15 @@ jobs:
       uses: actions/setup-node@v3
       with:
           node-version: ${{ matrix.node-version }}
-    - name: install & build npm
+    - name: install npm
       run: |
         cd frontend
         npm install
+
+    - name: build npm
+      run: |
+        cd frontend
+        npm list
         npm run build
 
     - name: Configure AWS credentials
