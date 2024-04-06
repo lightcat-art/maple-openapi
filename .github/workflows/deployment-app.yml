@@ -23,7 +23,7 @@ jobs:
     # environment: production
     strategy:
       matrix:
-        node-version: [18.13.x]
+        node-version: [18.13.0]
 
 
     steps:
@@ -33,15 +33,10 @@ jobs:
       uses: actions/setup-node@v3
       with:
           node-version: ${{ matrix.node-version }}
-    - name: install npm
+    - name: install & build npm
       run: |
         cd frontend
-        npm audit fix --force
         npm install
-
-    - name: build npm
-      run: |
-        cd frontend
         npm run build
 
     - name: Configure AWS credentials
