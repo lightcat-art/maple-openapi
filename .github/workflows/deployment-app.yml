@@ -22,8 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     # environment: production
     strategy:
-        matrix:
-            node-version: [18.13.x]
+      matrix:
+        node-version: [18.13.x]
 
 
     steps:
