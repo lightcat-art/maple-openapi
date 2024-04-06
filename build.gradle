@@ -55,12 +55,14 @@ sourceSets {
 }
 
 processResources {
-    dependsOn "copyReactBuildFiles"
+    // application local로 띄울때는 copyReactBuildFiles가 depend 된게 없으므로 실행되지 않음
+    // build 할때는 bootJar가 실행되므로 depend된 copyReactBuildFiles가 먼저 실행됨.
+    mustRunAfter "copyReactBuildFiles"
 }
 
-//bootJar {
-//        dependsOn "copyReactBuildFiles"
-//}
+tasks.bootJar {
+    dependsOn "copyReactBuildFiles"
+}
 
 tasks.register('installReact', Exec) {
     workingDir "$frontendDir"

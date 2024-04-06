@@ -61,3 +61,6 @@ out/
 /frontend/yarn-debug.log*
 /frontend/yarn-error.log*
 
+#docker volume
+/volume
+

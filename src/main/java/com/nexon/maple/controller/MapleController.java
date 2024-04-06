@@ -95,6 +95,11 @@ public class MapleController {
     @Autowired
     UserUnionRaiderApi userUnionRaiderApi;
 
+    @GetMapping("/healthcheck")
+    public String healthCheck() {
+        return "success";
+    }
+
     @GetMapping("/api/char/overall")
     public CharacterOverallResponse getCharOverall(CharacterOverallRequest request) {
         String formattedNow = DateManager.getSearchDate();
