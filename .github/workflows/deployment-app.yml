@@ -21,10 +21,24 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     # environment: production
-      
+    strategy:
+        matrix:
+            node-version: [18.13.x]
+
+
     steps:
     - uses: actions/checkout@v3
-    
+
+    - name: setup npm
+      uses: actions/setup-node@v3
+      with:
+          node-version: ${{matrix:node-version}}
+          cache: npm
+    - name: build npm
+      run: |
+        cd frontend
+        npm run build
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -45,9 +59,6 @@ jobs:
         # Build a docker container and
         # push it to ECR so that it can
         # be deployed to ECS.
-        cd frontend
-        npm run build
-        cd ../
         docker build -f App.dockerfile -t $ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_APP_REPOSITORY:latest .
         docker push $ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_APP_REPOSITORY:latest
