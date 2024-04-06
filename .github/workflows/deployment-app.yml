@@ -34,7 +34,9 @@ jobs:
       with:
           node-version: ${{ matrix.node-version }}
     - name: install npm
-      run: npm install
+      run: |
+        cd frontend
+        npm install
 
     - name: build npm
       run: |
