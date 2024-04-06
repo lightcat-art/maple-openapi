@@ -36,6 +36,7 @@ jobs:
     - name: install npm
       run: |
         cd frontend
+        npm audit fix
         npm install
 
     - name: build npm
