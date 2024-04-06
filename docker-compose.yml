@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  app-green:
+    hostname: maple-green
+    build:
+      context: .
+      dockerfile: App.dockerfile
+    # command: >
+    #   sh -c "sh ./start.sh"
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - "./volume/green/:/home/maple/volume"
+    networks:
+      network-maple:
+        ipv4_address: 172.21.0.51
+  nginx:
+    restart: always
+    container_name: maple-nginx
+    build:
+      context: .
+      dockerfile: Nginx.dev.green.dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./frontend/build/:/etc/nginx/html/green"
+    networks:
+      network-maple:
+        ipv4_address: 172.21.0.60
+networks:
+  # Use a pre-existing network
+#  network-maple:
+#    name: maple-network
+#    external: true
+  network-maple:
+    name: network-maple
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.21.0.10/16
+          gateway: 172.21.0.20
