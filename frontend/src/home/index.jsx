@@ -47,7 +47,8 @@ function HomeLayout() {
 
             <div className="container-fluid">
                 <div className="main">
-                    <h1 className="main-logo display-3 mb-3 text-center animate__animated animate__slideInDown" style={{ color: '#000000' }}>MP.GG</h1>
+                    <div className="main-logo display-3 mb-3 text-center animate__animated animate__slideInDown" style={{ color: '#000000' }}>Maple Tetris</div>
+                    <h5 className="main-logo-desc mb-4 text-center animate__animated animate__slideInDown" style={{ color: '#000000' }}>유니온 배치 계산기</h5> 
                     <div className="position-relative w-75 mx-auto">
                         <form onSubmit={handleSubmit}>
                             <input className="search-bar form-control border-0 rounded-pill py-3 ps-4 pe-5" type="text" placeholder="닉네임 입력"
