@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   app-green:
-    hostname: maple-green
+    hostname: maple-app-green
     build:
       context: .
       dockerfile: App.dockerfile
