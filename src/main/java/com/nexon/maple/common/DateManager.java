@@ -24,9 +24,10 @@ public class DateManager {
     }
 
     // 갱신시간인 새벽1시가 되었는지 아닌지 체크
-    public static boolean isRenewingTime() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalTime nowTime = LocalTime.of(now.getHour(), now.getMinute(), now.getSecond());
-        return nowTime.compareTo(oneAM) >= 0;
-    }
+    // 캐쉬 삭제는 ScheduledService에서 따로 진행하도록 함.
+//    public static boolean isRenewingTime() {
+//        LocalDateTime now = LocalDateTime.now();
+//        LocalTime nowTime = LocalTime.of(now.getHour(), now.getMinute(), now.getSecond());
+//        return nowTime.compareTo(oneAM) >= 0;
+//    }
 }

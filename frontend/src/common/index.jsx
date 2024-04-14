@@ -52,7 +52,7 @@ export const Footer = () => {
         <div className="container-fluid footer">
             <div className="row justify-content-center">
                 <div className="col-auto">
-                    Copyright © MP.GG 2024.
+                    Copyright © mapletetris 2024.
                 </div>
             </div>
         </div>

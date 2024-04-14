@@ -12,7 +12,7 @@ var minify = composer(uglifyjs, console);
 
 // gulp.task('clean', run('rmdir build'))
 gulp.task('run-build', run('npm run build', {env: {NODE_ENV: 'production'}}))
-gulp.task('build', gulp.series('run-build'))
+
 
 gulp.task('uglify-worker', function () {
     return gulp.src(['src/union/UnionWorker.jsx'])
@@ -20,17 +20,16 @@ gulp.task('uglify-worker', function () {
             compact:true,
             stringArray: false,
             simplify: true,
+            controlFlowFlattening: true,
+            controlFlowFlatteningThreshold: 1,
+            numbersToExpressions: true,
+            disableConsoleOutput: true,
+
             debugProtection: true,
+            debugProtectionInterval: 4000,
+            // renameGlobals: true,
+
         }))
-        // .pipe(minify(
-        //     {
-        //         mangle: {
-        //             toplevel: true,
-        //         },
-        //         annotations: true
-        //     }
-        // ))
-        // .pipe(uglify())
         .pipe(rename('UnionWorker.min.jsx'))
         .pipe(gulp.dest('src/union'))
 
@@ -44,3 +43,5 @@ gulp.task('merge-eslint', function () {
 
 
 gulp.task('obfuscate-worker', gulp.series('uglify-worker','merge-eslint'))
+
+// gulp.task('build', gulp.series('uglify-worker','merge-eslint','run-build'))
