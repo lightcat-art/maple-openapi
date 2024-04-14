@@ -17,37 +17,17 @@ gulp.task('run-build', run('npm run build', {env: {NODE_ENV: 'production'}}))
 gulp.task('uglify-worker', function () {
     return gulp.src(['src/union/UnionWorker.jsx'])
         .pipe(javascriptObfuscator({
-            // compact:true,
+            compact:true,
             stringArray: false,
-            // simplify: true,
+            simplify: true,
             controlFlowFlattening: true,
             controlFlowFlatteningThreshold: 1,
             numbersToExpressions: true,
             disableConsoleOutput: true,
-            // forceTransformStrings: [
-            //     'addFilledCount',
-            //     'addProcessCount',
-            //     'getProcessCount',
-            //     'parseRaider',
-            //     'normalizeOriginBlock',
-            //     'normalizeBlock',
-            //     'rotate',
-            //     'transToBinary',
-            //     'stopRequest',
-            //     'classify',
-            //     'scanImprove',
-            //     'checkTableBlank',
-            //     'findAllBlockDummy',
-            //     'sortingByBlockDummySize',
-            //     'createDummyRegionTable',
-            //     'compareBinary',
-            //     'bfs',
-            //     'checkFittable',
-            //     'dpImprove',
-            // ],
 
-            // debugProtection: true,
-            renameGlobals: true,
+            debugProtection: true,
+            debugProtectionInterval: 4000,
+            // renameGlobals: true,
 
         }))
         .pipe(rename('UnionWorker.min.jsx'))
