@@ -45,7 +45,7 @@ public class BasicApi {
             if (response.getStatusLine().getStatusCode() == 200) {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
-                logger.info(body);
+//                logger.info(body);
                 BasicResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, BasicResponse.class);
                 return res;
             } else {
