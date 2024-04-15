@@ -104,7 +104,7 @@ public class MapleController {
     public CharacterOverallResponse getCharOverall(CharacterOverallRequest request) {
         String formattedNow = DateManager.getSearchDate();
 
-        logger.info("request nickname = " + request.getNickname() + ", now = " + formattedNow);
+//        logger.info("request nickname = " + request.getNickname() + ", now = " + formattedNow);
         // 필요에 따라 key 저장방식을 ocid로 바꾸는것도 고려 필요.
         if (ResponseCacheManager.getInstance().getCharacterCacheMap().containsKey(request.getNickname())) {
             logger.info("Use Cache. character name = " + request.getNickname());

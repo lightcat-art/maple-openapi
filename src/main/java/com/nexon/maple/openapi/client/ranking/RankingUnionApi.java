@@ -47,7 +47,7 @@ public class RankingUnionApi {
             if (response.getStatusLine().getStatusCode() == 200) {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
-                logger.info(body);
+//                logger.info(body);
                 RankingUnionResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, RankingUnionResponse.class);
                 return res;
             } else {
