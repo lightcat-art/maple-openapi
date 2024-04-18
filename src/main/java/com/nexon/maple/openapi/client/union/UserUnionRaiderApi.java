@@ -45,7 +45,7 @@ public class UserUnionRaiderApi {
             if (response.getStatusLine().getStatusCode() == 200) {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
-                logger.info(body);
+//                logger.info(body);
                 UserUnionRaiderResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, UserUnionRaiderResponse.class);
                 return res;
             } else {

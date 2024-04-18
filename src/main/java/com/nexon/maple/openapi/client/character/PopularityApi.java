@@ -45,7 +45,7 @@ public class PopularityApi {
             if (response.getStatusLine().getStatusCode() == 200) {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
-                logger.info(body);
+//                logger.info(body);
                 PopularityResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, PopularityResponse.class);
                 return res;
             } else {
