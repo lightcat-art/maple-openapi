@@ -27,11 +27,11 @@ public class PopularityApi {
 
     Logger logger = LoggerFactory.getLogger(PopularityApi.class);
 
-    public PopularityResponse get(String ocid, String date) {
+    public PopularityResponse get(String ocid) {
         try {
             URI uri = new URIBuilder(mapleProperties.getBase() + characterProperties.getPopularity())
                     .addParameter("ocid", ocid)
-                    .addParameter("date", date)
+//                    .addParameter("date", date)
                     .build();
             HttpGet getRequest = new HttpGet(uri); //GET 메소드 URL 생성
 

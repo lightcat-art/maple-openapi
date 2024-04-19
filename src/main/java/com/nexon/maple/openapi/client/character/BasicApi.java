@@ -27,11 +27,11 @@ public class BasicApi {
 
     Logger logger = LoggerFactory.getLogger(BasicApi.class);
 
-    public BasicResponse get(String ocid, String date) {
+    public BasicResponse get(String ocid) {
         try {
             URI uri = new URIBuilder(mapleProperties.getBase() + characterProperties.getBasic())
                     .addParameter("ocid", ocid)
-                    .addParameter("date", date)
+//                    .addParameter("date", date)
                     .build();
             HttpGet getRequest = new HttpGet(uri); //GET 메소드 URL 생성
 
@@ -50,6 +50,7 @@ public class BasicApi {
                 return res;
             } else {
                 logger.error("response is error : " + response.getStatusLine().getStatusCode());
+                logger.error("response is error : " + response.getStatusLine().getReasonPhrase());
                 return null;
             }
         } catch (Exception e) {

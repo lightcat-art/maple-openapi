@@ -27,11 +27,11 @@ public class GuildBasicApi {
 
     Logger logger = LoggerFactory.getLogger(GuildBasicApi.class);
 
-    public GuildBasicResponse get(String oguildId, String date) {
+    public GuildBasicResponse get(String oguildId) {
         try {
             URI uri = new URIBuilder(mapleProperties.getBase() + guildProperties.getBasic())
                     .addParameter("oguild_id", oguildId)
-                    .addParameter("date", date)
+//                    .addParameter("date", date)
                     .build();
             HttpGet getRequest = new HttpGet(uri); //GET 메소드 URL 생성
 
@@ -45,7 +45,7 @@ public class GuildBasicApi {
             if (response.getStatusLine().getStatusCode() == 200) {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
-                logger.info(body);
+//                logger.info(body);
                 GuildBasicResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, GuildBasicResponse.class);
                 return res;
             } else {
