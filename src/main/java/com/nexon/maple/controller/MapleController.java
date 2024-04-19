@@ -119,8 +119,8 @@ public class MapleController {
         }
 
 
-        BasicResponse basicResponse = basicApi.get(idRes.getOcid(), formattedNow);
-        PopularityResponse popularityResponse = popularityApi.get(idRes.getOcid(), formattedNow);
+        BasicResponse basicResponse = basicApi.get(idRes.getOcid());
+        PopularityResponse popularityResponse = popularityApi.get(idRes.getOcid());
 //        StatResponse statResponse = statApi.get(idRes.getOcid(), formattedNow);
 //        HyperStatResponse hyperStatResponse = hyperStatApi.get(idRes.getOcid(), formattedNow);
 //        PropensityResponse propensityResponse = propensityApi.get(idRes.getOcid(), formattedNow);
@@ -147,8 +147,8 @@ public class MapleController {
 //        DojangResponse dojangResponse = dojangApi.get(idRes.getOcid(), formattedNow);
 
         // 유니온 랭킹 정보
-        RankingUnionResponse rankingUnionResponse = rankingUnionApi
-                .get(formattedNow, basicResponse.getWorldName(), idRes.getOcid(), 1);
+//        RankingUnionResponse rankingUnionResponse = rankingUnionApi
+//                .get(formattedNow, basicResponse.getWorldName(), idRes.getOcid(), 1);
 
 //        String myClassNamFull = rankingUnionResponse.getRanking().get(0).getClassName()
 //                + "-" + rankingUnionResponse.getRanking().get(0).getSubClassName();
@@ -172,9 +172,9 @@ public class MapleController {
 //
 //        RankingAchievementResponse rankingAchievementResponse = rankingAchievementApi.get(formattedNow, idRes.getOcid(), 1);
 
-        UserUnionResponse userUnionResponse = userUnionApi.get(idRes.getOcid(), formattedNow);
+        UserUnionResponse userUnionResponse = userUnionApi.get(idRes.getOcid());
 
-        UserUnionRaiderResponse userUnionRaiderResponse = userUnionRaiderApi.get(idRes.getOcid(), formattedNow);
+        UserUnionRaiderResponse userUnionRaiderResponse = userUnionRaiderApi.get(idRes.getOcid());
 
         CharacterOverallResponse out = CharacterOverallResponse.builder()
                 .basicResponse(basicResponse)
@@ -196,7 +196,7 @@ public class MapleController {
 //                .rankingOverallWholeClassResponse(rankOverallWholeClassResponse)
 //                .rankingDojangMyClassResponse(rankDojangMyClassResponse)
 //                .rankingDojangWholeClassResponse(rankDojangWholeClassResponse)
-                .rankingUnionResponse(rankingUnionResponse)
+//                .rankingUnionResponse(rankingUnionResponse)
 //                .rankingAchievementResponse(rankingAchievementResponse)
                 .userUnionResponse(userUnionResponse)
                 .userUnionRaiderResponse(userUnionRaiderResponse)
@@ -225,11 +225,11 @@ public class MapleController {
         if(idRes != null) {
 
             if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getBasicResponse() == null) {
-                BasicResponse basicResponse = basicApi.get(idRes.getOcid(), formattedNow);
+                BasicResponse basicResponse = basicApi.get(idRes.getOcid());
                 ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setBasicResponse(basicResponse);
             }
             if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getPopularityResponse() == null) {
-                PopularityResponse popularityResponse = popularityApi.get(idRes.getOcid(), formattedNow);
+                PopularityResponse popularityResponse = popularityApi.get(idRes.getOcid());
                 ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setPopularityResponse(popularityResponse);
             }
             if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getGuildIdResponse() == null ||
@@ -239,7 +239,7 @@ public class MapleController {
                         ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getBasicResponse().getWorldName());
                 if (guildIdResponse != null) {
                     ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setGuildIdResponse(guildIdResponse);
-                    GuildBasicResponse guildBasicResponse = guildBasicApi.get(guildIdResponse.getOguildId(), formattedNow);
+                    GuildBasicResponse guildBasicResponse = guildBasicApi.get(guildIdResponse.getOguildId());
                     ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setGuildBasicResponse(guildBasicResponse);
                 } else {
                     // 한번 조회했는데 없는 경우라면 다시 요청하지 않도록 캐시매니저에 빈 객체 등록
@@ -272,21 +272,21 @@ public class MapleController {
         // 필요한 기능 체크 후 없다면 api call.
         if (idRes != null) {
             if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getBasicResponse() == null) {
-                BasicResponse basicResponse = basicApi.get(idRes.getOcid(), formattedNow);
+                BasicResponse basicResponse = basicApi.get(idRes.getOcid());
                 ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setBasicResponse(basicResponse);
             }
-            if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getRankingUnionResponse() == null) {
-                RankingUnionResponse rankingUnionResponse = rankingUnionApi
-                        .get(formattedNow, ResponseCacheManager.getInstance().getCharacterCache(
-                                request.getNickname()).getBasicResponse().getWorldName(), idRes.getOcid(), 1);
-                ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setRankingUnionResponse(rankingUnionResponse);
-            }
+//            if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getRankingUnionResponse() == null) {
+//                RankingUnionResponse rankingUnionResponse = rankingUnionApi
+//                        .get(formattedNow, ResponseCacheManager.getInstance().getCharacterCache(
+//                                request.getNickname()).getBasicResponse().getWorldName(), idRes.getOcid(), 1);
+//                ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setRankingUnionResponse(rankingUnionResponse);
+//            }
             if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getUserUnionResponse() == null) {
-                UserUnionResponse userUnionResponse = userUnionApi.get(idRes.getOcid(), formattedNow);
+                UserUnionResponse userUnionResponse = userUnionApi.get(idRes.getOcid());
                 ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setUserUnionResponse(userUnionResponse);
             }
             if (ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).getUserUnionRaiderResponse() == null) {
-                UserUnionRaiderResponse userUnionRaiderResponse = userUnionRaiderApi.get(idRes.getOcid(), formattedNow);
+                UserUnionRaiderResponse userUnionRaiderResponse = userUnionRaiderApi.get(idRes.getOcid());
                 ResponseCacheManager.getInstance().getCharacterCache(request.getNickname()).setUserUnionRaiderResponse(userUnionRaiderResponse);
             }
             return ResponseCacheManager.getInstance().getCharacterCache(request.getNickname());
@@ -306,7 +306,7 @@ public class MapleController {
     public String getCharBasic() {
         IdResponse idres = idApi.get("마하포드");
         logger.info("ouid = " + idres.getOcid());
-        BasicResponse basicRes = basicApi.get(idres.getOcid(), "2023-12-21");
+        BasicResponse basicRes = basicApi.get(idres.getOcid());
         logger.info("response tostring = " + basicRes.toString());
         return null;
     }
@@ -423,7 +423,7 @@ public class MapleController {
     public String getCharPopularity() {
         IdResponse idres = idApi.get("마하포드");
         logger.info("ouid = " + idres.getOcid());
-        PopularityResponse symbolRes = popularityApi.get(idres.getOcid(), "2023-12-22");
+        PopularityResponse symbolRes = popularityApi.get(idres.getOcid());
         logger.info("response tostring = " + symbolRes.toString());
         return null;
     }
@@ -479,7 +479,7 @@ public class MapleController {
     public String getGuildInfo() {
         GuildIdResponse res = guildIdApi.get("리제", "리부트");
         logger.info("response tostring = " + res.toString());
-        GuildBasicResponse res2 = guildBasicApi.get(res.getOguildId(), "2023-12-23");
+        GuildBasicResponse res2 = guildBasicApi.get(res.getOguildId());
         logger.info("response tostring = " + res2.toString());
         return null;
     }
@@ -548,7 +548,7 @@ public class MapleController {
     public String getUserUnion() {
         IdResponse idres = idApi.get("마하포드");
         logger.info("ouid = " + idres.getOcid());
-        UserUnionResponse res = userUnionApi.get(idres.getOcid(), "2023-12-22");
+        UserUnionResponse res = userUnionApi.get(idres.getOcid());
         logger.info("response tostring = " + res.toString());
         return null;
     }
@@ -557,7 +557,7 @@ public class MapleController {
     public String getUserUnionRaider() {
         IdResponse idres = idApi.get("마하포드");
         logger.info("ouid = " + idres.getOcid());
-        UserUnionRaiderResponse res = userUnionRaiderApi.get(idres.getOcid(), "2023-12-22");
+        UserUnionRaiderResponse res = userUnionRaiderApi.get(idres.getOcid());
         logger.info("response tostring = " + res.toString());
         return null;
     }

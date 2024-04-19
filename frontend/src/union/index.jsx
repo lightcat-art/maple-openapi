@@ -380,19 +380,34 @@ export const UnionRaider = () => {
     return (
       <Tooltip id='help-tooltip' className='help-tooltip' data-tooltip-place='bottom'>
         <div className='help-tooltip-elem'>
+
           <AfterImageBadgeLight title='이용 방법'></AfterImageBadgeLight>
+
+          <span className='help-tooltip-desc'>
+            <span> ㆍ </span>
+            <span className='help-emp'> PC 버전</span>
+            <span>으로만 이용가능합니다</span><br />
+          </span>
+          <div className='help-tooltip-desc'>
+            <span>ㆍ인게임 기준 평균  </span>
+            <span className='help-emp'>15분 정도 후 확인 가능</span>
+            <span>합니다.</span><br />
+          </div>
+          <div className='help-tooltip-desc'>
+            <span>ㆍ </span>
+            <span className='help-emp'>2023년 12월 21일 이후에 접속</span>
+            <span>한 캐릭터로만 조회할 수 있습니다.</span><br />
+          </div>
+          
           <div className='help-tooltip-desc'>
             <span>ㆍ점령하고 싶은 구역을 </span>
             <span className='help-emp'>우선순위가 가장 높은 지역부터 선택</span>
             <span>해주세요</span><br />
           </div>
           <div className='help-tooltip-desc'>
-            <span>ㆍ자동 배치가 오래 걸리거나 가능한 경우가 없거나, 원하는 지역이 점령되지 않을 경우 </span>
-            <span className='help-emp'>우선순위가 낮은 구역을 조절하여 다시 시도</span>
+            <span>ㆍ자동 배치가 오래 걸림 / 배치 가능한 경우가 없음 / 원하는 지역이 점령되지 않는 경우 </span>
+            <span className='help-emp'>우선순위가 낮은 구역을 제외하고 다시 시도</span>
             <span>해보세요</span><br />
-          </div>
-          <div className='help-tooltip-desc'>
-            <span>※ </span><span className='help-emp'>점선이 테이블에 보이지 않으면 해금선은 5단계입니다</span>
           </div>
         </div>
         <Divider></Divider>
@@ -401,13 +416,6 @@ export const UnionRaider = () => {
           <div className='help-tooltip-desc'>
             ㆍ내 정보 보기 : 내 유니온 점령정보를 확인할수 있습니다<br />
             ㆍ자동 배치 모드 : 유니온을 쉽게 배치해주는 모드로 진입합니다
-          </div>
-        </div>
-        {/* <Divider /> */}
-        <div className='help-tooltip-elem'>
-          <AfterImageBadgeLight title='시작'></AfterImageBadgeLight>
-          <div className='help-tooltip-desc'>
-            ㆍ현재 세팅된 정보를 바탕으로 자동 배치 모드를 시작합니다
           </div>
         </div>
         {/* <Divider /> */}
@@ -424,15 +432,31 @@ export const UnionRaider = () => {
           </div>
         </div>
         <div className='help-tooltip-elem'>
+          <AfterImageBadgeLight title='외부지역 해금단계 조정'></AfterImageBadgeLight>
+          <div className='help-tooltip-desc'>
+            ㆍ외부지역 해금선을 원하는 등급에 맞게 단계를 조정합니다
+          </div>
+          <div className='help-tooltip-desc'>
+            ㆍ단계를 조정하여 설정할수 있는 최대 영역을 제한합니다.<br/>
+            ㆍ점선테두리로 표시됩니다.
+          </div>
+          <div className='help-tooltip-desc'>
+            <span>※ </span><span className='help-emp'>점선이 테이블에 보이지 않으면 해금선은 5단계입니다</span>
+          </div>
+        </div>
+        <div className='help-tooltip-elem'>
           <AfterImageBadgeLight title='외부지역 해금선 초기화'></AfterImageBadgeLight>
           <div className='help-tooltip-desc'>
             ㆍ외부지역 해금선을 현재 내 유니온 등급에 맞게 다시 초기화합니다<br />
           </div>
+          <div className='help-tooltip-desc'>
+            <span>※ </span><span className='help-emp'>점선이 테이블에 보이지 않으면 해금선은 5단계입니다</span>
+          </div>
         </div>
         <div className='help-tooltip-elem'>
-          <AfterImageBadgeLight title='외부지역 해금단계 조정'></AfterImageBadgeLight>
+          <AfterImageBadgeLight title='시작'></AfterImageBadgeLight>
           <div className='help-tooltip-desc'>
-            ㆍ외부지역 해금선을 원하는 등급에 맞게 단계를 조정합니다
+            ㆍ현재 세팅된 정보를 바탕으로 자동 배치 모드를 시작합니다
           </div>
         </div>
       </Tooltip>

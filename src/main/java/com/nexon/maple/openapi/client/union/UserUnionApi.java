@@ -27,11 +27,11 @@ public class UserUnionApi {
 
     Logger logger = LoggerFactory.getLogger(UserUnionApi.class);
 
-    public UserUnionResponse get(String ocid, String date) {
+    public UserUnionResponse get(String ocid) {
         try {
             URI uri = new URIBuilder(mapleProperties.getBase() + userProperties.getUnion())
                     .addParameter("ocid", ocid)
-                    .addParameter("date", date)
+//                    .addParameter("date", date)
                     .build();
             HttpGet getRequest = new HttpGet(uri); //GET 메소드 URL 생성
 
