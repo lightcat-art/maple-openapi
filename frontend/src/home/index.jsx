@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './index.css'
 import { useNavigate } from "react-router-dom";
-import { Menu } from '../common'
+import { Menu, Footer } from '../common'
 import logo from '../static/img/logo/logo.svg'
 
 export function Home() {
@@ -38,7 +38,7 @@ function HomeLayout() {
 
     return (
 
-        <div className="home">
+        <div className="home page-layout">
             {/* <div className="container-fluid bg-primary main-bg d-none d-sm-block">
             </div>
             <div className="container-fluid bg-primary main-bg-tab d-none d-md-block d-xl-none">
@@ -49,13 +49,13 @@ function HomeLayout() {
 
             <Menu page='home' />
 
-            <div className="home-inner container-fluid">
+            <div className="home-inner container-fluid wrapper">
                 <div className="main">
 
                     <h1 className="main-logo mb-3 text-center animate__animated animate__slideInDown" style={{ color: '#000000' }}>
-                        <p><img className="mb-1 homepage-logo" src={logo} alt="" />&nbsp;&nbsp;Union Block Allocator</p>
+                        <p><img className="mb-1 homepage-logo" src={logo} alt="" />&nbsp;&nbsp;Maple Tetris</p>
                     </h1>
-                    <h5 className="main-logo-desc mb-4 text-center animate__animated animate__slideInDown" style={{ color: '#000000' }}>유니온 배치 계산기</h5>
+                    <h5 className="main-logo-desc mb-4 text-center animate__animated animate__slideInDown" style={{ color: '#000000' }}>메이플 유니온 배치 계산</h5>
                     <div className="container-fluid">
                         <div className="row">
                             <div className="col-xl-3"></div>
@@ -74,6 +74,7 @@ function HomeLayout() {
                     </div>
                 </div>
             </div>
+            <Footer/>
         </div>
 
     )
