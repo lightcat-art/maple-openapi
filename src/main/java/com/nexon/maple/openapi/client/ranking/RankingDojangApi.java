@@ -49,7 +49,38 @@ public class RankingDojangApi {
             if (response.getStatusLine().getStatusCode() == 200) {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
-                logger.info(body);
+//                logger.info(body);
+                RankingDojangResponse dojangRes = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, RankingDojangResponse.class);
+                return dojangRes;
+            } else {
+                logger.error("response is error : " + response.getStatusLine().getStatusCode());
+                return null;
+            }
+        } catch (Exception e) {
+            logger.error("error occurred.",e);
+            return null;
+        }
+    }
+
+    public RankingDojangResponse getTop(String date, int difficulty) {
+        try {
+            URI uri = new URIBuilder(mapleProperties.getBase() + rankingProperties.getDojang())
+                    .addParameter("date", date)
+                    .addParameter("difficulty", String.valueOf(difficulty))
+                    .build();
+            HttpGet getRequest = new HttpGet(uri); //GET 메소드 URL 생성
+
+            getRequest.addHeader("x-nxopen-api-key", mapleProperties.getKey()); //KEY 입력
+
+            CloseableHttpClient client = HttpClients.createDefault();
+            CloseableHttpResponse response = (CloseableHttpResponse) client
+                    .execute(getRequest);
+
+            //Response 출력
+            if (response.getStatusLine().getStatusCode() == 200) {
+                ResponseHandler<String> handler = new BasicResponseHandler();
+                String body = handler.handleResponse(response);
+//                logger.info(body);
                 RankingDojangResponse dojangRes = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, RankingDojangResponse.class);
                 return dojangRes;
             } else {
