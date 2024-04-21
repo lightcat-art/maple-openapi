@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 public class DateManager {
     private static final LocalTime midNight = LocalTime.of(0, 0, 0);
     private static final LocalTime oneAM = LocalTime.of(1,0,1);
+    private static final LocalTime eightThirtyAM = LocalTime.of(8,30,5);
     public static String getSearchDate() {
         LocalDateTime now = LocalDateTime.now();
         LocalDate nowDate = null;
@@ -16,6 +17,20 @@ public class DateManager {
         // 12시 ~ 새벽 1시 사이
         if (nowTime.compareTo(midNight) >= 0 && nowTime.compareTo(oneAM) < 0) {
             nowDate = LocalDate.from(now.minusDays(2));
+        } else {
+            nowDate = LocalDate.from(now.minusDays(1));
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return nowDate.format(formatter);
+    }
+
+    public static String getRankingSearchDate() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDate nowDate = null;
+        LocalTime nowTime = LocalTime.of(now.getHour(), now.getMinute(), now.getSecond());
+        // 12시 ~ 새벽 1시 사이
+        if (nowTime.compareTo(eightThirtyAM) >= 0 ) {
+            nowDate = LocalDate.from(now);
         } else {
             nowDate = LocalDate.from(now.minusDays(1));
         }

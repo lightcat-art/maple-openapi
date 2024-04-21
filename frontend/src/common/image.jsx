@@ -37,6 +37,11 @@ import gm2 from '../static/img/union/grand-master-union-2.png'
 import gm3 from '../static/img/union/grand-master-union-3.png'
 import gm4 from '../static/img/union/grand-master-union-4.png'
 import gm5 from '../static/img/union/grand-master-union-5.png'
+import s1 from '../static/img/union/supreme-union-1.png'
+import s2 from '../static/img/union/supreme-union-2.png'
+import s3 from '../static/img/union/supreme-union-3.png'
+import s4 from '../static/img/union/supreme-union-4.png'
+import s5 from '../static/img/union/supreme-union-5.png'
 
 export const WorldImage = ({ server, className }) => {
     return (
@@ -79,7 +84,18 @@ export const WorldImage = ({ server, className }) => {
 }
 
 export const UnionGradeImage = ({ grade, className }) => {
-    return (grade === '그랜드 마스터 유니온 1' ?
+    return (
+    grade === '슈프림 유니온 1' ?
+    <img className={className ? className : ''} src={s1} alt={grade}></img> :
+    grade === '슈프림 유니온 2' ?
+    <img className={className ? className : ''} src={s2} alt={grade}></img> :
+    grade === '슈프림 유니온 3' ?
+    <img className={className ? className : ''} src={s3} alt={grade}></img> :
+    grade === '슈프림 유니온 4' ?
+    <img className={className ? className : ''} src={s4} alt={grade}></img> :
+    grade === '슈프림 유니온 5' ?
+    <img className={className ? className : ''} src={s5} alt={grade}></img> :    
+    grade === '그랜드 마스터 유니온 1' ?
     <img className={className ? className : ''} src={gm1} alt={grade}></img> :
     grade === '그랜드 마스터 유니온 2' ?
     <img className={className ? className : ''} src={gm2} alt={grade}></img> :

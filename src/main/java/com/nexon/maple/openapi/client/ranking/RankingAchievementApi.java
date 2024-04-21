@@ -46,7 +46,36 @@ public class RankingAchievementApi {
             if (response.getStatusLine().getStatusCode() == 200) {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
-                logger.info(body);
+//                logger.info(body);
+                RankingAchievementResponse achRes = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, RankingAchievementResponse.class);
+                return achRes;
+            } else {
+                logger.error("response is error : " + response.getStatusLine().getStatusCode());
+                return null;
+            }
+        } catch (Exception e) {
+            logger.error("error occurred.",e);
+            return null;
+        }
+    }
+
+    public RankingAchievementResponse getTop(String date) {
+        try {
+            URI uri = new URIBuilder(mapleProperties.getBase() + rankingProperties.getAchievement())
+                    .addParameter("date", date)
+                    .build();
+            HttpGet getRequest = new HttpGet(uri); //GET 메소드 URL 생성
+
+            getRequest.addHeader("x-nxopen-api-key", mapleProperties.getKey()); //KEY 입력
+
+            CloseableHttpClient client = HttpClients.createDefault();
+            CloseableHttpResponse response = (CloseableHttpResponse) client
+                    .execute(getRequest);
+
+            //Response 출력
+            if (response.getStatusLine().getStatusCode() == 200) {
+                ResponseHandler<String> handler = new BasicResponseHandler();
+                String body = handler.handleResponse(response);
                 RankingAchievementResponse achRes = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, RankingAchievementResponse.class);
                 return achRes;
             } else {

@@ -27,6 +27,37 @@ public class RankingUnionApi {
 
     Logger logger = LoggerFactory.getLogger(RankingUnionApi.class);
 
+
+    public RankingUnionResponse getTop(String date) {
+        try {
+            URI uri = new URIBuilder(mapleProperties.getBase() + rankingProperties.getUnion())
+                    .addParameter("date", date)
+                    .build();
+            HttpGet getRequest = new HttpGet(uri); //GET 메소드 URL 생성
+
+            getRequest.addHeader("x-nxopen-api-key", mapleProperties.getKey()); //KEY 입력
+
+            CloseableHttpClient client = HttpClients.createDefault();
+            CloseableHttpResponse response = (CloseableHttpResponse) client
+                    .execute(getRequest);
+
+            //Response 출력
+            if (response.getStatusLine().getStatusCode() == 200) {
+                ResponseHandler<String> handler = new BasicResponseHandler();
+                String body = handler.handleResponse(response);
+//                logger.info(body);
+                RankingUnionResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, RankingUnionResponse.class);
+                return res;
+            } else {
+                logger.error("response is error : " + response.getStatusLine().getStatusCode());
+                return null;
+            }
+        } catch (Exception e) {
+            logger.error("error occurred.",e);
+            return null;
+        }
+    }
+
     public RankingUnionResponse get(String date, String worldName, String ocid, int page) {
         try {
             URI uri = new URIBuilder(mapleProperties.getBase() + rankingProperties.getUnion())

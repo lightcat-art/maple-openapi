@@ -65,3 +65,15 @@
     width: 40px; /* svg 크기 조정 */
     height: 40px;
 }
+
+
+.ranking-head {
+    font-size: 15px;
+}
+.ranking-body {
+    font-size: 12px;
+}
+
+/* .rank-table {
+    table-layout: fixed;
+} */
