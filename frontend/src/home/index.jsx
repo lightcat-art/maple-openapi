@@ -95,6 +95,9 @@ function HomeLayout() {
             </div>
 
             <div className="top-rank">
+                {/* <div className="text-center mb-3">
+                    <span className="text-12 color-gray">ㆍ랭킹 정보는 당일 오전 8시 30분부터 집계됩니다.</span>
+                </div> */}
                 <section className="rank-section">
                     <article class="rank-article">
                         <OverallTopRanking />
