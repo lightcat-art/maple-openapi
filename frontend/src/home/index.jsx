@@ -3,11 +3,11 @@ import './index.css'
 import { useNavigate } from "react-router-dom";
 import { Menu, Footer } from '../common'
 import logo from '../static/img/logo/logo.svg'
-import axios from 'axios';
-import { WorldImage } from '../common/image.jsx'
+import { UnionTopRanking, OverallTopRanking, GuildTopRanking, DojangTopRanking, TheSeedTopRanking, AchieveTopRanking } from './topRanking';
 
 
-const backDomain = process.env.REACT_APP_BACK_URL || ''
+
+
 
 export function Home() {
     return (
@@ -24,110 +24,7 @@ function HomeContent() {
     );
 }
 
-function UnionTopRanking() {
-    const [unionTopRank, setUnionTopRank] = React.useState(null)
-    React.useEffect(() => {
-        axios.get(`${backDomain}/api/ranking/union-top`)
-            .then(response => {
-                setUnionTopRank(response.data.ranking)
-            })
-            .catch(error => console.log(error));
-    }, [])
-    return (
-        <>
-            <table class="rank-table">
-                {unionTopRank ?
-                    <>
-                        <thead className='ranking-head'>
-                            <tr>
-                                <th></th>
-                                <th>유니온 랭킹</th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody className='ranking-body'>
-                            {unionTopRank.map((row, i) => (
-                                <tr key={i}>
-                                    {i < 10 ?
-                                        <>
-                                            <th>{row.ranking}</th>
-                                            <td>
-                                                <a
-                                                    className='link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover'
-                                                    href={`/c/${row.characterName}/union`}>
-                                                    {row.characterName}
-                                                </a>
-                                            </td>
-                                            <td>Lv.{row.unionLevel}</td>
-                                            <td><WorldImage className='world-img' server={row.worldName}></WorldImage> {row.worldName}</td>
-                                        </> : null}
 
-                                </tr>
-                            ))}
-                        </tbody>
-                    </>
-                    :
-                    <></>}
-
-            </table>
-        </>
-    )
-}
-
-function OverallTopRanking() {
-    const [overallTopRank, setOverallTopRank] = React.useState(null)
-    React.useEffect(() => {
-        axios.get(`${backDomain}/api/ranking/overall-top`)
-            .then(response => {
-                setOverallTopRank(response.data.ranking)
-            })
-            .catch(error => console.log(error));
-    }, [])
-    return (
-        <>
-            <table class="rank-table">
-                {overallTopRank ?
-                    <>
-                        <thead className='ranking-head'>
-                            <tr>
-                                <th></th>
-                                <th>종합 랭킹</th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody className='ranking-body'>
-                            {overallTopRank.map((row, i) => (
-                                <tr key={i}>
-                                    {i < 10 ?
-                                        <>
-                                            <th>{row.ranking}</th>
-                                            <td>
-                                                <a
-                                                    className='link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover'
-                                                    href={`/c/${row.characterName}/union`}>
-                                                    {row.characterName}
-                                                </a>
-                                            </td>
-                                            <td>{row.className}</td>
-                                            <td>Lv.{row.characterLevel}</td>
-                                            {/* <td>{row.characterExp}</td> */}
-                                            <td><WorldImage className='world-img' server={row.worldName}></WorldImage> {row.worldName}</td>
-                                        </> : null}
-
-                                </tr>
-                            ))}
-                        </tbody>
-                    </>
-                    :
-                    <></>}
-
-            </table>
-        </>
-    )
-}
 
 
 function HomeLayout() {
@@ -183,7 +80,7 @@ function HomeLayout() {
                             <div className="col-xl-3"></div>
                         </div>
                     </div>
-                    <div className="row mt-5">
+                    {/* <div className="row mt-5">
                         <div className="col-xl-2"></div>
                         <div className="col-xl">
                             <UnionTopRanking></UnionTopRanking>
@@ -192,10 +89,36 @@ function HomeLayout() {
                             <OverallTopRanking></OverallTopRanking>
                         </div>
                         <div className="col-xl-2"></div>
-                    </div>
+                    </div> */}
+
                 </div>
             </div>
 
+            <div className="top-rank">
+                {/* <div className="text-center mb-3">
+                    <span className="text-12 color-gray">ㆍ랭킹 정보는 당일 오전 8시 30분부터 집계됩니다.</span>
+                </div> */}
+                <section className="rank-section">
+                    <article class="rank-article">
+                        <OverallTopRanking />
+                    </article>
+                    <article class="rank-article">
+                        <UnionTopRanking />
+                    </article>
+                    <article class="rank-article">
+                        <GuildTopRanking />
+                    </article>
+                    <article class="rank-article">
+                        <DojangTopRanking />
+                    </article>
+                    <article class="rank-article">
+                        <TheSeedTopRanking />
+                    </article>
+                    <article class="rank-article">
+                        <AchieveTopRanking />
+                    </article>
+                </section>
+            </div>
             <Footer />
         </div>
 

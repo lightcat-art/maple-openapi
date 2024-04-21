@@ -593,10 +593,10 @@ export const UnionRaider = () => {
                   <div className="col-auto">
                     <UnionGradeImage className="union-grade-img" grade={charUnionInfo && charUnionInfo.userUnionResponse ? charUnionInfo.userUnionResponse.unionGrade : ''}></UnionGradeImage>
                   </div>
-                  <div className="col-auto">
+                  <div className="col-auto text-bold">
                     {charUnionInfo && charUnionInfo.userUnionResponse ? charUnionInfo.userUnionResponse.unionGrade : ''}
                   </div>
-                  <div className="col-auto">
+                  <div className="col-auto text-bold">
                     Lv.{charUnionInfo && charUnionInfo.userUnionResponse ? charUnionInfo.userUnionResponse.unionLevel : ''}
                   </div>
                 </>
