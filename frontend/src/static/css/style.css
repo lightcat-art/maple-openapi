@@ -92,3 +92,7 @@ body {
 .wrapper {
     flex: 1;
 }
+
+.text-bold {
+    font-weight: bold;
+}
