@@ -77,30 +77,32 @@ export const Footer = () => {
     )
 }
 
-export const ContentLayout = ({ children, className, rowClassName, colClassName }) => {
+// export const ContentLayout = ({ children, className, rowClassName, colClassName }) => {
+//     return (
+//         <>
+//             <div className={`container-fluid ${className ? className : ''}`}>
+//                 <div className={`row ${rowClassName ? rowClassName : ''}`}>
+//                     <div className="col-xl-2"></div>
+//                     <div className={`col ${colClassName ? colClassName : ''}`}>
+//                         {children}
+//                     </div>
+//                     <div className="col-xl-2"></div>
+//                 </div>
+//             </div>
+//         </>
+//     )
+// }
+
+export const ContentLayout = ({ children, className }) => {
     return (
         <>
-            <div className={`container-fluid ${className ? className : ''}`}>
-                <div className={`row ${rowClassName ? rowClassName : ''}`}>
-                    <div className="col-xl-2"></div>
-                    <div className={`col ${colClassName ? colClassName : ''}`}>
+            <div className={`content-layout ${className ? className : ''}`}>
                         {children}
-                    </div>
-                    <div className="col-xl-2"></div>
-                </div>
             </div>
         </>
     )
 }
 
-export const Layout = ({ children }) => {
-    return (
-        <div className="layout">
-            <Menu></Menu>
-            {children}
-        </div>
-    )
-}
 
 export const NotFound = () => {
     return (

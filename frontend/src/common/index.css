@@ -91,3 +91,11 @@
 .menu-search-form {
     margin-right: 10%;
 }
+
+.content-layout {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0px 20px;
+    z-index: 1;
+}
