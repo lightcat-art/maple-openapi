@@ -398,7 +398,7 @@ export const UnionRaider = () => {
             <span className='help-emp'>2023년 12월 21일 이후에 접속</span>
             <span>한 캐릭터로만 조회할 수 있습니다.</span><br />
           </div>
-          
+
           <div className='help-tooltip-desc'>
             <span>ㆍ점령하고 싶은 구역을 </span>
             <span className='help-emp'>우선순위가 가장 높은 지역부터 선택</span>
@@ -437,7 +437,7 @@ export const UnionRaider = () => {
             ㆍ외부지역 해금선을 원하는 등급에 맞게 단계를 조정합니다
           </div>
           <div className='help-tooltip-desc'>
-            ㆍ단계를 조정하여 설정할수 있는 최대 영역을 제한합니다.<br/>
+            ㆍ단계를 조정하여 설정할수 있는 최대 영역을 제한합니다.<br />
             ㆍ점선테두리로 표시됩니다.
           </div>
           <div className='help-tooltip-desc'>
@@ -577,6 +577,13 @@ export const UnionRaider = () => {
     <>
       <CharMenu page='union'></CharMenu>
       <ContentLayout>
+        <div className="union-basic container-fluid">
+          <div className="row justify-content-center">
+            <div className="col-2 rounded-pill" />
+            <div className="col-auto text-bold">유니온 공격대</div>
+            <div className="col-2 rounded-pill"></div>
+          </div>
+        </div>
         {unionLoading ?
           <div className="union-basic container-fluid">
             <div className="row placeholder-glow justify-content-center">

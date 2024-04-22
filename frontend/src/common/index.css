@@ -50,9 +50,9 @@
     display: none;
 } */
 
-/* .navbar-nav {
-    margin-left: calc(100%-30vh);
-} */
+.navbar-nav {
+    margin-left: 20px;
+}
 
 .navbar-group {
     /* absolute property can bottom image to background */
@@ -63,6 +63,11 @@
     /* menu bottom line */
     border-bottom: 1px solid rgb(243, 243, 243);
     /* z-index: 999; */
+
+}
+
+.navbar .navbar-divider {
+    flex: 1 1 0%;
 }
 
 /* .navbar-wrapper {
@@ -77,4 +82,12 @@
     padding-top: 20px;
     padding-bottom: 20px;
     font-size: 13px;
+}
+
+.menu-search-input {
+    font-size: 12px;
+}
+
+.menu-search-form {
+    margin-right: 10%;
 }
