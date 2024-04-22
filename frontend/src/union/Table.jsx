@@ -4,7 +4,7 @@ import './index.css'
 import { getCSSProp } from '../util/util.jsx'
 import { PROCESS_INIT, PROCESS_READY, PROCESS_FAIL, setRegionLimitBorder, removeRegionLimitBorder, getRegionLimit } from './index';
 import { TABLE_ROW_LEN, TABLE_COL_LEN } from '../common'
-import { AfterImageButton } from '../common/clickable'
+import { AfterImageButton, AfterImageBadgeGray } from '../common/clickable'
 import WebWorker from '../util/worker'
 import worker from './UnionWorker.min'
 import { SwitchCheckBox } from '../common/checkBox'
@@ -504,13 +504,18 @@ export const BasicTable = ({
 
     return (
         <div className="union-table-wrapper" onMouseDown={(e) => e.preventDefault()} >
+            <div className="container-fluid">
+                <div className="row justify-content-center">
+                    <AfterImageBadgeGray className="union-mode" title={useProcess ? '자동 배치 모드' : '유니온 정보 모드'}></AfterImageBadgeGray>
+                </div>
+            </div>
             <div className='container-fluid'>
                 <div className="row justify-content-center pt-1 pb-3">
-
                     <div className="col-auto use-process-btn-wrapper text-center">
+
                         <AfterImageButton className="use-process-btn ps-3" action={handleUseProcess}
                             disabled={useProcessDisabled}
-                            title={useProcess ? '내 정보 보기' : '자동 배치 모드'}>
+                            title={useProcess ? '내 정보 모드로 변경' : '자동 배치 모드로 변경'}>
                         </AfterImageButton>
                     </div>
                     <div className="col-auto start-wrapper text-center">
