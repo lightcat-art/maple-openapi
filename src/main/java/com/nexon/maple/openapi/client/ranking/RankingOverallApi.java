@@ -44,7 +44,7 @@ public class RankingOverallApi {
             if (response.getStatusLine().getStatusCode() == 200) {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
-                logger.info(body);
+//                logger.info(body);
                 RankingOverallResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, RankingOverallResponse.class);
                 return res;
             } else {
@@ -79,7 +79,7 @@ public class RankingOverallApi {
             if (response.getStatusLine().getStatusCode() == 200) {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
-                logger.info(body);
+//                logger.info(body);
                 RankingOverallResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, RankingOverallResponse.class);
                 return res;
             } else {

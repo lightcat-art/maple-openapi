@@ -45,7 +45,7 @@ public class GuildIdApi {
             if (response.getStatusLine().getStatusCode() == 200) {
                 ResponseHandler<String> handler = new BasicResponseHandler();
                 String body = handler.handleResponse(response);
-                logger.info(body);
+//                logger.info(body);
                 GuildIdResponse res = ObjectMapperManager.camelToSnakeJsonMapper.readValue(body, GuildIdResponse.class);
                 return res;
             } else {

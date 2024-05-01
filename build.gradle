@@ -30,6 +30,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-configuration-processor'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7.1'
     implementation 'junit:junit:4.13.1'
+    implementation 'net.jodah:expiringmap:0.5.9'
     compileOnly 'org.projectlombok:lombok'
 //    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 //    runtimeOnly 'com.mysql:mysql-connector-j'
