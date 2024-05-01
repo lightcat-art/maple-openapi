@@ -577,15 +577,20 @@ export const UnionRaider = () => {
     <>
       <CharMenu page='union'></CharMenu>
       <ContentLayout>
-        <div className="union-raider-title container-fluid">
+        {/* <div className="union-raider-title container-fluid">
           <div className="row justify-content-center">
             <div className="col-2 rounded-pill" />
             <div className="col-auto text-bold">유니온 공격대</div>
             <div className="col-2 rounded-pill"></div>
           </div>
-        </div>
+        </div> */}
         {unionLoading ?
           <div className="union-basic container-fluid">
+            <div className="row justify-content-center">
+              <div className="col-2 rounded-pill" />
+              <div className="col-auto text-bold text-15 mb-3">유니온 공격대</div>
+              <div className="col-2 rounded-pill"></div>
+            </div>
             <div className="row placeholder-glow justify-content-center">
               <div className="placeholder col-auto bg-secondary rounded-pill" />
               <div className="col-auto" />
@@ -594,6 +599,11 @@ export const UnionRaider = () => {
           </div>
           :
           <div className="union-basic container-fluid">
+            <div className="row justify-content-center">
+              <div className="col-2 rounded-pill" />
+              <div className="col-auto text-bold text-15 mb-3">유니온 공격대</div>
+              <div className="col-2 rounded-pill"></div>
+            </div>
             <div className="row justify-content-center">
               {charUnionInfo && charUnionInfo.userUnionResponse && charUnionInfo.userUnionResponse.unionGrade ?
                 <>

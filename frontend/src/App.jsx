@@ -7,15 +7,17 @@ import { Home } from './home';
 import { NotFound } from './common'
 import { CharacterLayout } from './character'
 import { CharacterEquip } from './equip';
+import { Faq } from './faq';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route exact path='/' element={<Home />} />
+        <Route exact path='/faq' element={<Faq />} />
         <Route element={<CharacterLayout />}>
           <Route path='/c/:cname/union' element={<UnionRaider />}/>
-          {/* <Route path='/c/:cname/equip' element={<CharacterEquip />} /> */}
+          <Route path='/c/:cname/equip' element={<CharacterEquip />} />
         </Route>
         {/* <Route component={NotFound} /> */}
       </Routes>

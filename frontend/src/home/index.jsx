@@ -92,32 +92,31 @@ function HomeLayout() {
                     </div> */}
 
                 </div>
-            </div>
-
-            <div className="top-rank">
-                {/* <div className="text-center mb-3">
+                <div className="top-rank">
+                    {/* <div className="text-center mb-3">
                     <span className="text-12 color-gray">ㆍ랭킹 정보는 당일 오전 8시 30분부터 집계됩니다.</span>
                 </div> */}
-                <section className="rank-section">
-                    <article class="rank-article">
-                        <OverallTopRanking />
-                    </article>
-                    <article class="rank-article">
-                        <UnionTopRanking />
-                    </article>
-                    <article class="rank-article">
-                        <GuildTopRanking />
-                    </article>
-                    <article class="rank-article">
-                        <DojangTopRanking />
-                    </article>
-                    <article class="rank-article">
-                        <TheSeedTopRanking />
-                    </article>
-                    <article class="rank-article">
-                        <AchieveTopRanking />
-                    </article>
-                </section>
+                    <section className="rank-section">
+                        <article class="rank-article">
+                            <OverallTopRanking />
+                        </article>
+                        <article class="rank-article">
+                            <UnionTopRanking />
+                        </article>
+                        <article class="rank-article">
+                            <GuildTopRanking />
+                        </article>
+                        <article class="rank-article">
+                            <DojangTopRanking />
+                        </article>
+                        <article class="rank-article">
+                            <TheSeedTopRanking />
+                        </article>
+                        <article class="rank-article">
+                            <AchieveTopRanking />
+                        </article>
+                    </section>
+                </div>
             </div>
             <Footer />
         </div>

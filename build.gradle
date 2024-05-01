@@ -25,6 +25,7 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     implementation 'org.springframework.boot:spring-boot-configuration-processor'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7.1'
@@ -46,13 +47,28 @@ tasks.named('test') {
 
 def frontendDir = "$projectDir/frontend"
 
+// 1. application을 바로 실행하는 경우
+// profile에 -Dspring.profiles.active나 -Pprofile 값을 저장해놓고 난 다음 실행해야하는 코드임.
+// 아무것도 가져오는 것이 없다면 dev를 가져오는건데, 아무것도 가져오는 것이 없다!!!!!!!
+// 2. gradle build 실행의 경우
+// gradle build 작업은 -Pprofile을 자동으로 인식한다.
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'dev' : profile
+
 sourceSets {
     main {
         resources {
-            srcDirs = ["$projectDir/src/main/resources"]
+            srcDirs = [
+                    "$projectDir/src/main/resources"
+                    , "$projectDir/src/main/resources-$profile"
+            ]
         }
     }
 }
+//tasks {
+//    processResources {
+//        duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
+//    }
+//}
 
 processResources {
     // application local로 띄울때는 copyReactBuildFiles가 depend 된게 없으므로 실행되지 않음
@@ -95,8 +111,6 @@ tasks.register('copyReactBuildFiles', Copy) {
     from "$frontendDir/build"
     into "$projectDir/src/main/resources/static"
 }
-
-
 
 
 

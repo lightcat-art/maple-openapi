@@ -1,2 +1,2 @@
 cp -r ./front-build ./volume/
-java -jar ./maple.jar
+java -jar "-Dspring.profiles.active=prod" ./maple.jar

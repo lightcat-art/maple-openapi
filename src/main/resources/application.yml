@@ -1,5 +1,8 @@
+#spring:
+#  profiles:
+#    active: dev
+
 api:
-  key: test_0f23fc87b6d01ccef837703278e7264392a2f7aafe543ba700be5ad1cc3dd0dc3e492347b34892b3cb931d4d1dfacbcf
   base: https://open.api.nexon.com
   character:
     ocid: /maplestory/v1/id
@@ -35,3 +38,19 @@ api:
     dojang: /maplestory/v1/ranking/dojang
     theseed: /maplestory/v1/ranking/theseed
     achievement: /maplestory/v1/ranking/achievement
+
+#---
+#spring:
+#  config:
+#    activate:
+#      on-profile: dev
+#api:
+#  key: test_0f23fc87b6d01ccef837703278e7264392a2f7aafe543ba700be5ad1cc3dd0dc3e492347b34892b3cb931d4d1dfacbcf
+#
+#---
+#spring:
+#  config:
+#    activate:
+#      on-profile: prod
+#api:
+#  key: live_0f23fc87b6d01ccef837703278e726431afd368fb9fbfc71b69036e7bc10e6b5eca77c1829070003f625080886a2b2d0

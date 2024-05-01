@@ -9,8 +9,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SchedulerService {
     @Scheduled(cron = "2 0 1 * * *")
-    public void cacheRemove() {
+    public void cacheCharacterRemove() {
         ResponseCacheManager.getInstance().clearCharacterCacheAll();
     }
 
+    @Scheduled(cron = "0 0/5 * * * *")
+    public void cacheRankingRemove() { ResponseCacheManager.getInstance().clearRankingCacheAll(); }
 }

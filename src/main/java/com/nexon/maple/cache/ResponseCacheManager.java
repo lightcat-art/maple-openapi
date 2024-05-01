@@ -142,4 +142,16 @@ public class ResponseCacheManager {
         this.rankingAchievementCacheMap.put(pageNum, response);
     }
     public void clearRankingAchievementCacheAll() { this.rankingAchievementCacheMap.clear(); }
+
+    public void clearRankingCacheAll() {
+        clearRankingOverallCacheAll();
+        clearRankingAchievementCacheAll();
+        clearRankingDojangCommonCacheAll();
+        clearRankingDojangMasterCacheAll();
+        clearRankingUnionCacheAll();
+        clearRankingTheSeedCacheAll();
+        clearRankingGuildByPointCacheAll();
+        clearRankingGuildBySuroCacheAll();
+        clearRankingGuildByFlagCacheAll();
+    }
 }
