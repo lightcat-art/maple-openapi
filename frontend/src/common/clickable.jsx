@@ -43,6 +43,19 @@ export const AfterImageBadgeLight = (props) => {
     )
 }
 
+export const AfterImageBadgeGray = (props) => {
+    return (
+        <span
+            className={`tag-1 badge text-bg-warning ${props.className}`}
+            style={props.style}
+        >
+            {props.title}
+            {props.imgsrc}
+        </span>
+    )
+}
+
+
 export const AfterImageLink = (props) => {
     return (
         <Link to={props.to} className={`after-image-link ${props.className}`}>

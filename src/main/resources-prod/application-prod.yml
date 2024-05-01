@@ -1,0 +1,6 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+api:
+  key: live_0f23fc87b6d01ccef837703278e726431afd368fb9fbfc71b69036e7bc10e6b5eca77c1829070003f625080886a2b2d0

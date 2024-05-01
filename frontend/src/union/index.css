@@ -50,12 +50,44 @@
     border-color: black;
     width: 18px;
     height: 18px;
+    min-width: 18px;
     border-bottom: 1px solid ;
     border-left: 1px solid ;
 }
 
 .table-back {
     z-index: -999;
+}
+
+.union-grade-img {
+    /* padding-bottom: 2px; */
+    width: 20px;
+    height: 20px;
+
+}
+
+.union-basic {
+    background-color: #f8f8f8;
+    width: 100%;
+    max-width: 300px;
+    margin-top: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 10px;
+    /* font-weight: bold; */
+    font-size: 12px;
+}
+
+.union-raider-title {
+    background-color: #f8f8f8;
+    width: 100%;
+    max-width: 160px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 10px;
+    /* font-weight: bold; */
+    font-size: 12px;
+    
 }
 
 .union-table {
@@ -76,6 +108,13 @@
     padding-left: 10px;
     padding-right: 10px;
 }
+
+.union-mode {
+    max-width: 110px;
+    margin-bottom: 10px;
+}
+
+
 
 .use-process-btn-wrapper, .start-wrapper {
     margin-right: 20px;
@@ -147,24 +186,6 @@
     padding-top: 12px;
     font-weight: bold;
     color: #970000;
-}
-
-.union-grade-img {
-    /* padding-bottom: 2px; */
-    width: 20px;
-    height: 20px;
-
-}
-
-.union-basic {
-    background-color: #f8f8f8;
-    margin-top: 10px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    border-radius: 10px;
-    /* font-weight: bold; */
-    font-size: 12px;
-    width: 40%;
 }
 
 .region-limit-desc{
@@ -269,7 +290,3 @@
 /* .union-table-cell:hover {
     background-color: rgb(173, 173, 173);
 } */
-
-.union-raider {
-    font-size: 18px;
-}

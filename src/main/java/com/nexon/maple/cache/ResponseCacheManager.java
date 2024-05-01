@@ -1,16 +1,27 @@
 package com.nexon.maple.cache;
 
+import com.nexon.maple.controller.MapleController;
 import com.nexon.maple.model.character.overall.CharacterOverallResponse;
 import com.nexon.maple.openapi.client.ranking.response.*;
 import lombok.Getter;
+import net.jodah.expiringmap.ExpirationPolicy;
+import net.jodah.expiringmap.ExpiringMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 public class ResponseCacheManager {
-
-    private final Map<String, CharacterOverallResponse> characterCacheMap = new ConcurrentHashMap<String, CharacterOverallResponse>();
+    Logger logger = LoggerFactory.getLogger(ResponseCacheManager.class);
+    private final Map<String, CharacterOverallResponse> characterCacheMap =
+            ExpiringMap.builder()
+                    .expirationPolicy(ExpirationPolicy.CREATED)
+                    .expiration(3, TimeUnit.MINUTES)
+                    .expirationListener((key, value) -> logger.info("--- character key expired: " + key))
+                    .build();
 
     private final Map<Integer, RankingUnionResponse> rankingUnionCacheMap =
             new ConcurrentHashMap<Integer, RankingUnionResponse>();  // Map<페이지번호, 응답값>
@@ -142,4 +153,16 @@ public class ResponseCacheManager {
         this.rankingAchievementCacheMap.put(pageNum, response);
     }
     public void clearRankingAchievementCacheAll() { this.rankingAchievementCacheMap.clear(); }
+
+    public void clearRankingCacheAll() {
+        clearRankingOverallCacheAll();
+        clearRankingAchievementCacheAll();
+        clearRankingDojangCommonCacheAll();
+        clearRankingDojangMasterCacheAll();
+        clearRankingUnionCacheAll();
+        clearRankingTheSeedCacheAll();
+        clearRankingGuildByPointCacheAll();
+        clearRankingGuildBySuroCacheAll();
+        clearRankingGuildByFlagCacheAll();
+    }
 }

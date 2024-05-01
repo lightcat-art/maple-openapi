@@ -1,0 +1,6 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+api:
+  key: test_0f23fc87b6d01ccef837703278e7264392a2f7aafe543ba700be5ad1cc3dd0dc3e492347b34892b3cb931d4d1dfacbcf

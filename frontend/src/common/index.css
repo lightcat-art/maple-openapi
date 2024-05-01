@@ -22,7 +22,7 @@
     color: var(--primary) !important;
     font-weight: bold;
     background-color: rgb(223, 223, 223) !important;
-    border-radius: 30px;
+    border-radius: 15px;
     padding-left: 10px;
     padding-right: 10px;
 }
@@ -90,4 +90,22 @@
 
 .menu-search-form {
     margin-right: 10%;
+}
+
+.content-layout {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0px 20px;
+    z-index: 1;
+}
+
+.page-layout {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+.wrapper {
+    flex: 1;
 }

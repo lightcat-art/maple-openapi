@@ -40,24 +40,45 @@ export const Menu = ({ page }) => {
             <div className="container-fluid p-0 navbar-wrapper">
                 <nav className="navbar navbar-expand navbar-group">
                     {/* <div className="row"> */}
-                        <div className="navbar-nav">
-                            {page === 'home' ?
+                    <div className="navbar-nav">
+                        {page === 'home' ?
+                            <>
                                 <div>
                                     <Link to="/" className="nav-item nav-link active">홈</Link>
-                                </div> :
+                                </div>
+                                {/* <div>
+                                    <Link to="/faq" className="nav-item nav-link">FAQ</Link>
+                                </div> */}
+                            </>
+                            :
+                            page === 'faq' ?
+                            <>
                                 <div>
                                     <Link to="/" className="nav-item nav-link">홈</Link>
                                 </div>
-                            }
-                        </div>
-                        <div className="navbar-divider"></div>
-                        <form className="mt-1 menu-search-form" onSubmit={(e) => { handleSubmit(e) }}>
-                            <input className="menu-search-input search-bar form-control border-0 rounded-pill py-2 ps-4 pe-3" type="text" placeholder="닉네임 입력"
-                                value={input} onChange={(e) => handleChange(e.target.value)} />
-                            {/* <button type="submit" className="btn rounded-pill py-2 px-4 position-absolute top-0 end-0 me-2" style={{ marginTop: '7px' }}>
+                                {/* <div>
+                                    <Link to="/faq" className="nav-item nav-link active">FAQ</Link>
+                                </div> */}
+                            </>
+                            :
+                            <>
+                                <div>
+                                    <Link to="/" className="nav-item nav-link">홈</Link>
+                                </div>
+                                {/* <div>
+                                    <Link to="/faq" className="nav-item nav-link">FAQ</Link>
+                                </div> */}
+                            </>
+                        }
+                    </div>
+                    <div className="navbar-divider"></div>
+                    <form className="mt-1 menu-search-form" onSubmit={(e) => { handleSubmit(e) }}>
+                        <input className="menu-search-input search-bar form-control border-0 rounded-pill py-2 ps-4 pe-3" type="text" placeholder="닉네임 입력"
+                            value={input} onChange={(e) => handleChange(e.target.value)} />
+                        {/* <button type="submit" className="btn rounded-pill py-2 px-4 position-absolute top-0 end-0 me-2" style={{ marginTop: '7px' }}>
                                 <span className="material-symbols-outlined fill-thick-icon icon-darkgray">search</span>
                             </button> */}
-                        </form>
+                    </form>
                     {/* </div> */}
                 </nav>
             </div>
@@ -70,37 +91,58 @@ export const Footer = () => {
         <div className="container-fluid footer">
             <div className="row justify-content-center">
                 <div className="col-auto">
-                    Copyright © mapletetris 2024.
+                    <div>Copyright © mapletetris 2024.</div>
+                    <span>Data based on </span>
+                    <span><a
+                        className='link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover'
+                        href='https://openapi.nexon.com/'>
+                        NEXON Open API.
+                    </a></span>
+                    
                 </div>
             </div>
         </div>
     )
 }
 
-export const ContentLayout = ({ children, className, rowClassName, colClassName }) => {
+export const PageLayout = ({ children, className }) => {
+    return (
+        <div className={`page-layout ${className ? className : ''}`}>
+            <div className="wrapper">
+                {children}
+            </div>
+            <Footer />
+        </div>
+    )
+}
+
+
+// export const ContentLayout = ({ children, className, rowClassName, colClassName }) => {
+//     return (
+//         <>
+//             <div className={`container-fluid ${className ? className : ''}`}>
+//                 <div className={`row ${rowClassName ? rowClassName : ''}`}>
+//                     <div className="col-xl-2"></div>
+//                     <div className={`col ${colClassName ? colClassName : ''}`}>
+//                         {children}
+//                     </div>
+//                     <div className="col-xl-2"></div>
+//                 </div>
+//             </div>
+//         </>
+//     )
+// }
+
+export const ContentLayout = ({ children, className }) => {
     return (
         <>
-            <div className={`container-fluid ${className ? className : ''}`}>
-                <div className={`row ${rowClassName ? rowClassName : ''}`}>
-                    <div className="col-xl-2"></div>
-                    <div className={`col ${colClassName ? colClassName : ''}`}>
-                        {children}
-                    </div>
-                    <div className="col-xl-2"></div>
-                </div>
+            <div className={`content-layout ${className ? className : ''}`}>
+                {children}
             </div>
         </>
     )
 }
 
-export const Layout = ({ children }) => {
-    return (
-        <div className="layout">
-            <Menu></Menu>
-            {children}
-        </div>
-    )
-}
 
 export const NotFound = () => {
     return (

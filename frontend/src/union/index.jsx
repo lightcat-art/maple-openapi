@@ -8,7 +8,7 @@ import './index.css'
 import { getCSSProp, removeDupND } from '../util/util.jsx'
 import { useParams, useOutletContext } from 'react-router-dom'
 import { TABLE_ROW_LEN, TABLE_COL_LEN, ContentLayout } from '../common'
-import { Button, AfterImageButton, AfterImageBadgeLight } from '../common/clickable'
+import { AfterImageButton, AfterImageBadgeLight } from '../common/clickable'
 import { Divider } from '../common/divider.jsx'
 import { CharMenu } from '../character';
 import decreaseIcon from '../static/icons/chevron_left_FILL0_wght400_GRAD0_opsz20.svg'
@@ -577,15 +577,20 @@ export const UnionRaider = () => {
     <>
       <CharMenu page='union'></CharMenu>
       <ContentLayout>
-        <div className="union-basic container-fluid">
+        {/* <div className="union-raider-title container-fluid">
           <div className="row justify-content-center">
             <div className="col-2 rounded-pill" />
             <div className="col-auto text-bold">유니온 공격대</div>
             <div className="col-2 rounded-pill"></div>
           </div>
-        </div>
+        </div> */}
         {unionLoading ?
           <div className="union-basic container-fluid">
+            <div className="row justify-content-center">
+              <div className="col-2 rounded-pill" />
+              <div className="col-auto text-bold text-15 mb-3">유니온 공격대</div>
+              <div className="col-2 rounded-pill"></div>
+            </div>
             <div className="row placeholder-glow justify-content-center">
               <div className="placeholder col-auto bg-secondary rounded-pill" />
               <div className="col-auto" />
@@ -594,6 +599,11 @@ export const UnionRaider = () => {
           </div>
           :
           <div className="union-basic container-fluid">
+            <div className="row justify-content-center">
+              <div className="col-2 rounded-pill" />
+              <div className="col-auto text-bold text-15 mb-3">유니온 공격대</div>
+              <div className="col-2 rounded-pill"></div>
+            </div>
             <div className="row justify-content-center">
               {charUnionInfo && charUnionInfo.userUnionResponse && charUnionInfo.userUnionResponse.unionGrade ?
                 <>
@@ -615,6 +625,7 @@ export const UnionRaider = () => {
 
             </div>
           </div>
+
         }
 
         {/* <Tooltip ref={tooltipRefMode} />
@@ -655,7 +666,6 @@ export const UnionRaider = () => {
 
           </div>
         </div>
-
 
         <div className="container-fluid">
           <div className="row justify-content-center">
