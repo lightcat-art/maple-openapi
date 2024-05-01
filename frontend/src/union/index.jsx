@@ -9,7 +9,7 @@ import { getCSSProp, removeDupND } from '../util/util.jsx'
 import { useParams, useOutletContext } from 'react-router-dom'
 import { TABLE_ROW_LEN, TABLE_COL_LEN, ContentLayout } from '../common'
 import { AfterImageButton, AfterImageBadgeLight } from '../common/clickable'
-import { Divider } from '../common/divider.jsx'
+import { Divider, DividerLightGray } from '../common/divider.jsx'
 import { CharMenu } from '../character';
 import decreaseIcon from '../static/icons/chevron_left_FILL0_wght400_GRAD0_opsz20.svg'
 import increaseIcon from '../static/icons/chevron_right_FILL0_wght400_GRAD0_opsz20.svg'
@@ -586,12 +586,13 @@ export const UnionRaider = () => {
         </div> */}
         {unionLoading ?
           <div className="union-basic container-fluid">
-            <div className="row justify-content-center">
+            <div className="row justify-content-center mb-2">
               <div className="col-2 rounded-pill" />
-              <div className="col-auto text-bold text-15 mb-3">유니온 공격대</div>
+              <div className="col-auto text-bold text-15">유니온 공격대</div>
               <div className="col-2 rounded-pill"></div>
             </div>
-            <div className="row placeholder-glow justify-content-center">
+            <DividerLightGray></DividerLightGray>
+            <div className="row placeholder-glow justify-content-center mt-2">
               <div className="placeholder col-auto bg-secondary rounded-pill" />
               <div className="col-auto" />
               <div className="placeholder col-2 bg-secondary rounded-pill"></div>
@@ -599,12 +600,13 @@ export const UnionRaider = () => {
           </div>
           :
           <div className="union-basic container-fluid">
-            <div className="row justify-content-center">
+            <div className="row justify-content-center mb-2">
               <div className="col-2 rounded-pill" />
-              <div className="col-auto text-bold text-15 mb-3">유니온 공격대</div>
+              <div className="col-auto text-bold text-15">유니온 공격대</div>
               <div className="col-2 rounded-pill"></div>
             </div>
-            <div className="row justify-content-center">
+            <DividerLightGray></DividerLightGray>
+            <div className="row justify-content-center mt-2">
               {charUnionInfo && charUnionInfo.userUnionResponse && charUnionInfo.userUnionResponse.unionGrade ?
                 <>
                   <div className="col-auto">
