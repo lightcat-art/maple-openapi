@@ -1,5 +1,6 @@
 package com.nexon.maple.openapi.client.character.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -7,6 +8,7 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BasicResponse {
     private String date;
     private String characterName;
@@ -19,4 +21,7 @@ public class BasicResponse {
     private String characterExpRate;
     private String characterGuildName;
     private String characterImage;
+    private String characterDateCreate;
+    private String access_flag;
+    private String liberationQuestClearFlag;
 }
